@@ -86,9 +86,6 @@ const LogoAsciiSmall: React.FC<LogoAsciiSmallProps> = ({ className, style, ...pr
   <motion.div
     className={cn('relative overflow-hidden', className)}
     {...(style && { style })}
-    // initial={{ clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)' }}
-    // animate={{ clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)' }}
-    // transition={{ delay: 5, duration: 4, ease: 'easeInOut' }}
     {...props}
   >
     <Canvas className='!w-[200px] !h-[48px]'>

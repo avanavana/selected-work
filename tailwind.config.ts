@@ -11,8 +11,8 @@ export const colors = {
 
 const widths = {
   maximum: '1500px',
-  mid: '876px',
-  minimum: '40rem',
+  mid: '896px',
+  minimum: '640px',
 }
 
 export const screens = {
@@ -28,6 +28,11 @@ export const height = {
   maximum: '896px'
 }
 
+export const spacing = {
+  normal: '38px',
+  double: '76px'
+}
+
 export default {
   content: ['./src/**/*.{mjs,js,ts,jsx,tsx}'],
   theme: {
@@ -35,7 +40,8 @@ export default {
       colors,
       screens,
       width,
-      height
+      height,
+      spacing
     }
   },
   plugins: [animate]

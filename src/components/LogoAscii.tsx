@@ -5,8 +5,9 @@ import { SpotLight } from 'three'
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
 import { animate, motion, useMotionValue } from 'framer-motion'
 
-import { cn } from '@/lib/utils'
-import { colors } from '../../tailwind.config'
+import { useWindowSize } from '@/hooks/useWindowSize'
+import { cn, extractNumber } from '@/lib/utils'
+import { colors, screens } from '../../tailwind.config'
 
 import type { ShapePath } from 'three'
 
@@ -52,11 +53,11 @@ const MovingLight = () => {
   )
 }
 
-const LogoSvg = () => {
+const LogoSvg = ({ isMobile = false }: { isMobile?: boolean }) => {
   const svg = useLoader(SVGLoader, '/src/assets/logo.svg')
 
   return (
-    <group position={[3.0, 0.735, -1]} scale={[-1 / 100, -1 / 100, 1]}>
+    <group position={isMobile ? [ 1.5, 0.37, -1 ] : [ 3.0, 0.735, -1 ]} scale={isMobile ? [ -1 / 200, -1 / 200, 1 ] : [ -1 / 100, -1 / 100, 1 ]}>
       {svg.paths.map((path: ShapePath, i) => (
         <mesh key={i} position={[0, 0, 0]}>
           <shapeGeometry
@@ -81,28 +82,33 @@ interface LogoAsciiProps {
   className?: string
 }
 
-const LogoAscii: React.FC<LogoAsciiProps> = ({ className, ...props }) => (
-  <motion.div
-    className={cn('relative overflow-hidden', className)}
-    initial={{ clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)' }}
-    animate={{ clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)' }}
-    transition={{ delay: 5, duration: 4, ease: 'easeInOut' }}
-    {...props}
-  >
-    <Canvas className='!w-[600px] !h-[144px]'>
-      <OrthographicCamera makeDefault position={[0, 0, 1]} zoom={100} />
-      <MovingLight />
-      <LogoSvg />
-      <AsciiRenderer
-        fgColor={colors['gray-dark']}
-        bgColor='transparent'
-        invert={false}
-        characters={` .,;-<+|[}&="@#`}
-        resolution={0.2}
-      />
-    </Canvas>
-  </motion.div>
-)
+const LogoAscii: React.FC<LogoAsciiProps> = ({ className, ...props }) => {
+  const { width: screenWidth } = useWindowSize()
+  const isMidSizeScreenOrSmaller = screenWidth <= extractNumber(screens.mid)
+
+  return (
+    <motion.div
+      className={cn('relative overflow-hidden', className)}
+      initial={{ clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)' }}
+      animate={{ clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)' }}
+      transition={{ delay: 5, duration: 4, ease: 'easeInOut' }}
+      {...props}
+    >
+      <Canvas className={cn(isMidSizeScreenOrSmaller ? '!w-[300px] !h-[72px]' : '!w-[600px] !h-[144px]')}>
+        <OrthographicCamera makeDefault position={[0, 0, 1]} zoom={100} />
+        <MovingLight />
+        <LogoSvg isMobile={isMidSizeScreenOrSmaller} />
+        <AsciiRenderer
+          fgColor={colors['gray-dark']}
+          bgColor='transparent'
+          invert={false}
+          characters={` .,;-<+|[}&="@#`}
+          resolution={0.2}
+        />
+      </Canvas>
+    </motion.div>
+  )
+}
 
 LogoAscii.displayName = 'LogoAscii'
 
