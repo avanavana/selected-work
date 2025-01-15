@@ -3,9 +3,8 @@ import { motion } from 'framer-motion'
 
 import ContactDivider from '@/components/ContactDivider'
 import { Email, Link, LinkedIn } from '@/components/Icons'
-import Logo, { LogoSmall } from '@/components/Logo'
+import Logo from '@/components/Logo'
 import LogoAscii from '@/components/LogoAscii'
-import LogoAsciiSmall from '@/components/LogoAsciiSmall'
 import LogoOutlines from '@/components/LogoOutlines'
 import Tagline from '@/components/Tagline'
 import TypedText from '@/components/TypedText'
@@ -133,8 +132,8 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
       </motion.div>
       {introComplete && (
         <div id='logo' onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center mid:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}>
-          <LogoSmall className='absolute top-0 left-0' style={{ clipPath: solidLogoClipPath }} />
-          <LogoAsciiSmall className='absolute top-0 left-0' style={{ clipPath: asciiLogoClipPath }} />
+          <Logo size='small' className='absolute top-0 left-0' style={{ clipPath: solidLogoClipPath }} />
+          <LogoAscii size='small' className='absolute top-0 left-0' style={{ clipPath: asciiLogoClipPath }} />
           <Tagline size='small' animated={false} className='absolute bottom-0 left-0' />
         </div>
       )}

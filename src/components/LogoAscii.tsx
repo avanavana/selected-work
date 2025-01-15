@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrthographicCamera, AsciiRenderer } from '@react-three/drei'
 import { SpotLight } from 'three'
@@ -53,11 +53,34 @@ const MovingLight = () => {
   )
 }
 
-const LogoSvg = ({ isMobile = false }: { isMobile?: boolean }) => {
+const logoSizes = {
+  default: {
+    position: [ 3.0, 0.735, -1 ],
+    scale: [ -1 / 100, -1 / 100, 1 ],
+    canvasClassName: '!w-[600px] !h-[144px]'
+  },
+  mid: {
+    position: [ 1.5, 0.37, -1 ],
+    scale: [ -1 / 200, -1 / 200, 1 ],
+    canvasClassName: '!w-[300px] !h-[72px]'
+  },
+  small: {
+    position: [ 1, 0.25, -1 ],
+    scale: [ -1 / 300, -1 / 300, 1 ],
+    canvasClassName: '!w-[200px] !h-[48px]'
+  }
+} as const
+
+interface LogoSvgProps {
+  isMobile?: boolean
+  size?: keyof typeof logoSizes
+}
+
+const LogoSvg: React.FC<LogoSvgProps> = ({ isMobile = false, size = 'default' }) => {
   const svg = useLoader(SVGLoader, '/src/assets/logo.svg')
 
   return (
-    <group position={isMobile ? [ 1.5, 0.37, -1 ] : [ 3.0, 0.735, -1 ]} scale={isMobile ? [ -1 / 200, -1 / 200, 1 ] : [ -1 / 100, -1 / 100, 1 ]}>
+    <group position={isMobile && size !== 'small' ? logoSizes.mid.position : logoSizes[size].position} scale={isMobile && size !== 'small' ? logoSizes.mid.scale : logoSizes[size].scale}>
       {svg.paths.map((path: ShapePath, i) => (
         <mesh key={i} position={[0, 0, 0]}>
           <shapeGeometry
@@ -80,24 +103,31 @@ const LogoSvg = ({ isMobile = false }: { isMobile?: boolean }) => {
 
 interface LogoAsciiProps {
   className?: string
+  size?: keyof typeof logoSizes
+  style?: React.CSSProperties
 }
 
-const LogoAscii: React.FC<LogoAsciiProps> = ({ className, ...props }) => {
+const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', style, ...props }) => {
   const { width: screenWidth } = useWindowSize()
-  const isMidSizeScreenOrSmaller = screenWidth <= extractNumber(screens.mid)
+  const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
+  
+  useEffect(() => {
+    setIsMidSizeScreenOrSmaller(screenWidth <= extractNumber(screens.mid))
+  }, [ screenWidth ])
 
   return (
     <motion.div
       className={cn('relative overflow-hidden', className)}
-      initial={{ clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)' }}
-      animate={{ clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)' }}
-      transition={{ delay: 5, duration: 4, ease: 'easeInOut' }}
+      {...(size !== 'small' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)' }})}
+      {...(size !== 'small' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)' }})}
+      {...(size !== 'small' && { transition: { delay: 5, duration: 4, ease: 'easeInOut' }})}
+      {...(style && { style })}
       {...props}
     >
-      <Canvas className={cn(isMidSizeScreenOrSmaller ? '!w-[300px] !h-[72px]' : '!w-[600px] !h-[144px]')}>
+      <Canvas className={cn(isMidSizeScreenOrSmaller && size !== 'small' ? logoSizes.mid.canvasClassName : logoSizes[size].canvasClassName)}>
         <OrthographicCamera makeDefault position={[0, 0, 1]} zoom={100} />
         <MovingLight />
-        <LogoSvg isMobile={isMidSizeScreenOrSmaller} />
+        <LogoSvg isMobile={isMidSizeScreenOrSmaller} size={size} />
         <AsciiRenderer
           fgColor={colors['gray-dark']}
           bgColor='transparent'
