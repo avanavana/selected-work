@@ -11,8 +11,7 @@ import TypedText from '@/components/TypedText'
 
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber,getCurrentQuarter } from '@/lib/utils'
-import { colors, height, screens } from '../../tailwind.config'
-import { not } from 'three/tsl'
+import { colors, screens } from '../../tailwind.config'
 
 interface ContactInfoProps {
   className?: string
@@ -91,7 +90,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
   }, [ screenWidth ])
 
   return (
-    <div id='info' className={cn('flex mid:block relative w-[calc(100%_-_76px)] maximum:w-full mx-normal maximum:mx-0 transition-[justify-content] gap-normal flex-col-reverse mid:!flex-row mid:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto mid:h-[70px] py-normal maximum:pb-0' : 'py-0', className)} {...props}>
+    <section id='info' className={cn('flex mid:block relative w-[calc(100%_-_76px)] maximum:w-full mx-normal maximum:mx-0 transition-[justify-content] gap-normal flex-col-reverse mid:!flex-row mid:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto mid:h-[70px] py-normal maximum:pb-0' : 'py-0', className)} {...props}>
       <motion.div
         id='logo-intro'
         className={cn('relative w-[600px] h-[144px]', showContactInfo ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2', { 'hidden': introComplete })}
@@ -164,7 +163,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
           </motion.div>
         </motion.div>
       )}
-    </div>
+    </section>
   )
 }
 

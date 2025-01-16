@@ -1,15 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import ContactInfo from '@/components/ContactInfo'
 import Gallery from '@/components/Gallery'
 
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber } from '@/lib/utils'
-import { screens } from '../tailwind.config'
+import { height, width, screens, spacing } from '../tailwind.config'
+
+const idealAspectRatio = extractNumber(width.maximum) / (extractNumber(height.maximum) + 70 + extractNumber(spacing.double))
 
 const App: React.FC = () => {
-  const { width: screenWidth } = useWindowSize()
-  const isMidSizeScreenOrSmaller = screenWidth <= extractNumber(screens.mid)
+  const { width: screenWidth, height: screenHeight } = useWindowSize()
+  const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
+  const [ hasFlatAspectRatio, setHasFlatAspectRatio ] = useState<boolean>(screenWidth / screenHeight > idealAspectRatio)
   const [ contactInfoMounted, setContactInfoMounted ] = useState<boolean>(false)
   const [ slidesMounted, setSlidesMounted ] = useState<boolean>(false)
 
@@ -27,13 +30,21 @@ const App: React.FC = () => {
       clearTimeout(slidesTimer)
     }
   }, [])
+
+  useEffect(() => {
+    setIsMidSizeScreenOrSmaller(screenWidth <= extractNumber(screens.mid))
+  }, [ screenWidth ])
+
+  useEffect(() => {
+    setHasFlatAspectRatio(screenWidth / screenHeight > idealAspectRatio)
+  }, [ screenWidth, screenHeight ])
   
   return (
     <div className={cn('w-screen h-screen flex justify-center', slidesMounted ? 'items-start minimum:items-center max-height:items-start' : 'items-center')}> 
-      <div id='wrapper' className={cn('w-full maximum:w-maximum flex flex-col items-center', slidesMounted ? 'justify-between' : 'justify-center')}>
+      <main id='wrapper' className={cn('w-full maximum:w-maximum flex flex-col items-center', slidesMounted ? 'justify-between' : 'justify-center')}>
         {slidesMounted && <Gallery />}
         <ContactInfo showContactInfo={contactInfoMounted} />
-      </div>
+      </main>
     </div>
   )
 }
