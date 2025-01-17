@@ -23,6 +23,7 @@
     "typecheck": "tsc --project tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@million/lint": "^1.0.14",
     "@react-three/drei": "^9.120.8",
     "@react-three/fiber": "^8.17.12",
     "clsx": "^2.1.1",
