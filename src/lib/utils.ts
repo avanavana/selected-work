@@ -2,6 +2,8 @@ import { Children, isValidElement } from 'react'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
+import { rawHeightLimits } from '../../tailwind.config'
+
 import type { ReactElement, ReactNode } from 'react'
 
 export function classNames(...classes: unknown[]): string {
@@ -44,4 +46,23 @@ export function getCurrentQuarter(): string {
 
 export function extractNumber(value: string): number {
   return parseFloat(value.replace(/[^\d.]/g, ''))
+}
+
+type RawHeightLimits = Record<keyof typeof rawHeightLimits, number>
+type HeightLimits = Record<keyof typeof rawHeightLimits, { raw: string }>
+
+export function rawHeightLimitsToHeightLimits(rawHeightLimits: RawHeightLimits): HeightLimits {
+  return Object.entries(rawHeightLimits as RawHeightLimits).reduce((a, [ k, v ]) => {
+      a[k as keyof typeof rawHeightLimits] = { raw: `(max-height:${v}px)` }
+      return a
+    }, {} as HeightLimits)
+}
+
+export function createFileDownload(filename: string) {
+  const link = document.createElement('a')
+  link.href = `/files/${filename}`
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }

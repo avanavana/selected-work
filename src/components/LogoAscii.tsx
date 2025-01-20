@@ -91,7 +91,7 @@ const LogoSvg: React.FC<LogoSvgProps> = ({ isMobile = false, size = 'default' })
           />
           <meshStandardMaterial
             attach='material'
-            color={colors['gray-dark']}
+            color='#222225'
             roughness={0.6}
             metalness={1}
           />
@@ -110,7 +110,7 @@ interface LogoAsciiProps {
 const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', style, ...props }) => {
   const { width: screenWidth } = useWindowSize()
   const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
-  
+
   useEffect(() => {
     setIsMidSizeScreenOrSmaller(screenWidth <= extractNumber(screens.mid))
   }, [ screenWidth ])
@@ -118,9 +118,9 @@ const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', styl
   return (
     <motion.div
       className={cn('relative overflow-hidden', className)}
-      {...(size !== 'small' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)' }})}
-      {...(size !== 'small' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)' }})}
-      {...(size !== 'small' && { transition: { delay: 5, duration: 4, ease: 'easeInOut' }})}
+      {...(size !== 'small' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)', filter: 'blur(32px)' }})}
+      {...(size !== 'small' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)', filter: 'blur(0px)' }})}
+      {...(size !== 'small' && { transition: { clipPath: {delay: 5, duration: 4, ease: 'easeInOut' }, filter: { duration: 2, ease: 'easeOut' }}})}
       {...(style && { style })}
       {...props}
     >
@@ -129,7 +129,7 @@ const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', styl
         <MovingLight />
         <LogoSvg isMobile={isMidSizeScreenOrSmaller} size={size} />
         <AsciiRenderer
-          fgColor={colors['gray-dark']}
+          fgColor='#222225'
           bgColor='transparent'
           invert={false}
           characters={` .,;-<+|[}&="@#`}

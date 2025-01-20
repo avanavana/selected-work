@@ -19,6 +19,7 @@ const Tagline: React.FC<TaglineProps> = ({ animated = true, className, size = 'd
     <svg width={taglineSizes[size].width} height={taglineSizes[size].height} viewBox='0 0 600 45' fill='none' xmlns='http://www.w3.org/2000/svg'>
       {animated ? [
         <motion.path
+          key='divider-top'
           d='M222.105 22.5001 210.132 44.0283'
           stroke={colors['gray-lighter']}
           strokeWidth={taglineSizes[size].stroke}
@@ -33,6 +34,7 @@ const Tagline: React.FC<TaglineProps> = ({ animated = true, className, size = 'd
           }}
         />,
         <motion.path
+          key='divider-bottom'
           d='M222.105 22.5001L234.079 0.971863'
           stroke={colors['gray-lighter']}
           strokeWidth={taglineSizes[size].stroke}
@@ -47,8 +49,8 @@ const Tagline: React.FC<TaglineProps> = ({ animated = true, className, size = 'd
           }}
         />
       ] : [
-        <path d='M222.105 22.5001 210.132 44.0283' stroke={colors['gray-lighter']} strokeWidth={taglineSizes[size].stroke} />,
-        <path d='M222.105 22.5001L234.079 0.971863' stroke={colors['gray-lighter']} strokeWidth={taglineSizes[size].stroke} />
+        <path key='divider-top' d='M222.105 22.5001 210.132 44.0283' stroke={colors['gray-lighter']} strokeWidth={taglineSizes[size].stroke} />,
+        <path key='divider-bottom' d='M222.105 22.5001L234.079 0.971863' stroke={colors['gray-lighter']} strokeWidth={taglineSizes[size].stroke} />
       ]}
     </svg>
     <svg width={taglineSizes[size].width} height={taglineSizes[size].height} viewBox='0 0 600 45' fill='none' xmlns='http://www.w3.org/2000/svg' className={cn({ '[clip-path:polygon(38.85%_0%,_34.62%_100%,_0%_100%,_0%_0%)]': animated })}>

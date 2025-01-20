@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 
 import ContactInfo from '@/components/ContactInfo'
 import Gallery from '@/components/Gallery'
+import { TooltipProvider } from '@/components/Tooltip'
 
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber } from '@/lib/utils'
@@ -38,14 +39,16 @@ const App: React.FC = () => {
   useEffect(() => {
     setHasFlatAspectRatio(screenWidth / screenHeight > idealAspectRatio)
   }, [ screenWidth, screenHeight ])
-  
+
   return (
-    <div className={cn('w-screen h-screen flex justify-center', slidesMounted ? 'items-start minimum:items-center max-height:items-start' : 'items-center')}> 
-      <main id='wrapper' className={cn('w-full maximum:w-maximum flex flex-col items-center', slidesMounted ? 'justify-between' : 'justify-center')}>
-        {slidesMounted && <Gallery />}
-        <ContactInfo showContactInfo={contactInfoMounted} />
-      </main>
-    </div>
+    <TooltipProvider>
+      <div className={cn('w-screen h-screen flex justify-center', slidesMounted ? 'items-start minimum:items-center max-height:items-start' : 'items-center')}>
+        <main id='wrapper' className={cn('w-full maximum:w-maximum flex flex-col items-center', slidesMounted ? 'justify-between' : 'justify-center')}>
+          {slidesMounted && <Gallery />}
+          <ContactInfo showContactInfo={contactInfoMounted} />
+        </main>
+      </div>
+    </TooltipProvider>
   )
 }
 

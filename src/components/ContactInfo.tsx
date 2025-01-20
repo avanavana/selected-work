@@ -5,6 +5,7 @@ import ContactDivider from '@/components/ContactDivider'
 import { Email, Link, LinkedIn } from '@/components/Icons'
 import Logo from '@/components/Logo'
 import LogoAscii from '@/components/LogoAscii'
+import LogoAsciiSmall from '@/components/LogoAsciiSmall'
 import LogoOutlines from '@/components/LogoOutlines'
 import Tagline from '@/components/Tagline'
 import TypedText from '@/components/TypedText'
@@ -50,7 +51,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
   const [ clampedValue, setClampedValue ] = useState<number>(100)
   const [ solidLogoClipPath, setSolidLogoClipPath ] = useState<string>(`polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)`)
   const [ asciiLogoClipPath, setAsciiLogoClipPath ] = useState<string>(`polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)`)
-  
+
   const handleMouseMove = ({ clientX, currentTarget }: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { width, left } = currentTarget.getBoundingClientRect()
     setClampedValue(Math.min(Math.max(((clientX - left) / width) * 100, -14), 100))
@@ -74,6 +75,11 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
     }
 
     requestAnimationFrame(step);
+  }
+
+  const handleClickEmailLink = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    event.preventDefault()
+    window.open('mailto:avana.vana@pm.me', '_blank', 'noopener,noreferrer')
   }
 
   useEffect(() => {
@@ -132,7 +138,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
       {introComplete && (
         <div id='logo' onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center mid:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}>
           <Logo size='small' className='absolute top-0 left-0' style={{ clipPath: solidLogoClipPath }} />
-          <LogoAscii size='small' className='absolute top-0 left-0' style={{ clipPath: asciiLogoClipPath }} />
+          <LogoAsciiSmall className='absolute top-0 left-0 text-gray-dark' style={{ clipPath: asciiLogoClipPath }} />
           <Tagline size='small' animated={false} className='absolute bottom-0 left-0' />
         </div>
       )}
@@ -157,7 +163,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
           </motion.div>
           {!isMinimumSizeScreenOrSmaller && <ContactDivider {...(!introComplete && { delay: 4 })} />}
           <motion.div variants={contactInfoItemVariants}>
-            <p className='flex items-center gap-1.5 justify-center minimum:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.5, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Email size={14} color={colors['gray-light']} /></motion.span><a href="javascript:location='mailto:\u0061\u0076\u0061\u006e\u0061\u002e\u0076\u0061\u006e\u0061\u0040\u0070\u006d\u002e\u006d\u0065';void 0" tabIndex={6}><TypedText delay={1.5}>{'\u0061\u0076\u0061\u006e\u0061\u002e\u0076\u0061\u006e\u0061\u0040\u0070\u006d\u002e\u006d\u0065'}</TypedText></a></p>
+            <p className='flex items-center gap-1.5 justify-center minimum:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.5, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Email size={14} color={colors['gray-light']} /></motion.span><a className='cursor-pointer' onClick={handleClickEmailLink} tabIndex={6}><TypedText delay={1.5}>{'\u0061\u0076\u0061\u006e\u0061\u002e\u0076\u0061\u006e\u0061\u0040\u0070\u006d\u002e\u006d\u0065'}</TypedText></a></p>
             <p className='flex items-center gap-1.5 justify-center minimum:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.75, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Link size={14} color={colors['gray-light']} /></motion.span><a href="https://www.avanavana.com" tabIndex={7}><TypedText delay={1.75}>www.avanavana.com</TypedText></a></p>
             <p className='flex items-center gap-1.5 justify-center minimum:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 2, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><LinkedIn size={14} color={colors['gray-light']} /></motion.span><a href="https://www.linkedin.com/in/avanavana" tabIndex={8}><TypedText delay={2}>linkedin.com/in/avanavana</TypedText></a></p>
           </motion.div>

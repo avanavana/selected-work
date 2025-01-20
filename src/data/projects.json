@@ -1,0 +1,385 @@
+{
+  "projects": [ "WI00-1", "WI00-2", "WI01-1", "WI01-2", "WI02-1", "WI02-2", "WI03-1", "WI04-1", "WI05-1", "WI06-1", "WI06-2", "WI07-1", "WI07-2", "WI08-1", "WI08-2", "WI09-1", "WI10-1", "WI11-1", "WI12-1", "WI13-1", "WI14-1", "WI15-1", "WI16-1", "WI17-1", "PI00-1", "PI00-2", "PI01-1", "PI01-2", "PI02-1", "PI03-1", "PI04-1", "PI05-1", "PI06-1", "PI06-2", "PI07-1", "PI08-1", "3E00-1", "3E00-2", "3E01-1", "3E02-1", "3E02-2", "3E03-1", "3E04-1", "3E05-1", "3E06-1", "3E07-1", "3E08-1", "3E09-1", "3E10-1" ],
+  "details": [
+    {
+      "id": "WI00",
+      "title": "The Full Package/Flutterby",
+      "type": "2x Mobile Apps",
+      "date": "Oct 2022 – present",
+      "fullTime": true,
+      "client": "Own project, as co-founder",
+      "skills": "React Native, Expo, EAS, Git, GCP (Firestore, PubSub, Cloud Functions), AWS (S3, Lambda, SES), Elastic Cloud, Google S2, Stream Chat, Admob",
+      "desc": "<p>As co-founder and CTO of a new tech startup, I was solely responsible for the product design and UI/UX design of a pair of bold, proof-of-concept mobile dating apps, which use a shared codebase. I also personally coded over half of both the client—built with Expo and React Native—and the back end—which employs a microservices-style, often serverless architecture using Google Cloud Functions, PubSub, Cloud Firestore, Amazon S3, Amazon SES, Elastic Cloud, and Stream Chat—and later hired and managed a small team of international developers to help get the project across the finish line.</p><p>One of the hardest challenges of this entire project was developing a search algorithm that returns truly relevant matches to users—both in terms of geographical proximity, as well as users' declared preferences for age, interests, etc.  To accomplish the former, I used Google's S2 library to encode users' two-dimensional, coordinate locations as a single dimension, using a novel method that allows them to be efficiently ingested and indexed by Elasticsearch and searched using simple text queries, returning accurate hits quickly.</p><p>The unique emoji style of representing user interests presented another challenge. To index, search, and score this information in Elasticsearch, I abstracted it as a multidimensional vector, wherein each component is a different emoji, represented as either boolean true or false—the whole vector can thus be stored as a string of ones and zeroes,  such that similar sets of emoji effectively become similarly-spelled \"words\" to Elasticsearch—words which can then be fuzzy-searched, scored, and ranked according to similarity.  A few other preferences such as age act as filters in the query.  User matches are pre-generated whenever possible according to the user's last saved preferences, paged, and cached, to improve user experience on the client.</p>"
+    },
+    {
+      "id": "WI01",
+      "title": "Files.com",
+      "type": "Website & Animation",
+      "date": "Jul 2024 – Dec 2024",
+      "fullTime": true,
+      "client": "Files.com",
+      "skills": "Figma, Next.js, React, Typescript, Javascript, Tailwind CSS, Prismic, Gitbook, Radix UI, shadcn-ui, Framer Motion, Algolia, Formik",
+      "desc": "<p>The premier project I worked on while at Files.com, a leader in enterprise-level SaaS and APIs for managed file transfer and automation, was a site-wide design refresh and ground-up rebuild of its primary marketing website.  Having just released a more modern-feeling website for its developer docs, the company needed its marketing site to match.  Although nominally employed as a UI/UX designer, Files.com’s overwhelming emphasis on engineering, and my being part of a front end engineering team as opposed to a design team meant that the work for this project was treated less as a design project—no wireframes or mockups were needed for the main website refresh, for example—and more as an engineering project.  As such, delivering on this task required me to deploy all my skills in modern front-end development technologies, especially in React, Next.js, and front end component libraries and styling systems.</p></p>The original website was built with Next.js, using Prismic and Gitbook on the back end for content management, while the front end used a combination of Chakra UI and CSS modules.  To match and build on the design of its developer docs website, I would have to do a ground-up rebuild of the site using TailwindCSS and Radix UI/shadcn-ui-based components.  I systematically refactored the site section by section, iteratively improving the site pull request by pull request, and significantly improved UX by incorporating better navigation and search experiences.</p><p>The final part of this project was a redesign of its dated homepage, which called for a sophisticated new, responsive animation in the hero section.  Beginning with a litany of Figma mockups and technical demonstrations, I successfully implemented this complex animation in the Next.js site using Framer Motion’s animation library for React.</p>"
+    },
+    {
+      "id": "WI02",
+      "title": "Stealth SaaS Suite",
+      "type": "Web & Desktop Apps/SaaS",
+      "date": "Mar 2019 – Dec 2023",
+      "fullTime": true,
+      "client": "Double Gemini",
+      "skills": "Electron, React, TypeScript, Node.js, PostgreSQL, Elasticsearch, AWS (EKS, S3, Lambda), Docker, Adobe CC,  Sketch",
+      "desc": "<p>After twelve years of working with Double Gemini on many projects as a freelance designer and developer, I officially joined the team full-time in 2019 with the primary mission of architecting, designing, and building a groundbreaking suite of desktop- and web-based SaaS productivity apps from first principles.  Once at DG, a visionary leader in productivity training for individuals, teams, and organizations, I worked closely with the CEO and chief product designer to adapt and distill the wide-ranging constellation of DG's many paradigm-shifting ideas and methodologies into lean, impactful, viable user experiences.</p><p>Most critical to the process of adapting DG's methodologies to the new terrain of software was an extensive phase of detailed product design, in which all of DG's visionary ideas were thoughtfully mapped into physical user interfaces and user experiences by iterating through a set of what finally amounted to over 500 detailed wireframes backed by a single, centralized design system and component library, along with hundreds of pages of documentation specifying every detail of in-app user interactions, data models, and content.</p><p>ElectronJS was chosen as a framework for the project in order to allow for a single, shared, platform-agnostic codebase to reach as many users with as little development overhead as possible, along with React—a natural choice for rich, highly interactive UX, with which I had much experience working.  Presented above are both a high-level view of the sheer volume of detailed design accompanying the vast scope of this ambitious project, as well as selected details, in the form of wireframes and documentation—all I am able to share here since the project remains in \"stealth mode\".</p>"
+    },
+    {
+      "id": "WI03",
+      "title": "unitemethod.com",
+      "type": "Website",
+      "date": "Aug 2023 – Dec 2023",
+      "fullTime": true,
+      "client": "Double Gemini",
+      "skills": "HTML, CSS, JavaScript, Node.js, ExpressJS, Firebase, Git, Webhooks, Stripe, Responsive Design, a11y, Sketch, Adobe CC, Video Editing",
+      "desc": "<p>This website—the result of an intensive team-wide (myself included) effort at Double Gemini to rebrand and redevelop marketing strategies for its online class offerings—was the first in a series of four planned sites.  As with its predecessors (see next project), I had to design and develop the site around a legacy Squarespace account, which presented several challenges and limitations.  A custom template, clever use of JavaScript, and careful use of modern features of CSS allowed me to produce a beautiful, responsive, accessible website, powered by a custom back-end API and Stripe-based payments system for group purchases.</p>"
+    },
+    {
+      "id": "WI04",
+      "title": "DG Product Sites",
+      "type": "3x Websites + Redesigns",
+      "date": "Mar 2019 – Mar 2023",
+      "fullTime": true,
+      "client": "Double Gemini",
+      "skills": "HTML, CSS, JavaScript, Node.js, ExpressJS, Firebase, Git, Webhooks, Stripe, Responsive Design, a11y, Sketch, Adobe CC, Video Editing",
+      "desc": "<p>Besides its traditional consulting and dedicated organizational transformation services, Double Gemini wanted to begin offering paid classes to the general public through its existing online presence.  To this end, I designed and developed three websites (some of which went through multiple iterations during my time at DG), built around an existing Squarespace account, using a custom template and cleverly-written CSS and injected JavaScript.  All sites were powered on the back-end by a custom API server and Stripe-based group purchases system, both of which were seamlessly integrated with DG's existing CRM, calendar, and video conferencing systems.</p>"
+    },
+    {
+      "id": "WI05",
+      "title": "Pulse Templates",
+      "type": "Add-on for Gmail",
+      "date": "Jul 2022 – Mar 2023",
+      "fullTime": true,
+      "client": "Double Gemini",
+      "skills": "Google Apps Script, Google Cloud Platform (Firebase Auth, Cloud Firestore, Cloud Functions), Google Workspace, HTML, CSS, JavaScript, Google Apps Script, Google Cloud Platform (Firebase Auth, Cloud Firestore, Cloud Functions), Google Workspace, HTML, CSS, JavaScript",
+      "desc": "<p>Seeking to expand its offerings in the area of e-mail management and etiquette, Double Gemini asked me to develop an add-on for Gmail/Google Workspace that allowed Gmail users access to a library of customizable email templates based on its novel methodology, <em>The Pulse Method</em>.  I developed a comprehensive solution for the problem in Google Apps Script, stretching the fairly limited API available to add-ons to Google Workspace beyond its nominal limit by implementing custom UI and UX flows in a parallel, Google-hosted web app, bundled with the add-on, as well as extending native add-on persistence and organizational utility with Cloud Firestore.</p>"
+    },
+    {
+      "id": "WI06",
+      "title": "Gro Platform",
+      "type": "Web App/SaaS",
+      "date": "Jan 2014 – Apr 2017",
+      "fullTime": true,
+      "client": "Gro Intelligence",
+      "skills": "HTML, CSS, JavaScript, D3.js, Mapbox, Tilemill, GIS, Responsive Design, a11y, Adobe Creative Cloud, Sketch",
+      "desc": "<p>In January 2014, I became the first hire at Gro Intelligence's New York office, where Gro intended to build a team to develop its web app and platform for visualizing and analyzing agricultural and environmental data.  I was brought onboard with the task of transforming what was essentially just a large collection of spreadsheets—containing a medley of thousands of varied sources data—into a powerful, streamlined, and refined user experience and interface.</p><p>The core task of the project would prove to be the ontological structuring of the various datasets that Gro's platform offer and the devising of a language and grammar for the discovery and search of the data itself.  To this end, I developed a system  composed primarily of \"metrics\", or indicators—pure datasets or kinds of measurements, whose data could be further constrained by the selection of one or more \"regions\" and \"items\" (e.g. individual crop types for a vegetation index metric).  This combination of \"metrics\", \"regions\", and \"items\" could be further constrained by a time range and given a method of visualization, forming one \"dataset\" in a modular \"component\" visualization, up to six of which comprised a \"dashboard\".</p><p>In this way, I was able to devise a system that distilled the raw power and sheer enormity of the data backing the platform into a simple, modular, and highly-usable user interface, which comprised the core user experience on the platform.  Although my role was primarily in product and UI/UX design, I also contributed to front-end code and managed a team of other designers and front-end developers.  Together, we built—from the ground-up—a successful product and platform that allowed Gro Intelligence to expand to over 200 employees across three continents, with journalists at <em>Forbes</em> speculating about its future \"unicorn\" status.</p>"
+    },
+    {
+      "id": "WI07",
+      "title": "gro-intelligence.com",
+      "type": "Website + Redesigns",
+      "date": "Jan 2014 – Mar 2019",
+      "fullTime": true,
+      "client": "Gro Intelligence",
+      "skills": "HTML, CSS, JavaScript, Node.js, KeystoneJS, MongoDB, ExpressJS, New Relic, Jade/Pug, D3.js, Responsive Design, a11y, Adobe CC, Sketch",
+      "desc": "<p>While at Gro Intelligence as Lead Interaction Designer, although my primary responsibility was the design and development of Gro's principle web app/platform for agricultural and environmental data visualization and analysis, I was also responsible for designing, developing, and maintaining the company's public-facing marketing and informational web pages.  While at Gro Intelligence in a full-time capacity, I was completely responsible for the first two versions of Gro's main public-facing website, www.gro-intelligence.com.</p><p>Later, after I left Gro Intelligence full-time to focus on a new family, I continued to work with Gro on a contract basis, and it was in this capacity that I designed and developed the third version of www.gro-intelligence.com, which is shown above—the design of which I was most proud.  When Gro contacted me with the brief for this project, it was beginning to scale rapidly, and the design, structure, and content of the site had to reflect this new reality—namely, much more emphasis on Gro's agricultural models/predictions, integrating the web app/ platform with the public-facing website, and converting visitors into users and consumers of Gro's new enterprise-level API.</p><p>For the design, I had already established a set of design principles that I had developed over my years working at Gro, working around an inherited, basic brand identity (logo and colors), which, in following with the principles by which I designed the web app, communicated \"clarity\", \"openness\", \"technical savvy\", and \"professionalism\".  I developed the front-end code using Keystone JS as a framework, and other developers at Gro helped to iron out some of the details with connecting to Gro's back-end.</p>"
+    },
+    {
+      "id": "WI08",
+      "title": "yellowsmith.com",
+      "type": "e-Commerce Website",
+      "date": "Jun 2013 – Dec 2013",
+      "fullTime": true,
+      "client": "Yellowsmith",
+      "skills": "Responsive Design, a11y, Adobe Creative Cloud, Sketch, Glyphs (Font Editor)",
+      "desc": "<p>I was approached by Yellowsmith (acquired by Etsy in 2014—originally called <em>Crowdjewel</em>, as well as <em>Bevel</em>/<em>Shopbevel</em>) in the summer of 2013, through a connection from my work on <em>Pushpin Local</em> (see project WI08 in this document), to join their growing team as lead UI/UX designer in order to design the entirety of a responsive, modern e-commerce website, with innovative crowdsourcing elements.</p><p>When I first joined the team, the company had just rebranded from <em>Crowdjewel</em> to <em>Bevel</em>/<em>Shopbevel</em>, and it had in its possession an existing design system/style guide, and so initially, I designed the entire site with this brand in mind.  Shortly after this, however, the company rebranded once again as <em>Yellowsmith</em>, with a much more \"artisanal\", \"made by hand\" kind-of feel, and I had the opportunity to contribute to the development of this new brand/style, especially in the area of typography, designing and producing a custom typeface for the purpose, along with several design elements and illustrations.  With the rebrand obviously came the need to completely redesign the website, and the results of that redesign are shown above.  As a completely responsive website developed at a time when mobile traffic was just catching up to traffic from legacy, desktop-based browsers, this website was designed from the outset with mobile browsers and devices in mind, and especially designed and developed for them.  Besides features and pages common to e-commerce websites such as a product display page and product listing pages/filters, Yellowsmith was unique in that it promoted and sold products by independent creators, which customers could vote on for inclusion.</p><p>My role at Yellowsmith was purely as a designer.  After successfully delivering this project, Yellowstone was acquired by Etsy in 2014.</p>"
+    },
+    {
+      "id": "WI09",
+      "title": "Pushpin Local",
+      "type": "Web App/SaaS",
+      "date": "Jun 2012 – Sep 2013",
+      "fullTime": false,
+      "client": "Pushpin Local (freelance client)",
+      "skills": "HTML, CSS, JavaScript, Node.js, MongoDB, Mongoose, ExpressJS, Bootstrap, HighCharts, Responsive Design, a11y, Adobe CC, Sketch",
+      "desc": "<p>For business owners, executives, or marketing managers responsible for managing the accuracy or visibility of what may be up to hundreds of a business's locations on multiple search/listing platforms, <em>Pushpin Local</em> offered a one-stop-shop and was an early competitor in this field.  I was contracted to design and do front-end development for this web app, which also entailed a lot of data visualization and designing an API specification and data model for the developer contracted to develop the back-end to use.  The primary design goals with this project were clarity, legibility, speed, and usability.</p>"
+    },
+    {
+      "id": "WI10",
+      "title": "Surfdash",
+      "type": "Web App",
+      "date": "Sep 2011 – Aug 2012",
+      "fullTime": false,
+      "client": "Surfdash (freelance client)",
+      "skills": "HTML, CSS, JavaScript, PHP, MySQL, Facebook API/Social Graph, Responsive Design, a11y, Adobe Creative Cloud",
+      "desc": "<p>I was hired by San Jose-based Surfdash to design and develop the front-end for a new web app which allowed users to sign, then store, organize, and consume  bookmarks and rich web content like videos in collections, which could be made either public or private, and these public collections allowed for a kind of curatorial, social user experience.  The process involved several iterations, designing the product itself and its features at the same time as developing its visual look and feel.  I also provided front-end code for the whole web app, which was handed off to a back-end developer, and I also developed Surfdash's apps and presence on Facebook.</p>"
+    },
+    {
+      "id": "WI11",
+      "title": "Collective Jam",
+      "type": "Web App",
+      "date": "Aug 2010 – Oct 2010",
+      "fullTime": false,
+      "client": "Collective Jam (freelance client)",
+      "skills": "HTML, CSS, JavaScript, Responsive Design, a11y, Adobe Creative Cloud",
+      "desc": "<p><em>Collective Jam</em> was a marketplace that connected freelance web professionals—designers and developers—with clients, provided them a way to track project progress, a project manager, and managed payments between freelancers and their clients in the app itself, similar to the platform that would become Upwork some years later.  For my part, I designed the entirety of the app, from simple list and profile pages, to complex calendaring, messaging, and payment-tracking systems, and I also contributed front-end code in the form of vanilla HTML/CSS/JS for the whole project.</p>"
+    },
+    {
+      "id": "WI12",
+      "title": "Energy in Common",
+      "type": "Web App",
+      "date": "Mar 2010 – Oct 2010",
+      "fullTime": false,
+      "client": "Energy in Common (freelance client)",
+      "skills": "HTML, CSS, JavaScript, PHP, CakePHP, MySQL, Responsive Design, a11y, Adobe Creative Cloud",
+      "desc": "<p><em>Energy in Common</em> was a startup founded by a friend and fellow Cornell alumnus that provided microlending services (like Kiva) to people in need in energy-impoverished parts of the world, for the purpose of sustainable development and alleviation of energy poverty.  I was approached by the founder and ended up bringing part of the project with me to Ancient Wisdom Productions, where I worked, which did the back-end code for the app, while I did the design and front-end code on a freelance basis (although I inherited the unfortunate logo).  I also worked on EIC's innovative \"Nanoloans\" app, which provided users with even more flexible microloans.</p>"
+    },
+    {
+      "id": "WI13",
+      "title": "museum.cornell.edu",
+      "type": "Website",
+      "date": "Oct 2009 – Aug 2010",
+      "fullTime": true,
+      "client": "Ancient Wisdom Productions",
+      "skills": "HTML, CSS, JavaScript, PHP, CakePHP, MySQL, Responsive Design, a11y, Adobe Creative Cloud",
+      "desc": "<p>Probably the project of which I was most proud during my time working with Ancient Wisdom Productions, out of all of the dozens of websites, web apps, and mobile apps that we built together, was my work for Cornell University's iconic Johnson Museum of Art, and so I've chosen to feature it on its own in this document, separately from my other web work  for Cornell at AWP.  This was a massive project —a complete renovation of the museum's web presence with a vast collection of content across galleries, exhibitions, and events, for which I contributed design mockups, front-end, and some of the back-end code.</p>"
+    },
+    {
+      "id": "WI14",
+      "title": "Misc. Cornell U. Work",
+      "type": "14x Websites",
+      "date": "Jul 2009 – Jun 2012",
+      "fullTime": true,
+      "client": "Ancient Wisdom Productions",
+      "skills": "HTML, CSS, JavaScript, PHP, CakePHP, MySQL, Responsive Design, a11y, Adobe Creative Cloud",
+      "desc": "<p>As an alumnus of Cornell University, it was my pleasure to give back to my alma mater while working at local Ithaca studio Ancient Wisdom Productions, which had become a premier provider of web services for the University.  While working at AWP both in Ithaca and later remotely in New York, I designed and built at least 14 different websites for Cornell, across several colleges and departments.  Some of my favorite Cornell projects to work on were those that solicited donations for new buildings, for which I created interactive floor plans.  All projects used a custom-built CMS based on CakePHP and MySQL for the front- and back-end.</p>"
+    },
+    {
+      "id": "WI15",
+      "title": "Misc. Website Work",
+      "type": "27x Websites",
+      "date": "Jul 2009 – Jun 2012",
+      "fullTime": true,
+      "client": "Ancient Wisdom Productions",
+      "skills": "HTML, CSS, JavaScript, PHP, CakePHP, MySQL, Responsive Design, a11y, Adobe Creative Cloud",
+      "desc": "<p>Another great thing about my time working at Ancient Wisdom Productions as lead designer and front-end developer, was that I got to contribute to the development of so many local businesses and regional non-profits.  AWP had positioned itself as an expert working with non-profits and offered them a sizable discount for services, so I was able to work on several projects for regional organizations that help people, museums, theaters, and more.  Overall, I designed and built at least 27 websites for local business and non-profits, using AWP's custom CMS and stack built on CakePHP and MySQL.</p>"
+    },
+    {
+      "id": "WI16",
+      "title": "Pee in Peace",
+      "type": "Mobile App + Website",
+      "date": "Jun 2011 – Jul 2011",
+      "fullTime": true,
+      "client": "Ancient Wisdom Productions",
+      "skills": "HTML, CSS, JavaScript, Responsive Design, a11y, Adobe Creative Cloud",
+      "desc": "<p><em>Pee in Peace</em> (winner of a 2011 Webby Award) was a native mobile app for the iPhone that I helped build while working at Ancient Wisdom Productions, on behalf of Planned Parenthood of the Southern Finger Lakes, as part of its <em>Out For Health</em> program, which provides outreach, education, services, and advocacy to members of the regional LGBTQI+ community.  This app provided transgender users (and all users) with a wealth of timely,  local, and relevant bathroom intelligence, solving a problem that is often tricky—at best, for trans people.  I contributed design for the mobile app, and I also designed and built a marketing website for the app.</p>"
+    },
+    {
+      "id": "WI17",
+      "title": "lerival.com",
+      "type": "Website",
+      "date": "Feb 2009 – Sep 2009",
+      "fullTime": false,
+      "client": "Lerival (freelance client)",
+      "skills": "HTML, CSS, JavaScript, PHP, MySQL,  Adobe Creative Cloud",
+      "desc": "<p>Lerival was a gallery for furniture and human-scale objects designed by architects, which sold limited series of its roster's bespoke designs.  Founded by an ex-colleague of mine from nArchitects, I was approached to develop a brand, identity, print collateral, and ultimately a web version of their physical gallery space.  The website featured a custom content management system, which I built from scratch using PHP and MySQL, and the forward-facing webpages themselves were also served via PHP, backed by the same MySQL database.  Features included a blog, product management, hierarchical types, and a mailing list.</p>"
+    },
+    {
+      "id": "PI00",
+      "title": "Hermetica",
+      "type": "Font + Poster + Products + Website",
+      "date": "Mar 2013 – May 2018",
+      "fullTime": true,
+      "client": "Own project",
+      "skills": "Adobe Creative Cloud, Sketch, Glyphs, HTML, CSS, Javascript, PHP, MySQL, Stripe, Pre-print & Print Production",
+      "desc": "<p>Hermetica is a personal passion project I began working on in 2012. I had been working on a design project that required astrological symbols, however, I found it impossible to find symbols that matched the simple, minimalist, geometric character of my design, as one stylistically-cohesive set. So, I decided to make my own set of symbols, beginning with the twelve signs of the zodiac. For the sake of completeness, I also created signs for other astrological entities, and it was at this point that the idea first arose—I would create the definitive \"Helvetica of Symbols\"—a single, comprehensive set of cultural, historical and esoteric symbols, rendered in a clean, minimalist, geometric style modeled after Swiss neo-grotesque typography.</p><p>Over the course of the next five years, I gradually developed a collection of over 750 symbols from all around the world, painstakingly researched and rendered in Hermetica's idiosyncratic minimalist, geometric style. As I got closer finishing, I began thinking about distribution, with intent to assemble and sell them as a font/webfont, along with the original artwork. I also wanted to create a lightweight version, along with posters and a possible coffee table book, but knowing that I couldn't invest so much time into it without compensation, I decided to try Kickstarter to fund further development.</p><p>The Kickstarter ended up being a runaway success, funded over 1000% of its original goal and featured by Kickstarter under <em>Projects We Like</em> on their homepage. I designed a range of themed merchandise to support the effort—shirts, posters, and tote bags. I continue to sell the collection on my own website, and the symbols individually through providers like <em>The Noun Project</em>, and I hope to add the lightweight version soon, along with a host of new symbols in a version 2.0.</p>"
+    },
+    {
+      "id": "PI01",
+      "title": "FilesComCon",
+      "type": "Illustrations + Presentation",
+      "date": "Aug 2024 – Sep 2024",
+      "fullTime": true,
+      "client": "Files.com",
+      "skills": "Adobe Creative Cloud, Figma, Midjourney, Stable Diffusion",
+      "desc": "<p>One of the few pure design projects I worked on while at Files.com was this collection of illustrations, conference materials, and presentation graphics that I lovingly crafted for the first (annual-to-be) occurence of FilesComCon, Files.com’s invite-only customer conference, at Disney’s Grand Floridian Hotel and Resort in Lake Buena Vista (Orlando), Florida.  The purpose of this event was for Files.com’s customers—old and new alike—to have a chance to meet the team behind the product they use, share their feedback, learn about upcoming and new features, and have a great time relaxing in the resort environment.  As the first time Files.com would be hosting such an event, there was wide latitude in terms of what kind of materials would be needed.  I was approached with the project as a request for a set of specially-designed and branded presentation materials for presentations given at the event.  This would require not only a set of presentation slide templates for speakers, but especially strongly branded title and interstitial slides that would be shown on screen as a backdrop to the event and tie all the talks together.  The central design request was that the designs incorporate the event's unique location as a primary theme.  I decided to go all-in on a heavily illustrated concept in order to accomplish this, digging deep into a retro, midcentury Florida theme that was fun, visually stimulating, and deeply connected to the classic location, which would be memorable and visually tie the event together.</p><p>Along with the presentation slide kit, I produced a set of conference materials from the illustrations that would also help brand the event, tie it all together visually, and make it even more memorable for attendees, but Files.com ultimately decided to go with a toned-down version of this concept, without the conference materials.</p>"
+    },
+    {
+      "id": "PI02",
+      "title": "Gro Platform Diagram",
+      "type": "Illustration",
+      "date": "Mar 2019 – May 2019",
+      "fullTime": false,
+      "client": "Gro Intelligence (as freelance client)",
+      "skills": "Adobe Creative Cloud, Sketch",
+      "desc": "<p>In combination with a redesign of Gro Intelligence's public-facing website (see project WI06), I was contracted by Gro to design a detailed diagram that thoroughly illustrated and explained Gro's entire platform and offerings.  In order to communicate the complex, abstract concepts involved, I made the decision to represent  major components of the platform as separate \"vignettes\", each comprised of physical objects that stand in for abstract ideas metaphorically or symbolically.  The illustration shows how Gro gathers data from a range of sources, cleans, packages, and distributes that data, linked by a common ontology.</p>"
+    },
+    {
+      "id": "PI03",
+      "title": "Misc. Print Collateral",
+      "type": "Collateral",
+      "date": "Jun 2011 – Jun 2019",
+      "fullTime": false,
+      "client": "Various (freelance clients)",
+      "skills": "Adobe Creative Cloud, Sketch, Pre-print & Print Production",
+      "desc": "<p>In most of the full-time positions I've held at various companies, and many of the freelance jobs I've done, my employers and clients recognized my skill in graphic design and experience in print production, and therefore I have often been tasked on the side with designing and producing print collateral (business cards, letterheads, and other printed material promoting a company's services).  Shown above is just a sample of some of that work from recent positions I've held—three different sets of double-sided business cards designed and printed for three different companies.</p>"
+    },
+    {
+      "id": "PI04",
+      "title": "SAAVHA Brand Artwork",
+      "type": "Illustration",
+      "date": "Mar 2018 – Jun 2018",
+      "fullTime": false,
+      "client": "SAAVHA",
+      "skills": "Adobe Creative Cloud, Sketch",
+      "desc": "<p>I joined SAAVHA (Secure Auditing Application by Verified Hash Algorithm), a New York state-based inventor and provider of a unique biometric authentication method called <em>Voiceprint</em>, in Spring 2018, on the recommendation of a work acquaintance.  I was to develop a brand/identity and print collateral, and also to design and code (front-end) its new web app and public-facing website.  Playing off its role as a protector of user data, I developed an iconic brand and the above illustrations, inspired by the relative safety, sense of purpose, and experience of community that many Americans felt during the 1950s and 60s.</p>"
+    },
+    {
+      "id": "PI05",
+      "title": "Blink! Flash Cards",
+      "type": "Packaging",
+      "date": "Nov 2009 – Sep 2011",
+      "fullTime": false,
+      "client": "Double Gemini (freelance client)",
+      "skills": "Adobe Creative Cloud, SketchUp, Blender, Pre-print & Print Production",
+      "desc": "<p>Long before I joined Double Gemini full-time in 2019 to develop its upcoming SaaS offerings, I worked with DG on a freelance basis on many different projects, starting back in 2007.  Beginning in 2009, I helped Double Gemini (d.b.a. 1+1 Training) produce a set of hundreds of flash cards for studying for the PMP certification exam.  I designed the flashcards themselves, as well as the packaging for the flashcards, which took the form of  a folding carton with an autolocking bottom and top tuck flap without a tongue lock.  Later, I would go on to work with Double Gemini to develop a marketing website for this product.</p>"
+    },
+    {
+      "id": "PI06",
+      "title": "Planned Parenthood",
+      "type": "3x Annual Reports",
+      "date": "May 2010 – Sep 2012",
+      "fullTime": true,
+      "client": "Ancient Wisdom Productions",
+      "skills": "Adobe Creative Cloud, Pre-print & Print Production",
+      "desc": "<p>While working as lead designer at Ancient Wisdom Productions in Ithaca, NY, I had the opportunity to do a lot of work for various regional non-profits, which was one of the studio's main focuses.  Among the non-profits I worked with was Planned Parenthood of the Southern Finger Lakes, a regional office of the national organization, for which I developed several websites and mobile apps, and also did quite a bit of production print work.  Chief among this print work was a series of three annual reports from 2010 to 2012 (i.e. PPSFL's 2009, 2010, and 2011 annual reports), two of which (2009 and 2010) are shown in detail above.</p><p>The designs began with a brand refresh that involved a choosing a fresh color palette, defining typographic conventions, and a developing a set of reusable, geometric, graphic elements.  These brand elements were incorporated into the design of each annual report in unique and interesting ways—informing the design and layout of full-spread and fold-out maps, financial and donation tables and diagrams, infographics and data visualizations in the text, as well as common elements of the design such as page numbers and tables of contents.</p><p>For the 2010 annual report, which was designed and produced in 2011, the styles and geometric graphic elements that I developed for PPSFL's brand took on an even more dynamic implementation, inspiring the form of the publication itself, as unique, geometric, die-cut folding flaps and tear-off sections.  I played off of the theme of the 2010 annual report, \"We're Here\" by using the two forms of pointed placemarkers and circles/dots (for \"point of interest\") throughout the publication, but especially for the folding and locking cover design, which consisted of a large pointed flap in the form of a \"you are here\" placemarker that tucked into and pointed to a semicircular, wraparound, tear-off flap emblazoned with the PPSFL logo.</p>"
+    },
+    {
+      "id": "PI07",
+      "title": "Association",
+      "type": "Periodical",
+      "date": "Aug 2006 – Nov 2006",
+      "fullTime": false,
+      "client": "Cornell University (volunteer work)",
+      "skills": "Adobe Creative Cloud, Pre-print & Print Production",
+      "desc": "<p>As an architecture student at Cornell University's College of Architecture, Art, & Planning, I participated in many different student-run organizations and contributed to several of their periodicals as a graphic designer.  <em>Association</em> was a student-run organization and periodical of the College of Architecture, Art, & Planning, which attempted to bring to light connections between the work of students of each of those fields, by association.  The publication attempted to do this in different ways in each of its incarnations—in  the Fall 2006 edition, shown above, folded maps tracing these connections were inserted into a triple-folding cover.</p>"
+    },
+    {
+      "id": "PI08",
+      "title": "Case Western Reserve U.",
+      "type": "Annual Report",
+      "date": "Jul 2005 – Aug 2005",
+      "fullTime": true,
+      "client": "Aue Design Studio",
+      "skills": "Adobe Creative Cloud, Pre-print & Print Production",
+      "desc": "<p>At my first studio job in graphic design—working at Aue Design Studio just outside of Cleveland, Ohio—I had the great opportunity to design and print Case Western Reserve University's 2005 annual report.  CWRU, famous for its engineering program, was celebrating its 125th anniversary, which it wanted to feature in the annual report, so I came up with the idea of designing the annual report as if it were an engineering textbook printed 125 years ago, and they loved the hand-bound mockup I produced to sell the idea (costs dictated that it be perfect-bound in production).  This piece won a Silver Addy Award from the Cleveland Advertising Association.</p>"
+    },
+    {
+      "id": "3E00",
+      "title": "Covid Clear",
+      "type": "Product + Collateral",
+      "date": "Dec 2020 – Jan 2021",
+      "fullTime": true,
+      "client": "Double Gemini",
+      "skills": "Blender, Adobe Creative Cloud, Sketch, Pre-print & Print Production, Keynote",
+      "desc": "<p>I was working at Double Gemini in March 2020 when the Covid-19 pandemic broke out, hitting us especially hard in New York early on.  As lockdowns and social distancing transformed our day-to-day lives that year and we waited with bated breath for the first of the vaccines to be released under a cloud of misinformation, my employer at Double Gemini, Prasanth Nair and I started talking about what—if anything—we could do to help improve the effectiveness of the upcoming vaccines.</p><p>We came up with the idea for a pilot program, a campaign which we called <em>Covid Clear</em> that would bundle and distribute branded silicone wristbands, branded band-aids (or as we called them: <em>brand-aids</em>), and CR80 cards with a printed QR codes linking to a campaign website, with the vaccines themselves, such that patients receiving a Covid-19 vaccine would also receive these three items.  The idea for the branded silicone wristband followed the success of campaigns such as <em>LiveStrong</em>—it was our idea that people who really believed in the importance and efficacy of the vaccines would be happy to wear a wristband to promote vaccination itself, and it would also make for a quick informal way to demonstrate one's vaccination status in public.  The goal was to create a viral campaign that would promote messages of positivity, hope, and resilience, give vaccinated people greater visibility, and encourage trust and action around the vaccines, at a time when there was still a lot of fear and uncertainty going around, and we hoped to work with partner organizations, governmental or non-profit to make it happen.</p><p>Ultimately this project never came to fruition—perhaps for the best, given all of the controversy that later erupted around the vaccines.  For the project I did detailed 3D modeling of mockups of the products, along with some spectacular presentations and brand/marketing materials.</p>"
+    },
+    {
+      "id": "3E01",
+      "title": "Sci-fi Lullabies",
+      "type": "Commercial Display",
+      "date": "Nov 2012 – Feb 2013",
+      "fullTime": false,
+      "client": "Obsessive-Compulsive Cosmetics (freelance client)",
+      "skills": "Adobe Creative Cloud, Sketch, Pre-print & Print Production",
+      "desc": "<p>Obsessive-Compulsive Cosmetics, which at the time was a small, yet up-and-coming cosmetics manufacturer and boutique, which pioneered certain vegan and cruelty-free beauty products and went a long way towards popularizing their use, approached me at the end of 2012 as they were about to be sold in Sephora stores worldwide, for the first time, to design a product display, or \"gondola\" and \"bay\", as they are known within Sephora that would host their latest collection <em>Sci-fi Lullabies</em>.  I had a lot of fun experimenting with broken 80's TV and VCR video effects to create the unique retro-futuristic look that characterizes this project.</p>"
+    },
+    {
+      "id": "3E02",
+      "title": "Villa Villa (Ordos 100)",
+      "type": "Architecture",
+      "date": "Jun 2008 – Aug 2008",
+      "fullTime": true,
+      "client": "nArchitects",
+      "skills": "3dsmax, Maya, AutoCAD, Adobe Creative Cloud, Laser-cutting, Fabrication/Physical Model Construction",
+      "desc": "<p>The <em>Ordos 100</em> were a collection—actually a luxury neighborhood development near Ordos in Inner Mongolia, China—of one hundred iconic homes designed by up-and-coming architects and architecture firms from all around the world, an exclusive list curated by Chinese artist and activist Ai Weiwei and famed Swiss architecture firm Herzog & de Meuron, who oversaw the whole project.  Other architects on the project included HHF, WORK, OBRA, and Atelier Bow Wow.  It was my fortune to be a part of this project while working as an intern architect at nArchitects in Brooklyn, New York, which had been selected to participate in the project, having gained notoriety for its original and compelling work in recent years.  After the studio's principals, Eric Bunge and Mimi Hoang, traveled to Inner Mongolia to scout out the location and be briefed on the project by Ai Weiwei and Herzog & de Meuron, we commenced design work on the project.  Our entry for the project was entitled \"Villa Villa\", because our design consisted of an inner home and enclosure surrounded by a second, outer enclosure, creating a sort of \"house within a house\".  The \"inner house\" contained all of the livable, indoor spaces, while the \"outer house\", between the exterior environment and the \"inner house\" formed a kind of liminal space, neither completely exterior nor interior, which was programmed for internal courtyards and garden space­s—outdoors, yet protected from the harsh environment of open Inner Mongolia.  My responsibilities on the project included constructing and then rendering a detailed 3D model of the design, including the design's idiosyncratic exterior brickwork, which was done in 3D Studio Max, with many final edits in Adobe Photoshop, architectural drawings, and a hand-made model of the home constructed out of wood.</p>"
+    },
+    {
+      "id": "3E03",
+      "title": "ABC Debayeh Dept. Store Façade",
+      "type": "Architecture",
+      "date": "Jun 2008 – Aug 2008",
+      "fullTime": true,
+      "client": "nArchitects",
+      "skills": "3dsmax, Maya, AutoCAD, Adobe Creative Cloud, Laser-cutting, Fabrication/Physical Model Construction, 3dsmax, Maya, AutoCAD, Adobe Creative Cloud, Laser-cutting, Fabrication/Physical Model Construction",
+      "desc": "<p>Another overseas project that I was able to work on while at nArchitects was this competition entry—which ended up winning and was constructed—for a façade design for the ABC Debayeh Department store in Beirut, Lebanon.  This project's design centered around the fabrication of a modular system of cladding in the form of triangular tiles.  Six different sizes of apertures in the tiles allowed light to pass through them in the daytime, illuminating the interior, and light to pass out at night, illuminating the store.  I contributed 3D modeling and rendering, as well as drawings for the project.</p>"
+    },
+    {
+      "id": "3E04",
+      "title": "D.R.E.S.S. F.A.R.M.S",
+      "type": "Architecture",
+      "date": "Aug 2008 – Dec 2008",
+      "fullTime": false,
+      "client": "Thesis project (at Cornell University)",
+      "skills": "Adobe Creative Cloud, AutoCAD, form·Z, V-ray, Rhino, Laser-cutting, Fabrication/Physical Model Construction, Bookbinding, Agitation",
+      "desc": "<p><em>D.R.E.S.S. F.A.R.M.S.</em>—an acronym which stands for Diversity, Reproducibility, Economy, Secrecy, Spontaneity, Flexibility, Activity, Rituality, Mobility, Self-Sufficiency—was my thesis project at Cornell, for which I earned my B.ARCH degree (and a 4.0 grade!), as well as a kind of personal manifesto on what architecture had become to me over my years there.  This project, which was presented in the form of a military-style field manual, containing instructions and plans for the deployment of artistic collectives in urban environments, flouted many norms for the thesis institution, in that I did not present a \"building\" per se, as was customary.</p>"
+    },
+    {
+      "id": "3E05",
+      "title": "Vertical Village",
+      "type": "Architecture",
+      "date": "Jan 2008 – May 2008",
+      "fullTime": false,
+      "client": "Studio project (at Cornell University)",
+      "skills": "Adobe Creative Cloud, AutoCAD, form·Z, V-ray, Rhino, 3D Printing, Laser-cutting, Fabrication/Physical Model Construction",
+      "desc": "<p>This was a semester project done while at Cornell Architecture's abroad program in New York, with Spanish architect Iñaki Ábalos as visiting critic.  The brief for the semester centered around two concerns—the future <em>T-line</em> subway on New York's east side and the idea of \"verticalism\"—taking a traditionally horizontal building program and reworking it for a vertical form factor.  This project consisted of six independent high-rises poking above a single block in Chinatown, connected by a pedestrian network floating above the lower buildings and included a vertical Carthusian monastery.  It was published in the book <em>THIS IS HYBRID</em> by a+t publishers.</p>"
+    },
+    {
+      "id": "3E06",
+      "title": "Im/purity",
+      "type": "Architecture",
+      "date": "Aug 2007 – Dec 2007",
+      "fullTime": false,
+      "client": "Studio project (at Cornell University)",
+      "skills": "Adobe Creative Cloud, AutoCAD, form·Z, V-ray, Rhino, Fabrication/Physical Model Construction",
+      "desc": "<p><em>Im/purity</em> was a semester project designed while part of Cornell Architecture's unforgettable Cornell in Rome study abroad program, with Vince Mulcahy and Roman architect Alberto Iacovoni as critics.  The idea for this project came about after following occupation patterns in the Via Flaminia (Flaminio) neighborhood of Rome, where I noticed places that were occupied by schoolchildren during the day became seedy haunts for old Italian men by night.  The project ended up being a combination primary school and lounge/nightclub complex, both programs remained inaccessible from one another, but were separated by only a wall.</p>"
+    },
+    {
+      "id": "3E07",
+      "title": "Bad Apple Building",
+      "type": "Architecture",
+      "date": "Jan 2007 – May 2007",
+      "fullTime": false,
+      "client": "Studio project (at Cornell University)",
+      "skills": "Adobe Creative Cloud, AutoCAD, form·Z, V-ray, Rhino, 3D Printing, Laser-cutting, Fabrication/Physical Model Construction",
+      "desc": "<p>This project, done with criticism by visiting critic and New York architect Lonn Combs, was part of a studio-wide investigation of the High Line's effect on New York's west side urban fabric, at the time just about to be renovated, and I also brought to the project my previous experience with Chelsea and the Meatpacking District as a historical center of nightlife in NYC.  The project consisted of a—at first glance—nondescript private office block, which was in actuality riddled and shot through with open space, around which grew public spaces and spaces for nightlife and the arts, connected to the High Line below. </p>"
+    },
+    {
+      "id": "3E08",
+      "title": "Cultural Cathedral",
+      "type": "Architecture",
+      "date": "Aug 2006 – Dec 2006",
+      "fullTime": false,
+      "client": "Studio project (at Cornell University)",
+      "skills": "Adobe Creative Cloud, AutoCAD, form·Z, V-ray, Rhino, 3D Printing, Laser-cutting, Fabrication/Physical Model Construction",
+      "desc": "<p>The <em>Cultural Cathedral</em> project, with Vince Mulcahy as critic, was a project for a mixed-use museum/gallery/cinema/nightclub, located across the street from the Harvard Lampoon in Cambridge, right on Harvard's campus.  This project continued what would become something of a concentration or a focused investigation into the intersection of subculture and architecture.  Reconciling the two was often fraught and problematic, with architecture belonging inherently to the institution.  The project also investigated possibilities of variability of a single space when recontextualized by occupancy and/or time of day.</p>"
+    },
+    {
+      "id": "3E09",
+      "title": "Bathscape",
+      "type": "Architecture",
+      "date": "Jan 2006 – May 2006",
+      "fullTime": false,
+      "client": "Studio project (at Cornell University)",
+      "skills": "Adobe Creative Cloud, AutoCAD, form·Z, V-ray, Rhino, 3D Printing, Laser-cutting, Fabrication/Physical Model Construction",
+      "desc": "<p>Another semester project at Cornell that was located in New York, <em>Bathscape</em> was a study in urban renovation and gentrification among the former industrial landscapes of Red Hook, with George Hascup as critic.  I was inspired to create this large public pier, which consisted of several different public parks, baths, and pools, scattered and superimposed on one another in a kind of landscape—a <em>bathscape</em>—by my prior experiences visiting the palimpsest-like ruins of the Ancient Roman baths in Bath, England, combined with cultural affinities for public baths among the nearby immigrant population in Brooklyn and the observed lack of such facilities.</p>"
+    },
+    {
+      "id": "3E10",
+      "title": "Signal Path House",
+      "type": "Architecture",
+      "date": "Aug 2005 – Dec 2005",
+      "fullTime": false,
+      "client": "Studio project (at Cornell University)",
+      "skills": "Adobe Creative Cloud, AutoCAD, form·Z, V-ray, Rhino, Laser-cutting, Fabrication/Physical Model Construction",
+      "desc": "<p>This was one of those projects—common to underclassmen in architecture school—which began with a small-scale exercise intended to inform or structure the logic of the design for a later building.  In this case, we were instructed to first study a tool and create detailed drawings of it, after which we would allow our investigations to inform the architecture of a small home.  I chose the cartridge from a Technics turntable arm, and its construction inspired this home—a modular, mobile, linear structure, each module different in program, but equally consisting of a steel outer shell and a smooth, bent plywood interior, connected by centralized utility lines.</p>"
+    }
+  ]
+}

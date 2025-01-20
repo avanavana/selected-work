@@ -1,22 +1,71 @@
-import animate from 'tailwindcss-animate';
+import animate from 'tailwindcss-animate'
 
-import type { Config } from "tailwindcss";
+import { rawHeightLimitsToHeightLimits } from './src/lib/utils'
+
+import type { Config } from 'tailwindcss'
+
+const gray = {
+  lighter: '240 5% 87%',
+  light: '240 3% 81%',
+  medium: '240 1% 41%',
+  dark: '240 4% 14%'
+} as const
 
 export const colors = {
-  'gray-lighter': '#dddde0',
-  'gray-light': '#cccccf',
-  'gray-medium': '#666669',
-  'gray-dark': '#222225'
+  background: 'hsl(var(--background))',
+  foreground: 'hsl(var(--foreground))',
+  card: {
+    DEFAULT: 'hsl(var(--card))',
+    foreground: 'hsl(var(--card-foreground))'
+  },
+  popover: {
+    DEFAULT: 'hsl(var(--popover) / 85%)',
+    foreground: 'hsl(var(--popover-foreground))'
+  },
+  primary: {
+    DEFAULT: 'hsl(var(--primary))',
+    foreground: 'hsl(var(--primary-foreground))'
+  },
+  secondary: {
+    DEFAULT: 'hsl(var(--secondary))',
+    foreground: 'hsl(var(--secondary-foreground))'
+  },
+  muted: {
+    DEFAULT: 'hsl(var(--muted))',
+    foreground: 'hsl(var(--muted-foreground))'
+  },
+  accent: {
+    DEFAULT: 'hsl(var(--accent))',
+    foreground: 'hsl(var(--accent-foreground))'
+  },
+  destructive: {
+    DEFAULT: 'hsl(var(--destructive))',
+    foreground: 'hsl(var(--destructive-foreground))'
+  },
+  border: 'hsl(var(--border))',
+  input: 'hsl(var(--input))',
+  ring: 'hsl(var(--ring))',
+  chart: {
+    '1': 'hsl(var(--chart-1))',
+    '2': 'hsl(var(--chart-2))',
+    '3': 'hsl(var(--chart-3))',
+    '4': 'hsl(var(--chart-4))',
+    '5': 'hsl(var(--chart-5))'
+  },
+  'gray-lighter': `hsl(${gray.lighter})`,
+  'gray-light': `hsl(${gray.light})`,
+  'gray-medium': `hsl(${gray.medium})`,
+  'gray-dark': `hsl(${gray.dark})`,
+  'gray-dark-translucent-50': `hsl(${gray.dark} / 50%)`,
+  'gray-dark-translucent-85': `hsl(${gray.dark} / 85%)`
 } as const
 
 const widths = {
   maximum: '1500px',
   mid: '896px',
   minimum: '640px',
+  modal: '1024px'
 } as const
-
-type RawHeightLimits = Record<keyof typeof rawHeightLimits, number>
-type HeightLimits = Record<keyof typeof rawHeightLimits, { raw: string }>
 
 export const rawHeightLimits = {
   'max-height': 1080,
@@ -26,10 +75,7 @@ export const rawHeightLimits = {
 
 export const screens = {
   ...widths,
-  ...Object.entries(rawHeightLimits as RawHeightLimits).reduce((a, [ k, v ]) => {
-    a[k as keyof typeof rawHeightLimits] = { raw: `(max-height:${v}px)` }
-    return a
-  }, {} as HeightLimits)
+  ...rawHeightLimitsToHeightLimits(rawHeightLimits)
 } as const
 
 export const width = {
@@ -46,18 +92,27 @@ export const spacing = {
 } as const
 
 export default {
-  content: ['./src/**/*.{mjs,js,ts,jsx,tsx}'],
+    darkMode: [ 'class' ],
+    content: [ './index.html', './src/**/*.{mjs,js,ts,jsx,tsx}' ],
   theme: {
-    extend: {
+  	extend: {
       colors,
       screens,
       width,
       height,
+  		maxWidth: {
+        ...widths
+  		},
       spacing,
-      flex: {
-        full: '0 0 100%'
-      }
-    }
+  		flex: {
+  			full: '0 0 100%'
+  		},
+  		borderRadius: {
+  			lg: 'var(--radius)',
+  			md: 'calc(var(--radius) - 2px)',
+  			sm: 'calc(var(--radius) - 4px)'
+  		}
+  	}
   },
-  plugins: [animate]
+  plugins: [ animate ]
 } satisfies Config
