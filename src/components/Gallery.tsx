@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
@@ -86,10 +86,12 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
   const [ categories, setCategories ] = useState<string[]>([ 'web/interactive', 'print/illustration', '3d/environmental' ])
   const [ projects, setProjects ] = useState<string[]>(data.projects)
   const [ showAnnouncement, setShowAnnouncement ] = useState<boolean>(true)
+  const [ galleryControlsMounted, setGalleryControlsMounted ] = useState<boolean>(false)
   const [ galleryControlsOpen, setGalleryControlsOpen ] = useState<boolean>(false)
   const [ selectCategoriesOpen, setSelectCategoriesOpen ] = useState<boolean>(false)
-  const viewProjectDetailsRef = React.useRef<HTMLButtonElement>(null)
-  const galleryRef = React.useRef<HTMLDivElement>(null)
+  const viewProjectDetailsRef = useRef<HTMLButtonElement>(null)
+  const selectCategoriesInputRef = useRef<HTMLInputElement>(null)
+  const galleryRef = useRef<HTMLDivElement>(null)
   const galleryDimensions = useResizeObserver<HTMLDivElement>(galleryRef)
   const calculatedHeight = galleryDimensions.width * aspectRatio
   const currentProjectDetails: Project = data.details.find(({ id }: Project) => id === projects[currentSlideIndex].substring(0, 4))!
@@ -100,6 +102,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
 
   const handleMouseLeaveGallery = () => {
     if (emblaApi && isPlaying && !infoModalOpen) emblaApi.plugins().autoplay.play()
+    if (selectCategoriesInputRef.current) selectCategoriesInputRef.current.blur()
   }
 
   const handleNavigateNextSlide = () => {
@@ -181,6 +184,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
   useEffect(() => {
     const announcementExitTimer = setTimeout(() => {
       setShowAnnouncement(false)
+      setGalleryControlsMounted(true)
     }, 7500)
 
     return () => clearTimeout(announcementExitTimer)
@@ -203,8 +207,11 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
         style={{ height: calculatedHeight }}
         onMouseEnter={handleMouseEnterGallery}
         onMouseLeave={handleMouseLeaveGallery}
+        onFocusCapture={(e) => {
+          e.stopPropagation();
+        }}
       >
-        <div className='overflow-hidden' ref={emblaRef}>
+        <div id='slides' className='overflow-hidden' ref={emblaRef}>
           <div className='flex touch-pan-y touch-pinch-zoom -ml-normal'>
             {projects.map((id, i) => (
               <div className='flex-full min-w-0 pl-normal [transform:translate3d(0,0,0)]' key={`image-${i.toString().padStart(2, '0')}-${id.substring(0, 4)}`}>
@@ -222,64 +229,65 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
         </div>
         {isMidSizeScreenOrSmaller ? (
           <Button className='button-mobile-menu gallery-top-right z-[60]' onClick={infoModalOpen ? handleCloseInfoModal : handleOpenInfoModal}><Hamburger size={18} toggled={infoModalOpen} /></Button>
-            // <div className='absolute top-0 left-0 size-full cursor-pointer z-50' onClick={handleOpenInfoModal}></div>
         ) : (
-          <motion.div
-            id='gallery-controls'
-            className='absolute top-0 left-0 size-full z-10'
-            initial={{ opacity: 0 }}
-            animate={{ opacity: galleryControlsOpen ? 1 : 0 }}
-            transition={{ duration: 0.5 }}
-            onMouseEnter={() => setGalleryControlsOpen(true)}
-            onMouseLeave={() => {
-              setGalleryControlsOpen(false)
-              setSelectCategoriesOpen(false)
-            }}
-          >
-            <div className='absolute top-0 left-0 size-full cursor-pointer' onClick={handleOpenInfoModal}></div>
-            <PreviousButton className={cn('button-previous transition-[left] duration-500', galleryControlsOpen ? 'left-0' : 'motion-safe:-left-full')} onClick={handleNavigatePreviousSlide} />
-            <NextButton className={cn('button-next transition-[right] duration-500', galleryControlsOpen ? 'right-0' : 'motion-safe:-right-full')} onClick={handleNavigateNextSlide} />
-            <div className='gallery-top-right flex items-center gap-1.5'>
-              <Combobox
-                multiple
-                value={categories}
-                onValueChange={setCategories}
-                open={selectCategoriesOpen}
-                setOpen={setSelectCategoriesOpen}
-                options={[
-                  { value: 'web/interactive', label: 'Web/Interactive' },
-                  { value: 'print/illustration', label: 'Print/Illustration' },
-                  { value: '3d/environmental', label: '3D/Environmental' }
-                ]}
-              />
+          galleryControlsMounted && (
+            <motion.div
+              id='gallery-controls'
+              className='absolute top-0 left-0 size-full z-10'
+              initial={{ opacity: 0 }}
+              animate={{ opacity: galleryControlsOpen ? 1 : 0 }}
+              transition={{ duration: 0.5 }}
+              onMouseEnter={() => setGalleryControlsOpen(true)}
+              onMouseLeave={() => {
+                setGalleryControlsOpen(false)
+                setSelectCategoriesOpen(false)
+              }}
+            >
+              <div className='absolute top-0 left-0 size-full cursor-pointer' onClick={handleOpenInfoModal}></div>
+              <PreviousButton className={cn('button-previous transition-[left] duration-500', galleryControlsOpen ? 'left-0' : 'motion-safe:-left-full')} onClick={handleNavigatePreviousSlide} />
+              <NextButton className={cn('button-next transition-[right] duration-500', galleryControlsOpen ? 'right-0' : 'motion-safe:-right-full')} onClick={handleNavigateNextSlide} />
+              <div className='gallery-top-right flex justify-end items-center gap-1.5'>
+                <Combobox
+                  ref={selectCategoriesInputRef}
+                  value={categories}
+                  onValueChange={setCategories}
+                  open={selectCategoriesOpen}
+                  setOpen={setSelectCategoriesOpen}
+                  options={[
+                    { value: 'web/interactive', label: 'Web/Interactive' },
+                    { value: 'print/illustration', label: 'Print/Illustration' },
+                    { value: '3d/environmental', label: '3D/Environmental' }
+                  ]}
+                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button className='button-info shrink-0' onClick={handleOpenInfoModal}><Icon iconNode={textSquare} size={24} strokeWidth={2} /></Button>
+                  </TooltipTrigger>
+                  <TooltipContent>View project details</TooltipContent>
+                </Tooltip>
+              </div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button className='button-info shrink-0' onClick={handleOpenInfoModal}><Icon iconNode={textSquare} size={24} strokeWidth={2} /></Button>
+                  <Button onClick={handlePlayPauseSlides} className='button-play-pause gallery-bottom-left'>{isPlaying ? <Pause size={24} strokeWidth={2} fill='currentColor' /> : <Play size={24} strokeWidth={2} fill='currentColor' />}</Button>
                 </TooltipTrigger>
-                <TooltipContent>View project details</TooltipContent>
+                <TooltipContent>{isPlaying ? 'Pause' : 'Play'}</TooltipContent>
               </Tooltip>
-            </div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button onClick={handlePlayPauseSlides} className='button-play-pause gallery-bottom-left'>{isPlaying ? <Pause size={24} strokeWidth={2} fill='currentColor' /> : <Play size={24} strokeWidth={2} fill='currentColor' />}</Button>
-              </TooltipTrigger>
-              <TooltipContent>{isPlaying ? 'Pause' : 'Play'}</TooltipContent>
-            </Tooltip>
-            <div className='gallery-bottom-right flex items-center gap-1.5'>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button className='button-resume' onClick={handleResumeClick}><CircleUserRound size={24} strokeWidth={2} /></Button>
-                </TooltipTrigger>
-                <TooltipContent>Download résumé <span className='font-normal text-gray-light'>(61 kB PDF)</span></TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button className='button-portfolio' onClick={handlePortfolioClick}><Paperclip size={24} strokeWidth={2} /></Button>
-                </TooltipTrigger>
-                <TooltipContent>Download selected work <span className='font-normal text-gray-light'>(16 MB PDF)</span></TooltipContent>
-              </Tooltip>
-            </div>
-          </motion.div>
+              <div className='gallery-bottom-right flex items-center gap-1.5'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button className='button-resume' onClick={handleResumeClick}><CircleUserRound size={24} strokeWidth={2} /></Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Download résumé <span className='font-normal text-gray-light'>(61 kB PDF)</span></TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button className='button-portfolio' onClick={handlePortfolioClick}><Paperclip size={24} strokeWidth={2} /></Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Download selected work <span className='font-normal text-gray-light'>(16 MB PDF)</span></TooltipContent>
+                </Tooltip>
+              </div>
+            </motion.div>
+          )
         )}
           <AnimatePresence>
             {showAnnouncement && (
