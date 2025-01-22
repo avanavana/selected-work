@@ -35,11 +35,16 @@
     --gray-medium: 240 1% 41%;
     --gray-dark: var(--foreground);
 
+    --scrollbar-foreground: hsl(var(--gray-lighter));
+    --scrollbar-background: transparent;
+
     font-family: 'din-2014', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
 
     color-scheme: light dark;
+
+    scrollbar-color: var(--scrollbar-foreground) var(--scrollbar-background);
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;

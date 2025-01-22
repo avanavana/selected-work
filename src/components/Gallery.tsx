@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
+import Fade from 'embla-carousel-fade'
 import { Squash as Hamburger } from 'hamburger-react'
 import { ChevronLeft, ChevronRight, CircleUserRound, Icon, MousePointerClick, Paperclip, Pause, Play, X } from 'lucide-react'
 import { textSquare } from '@lucide/lab'
@@ -76,7 +77,9 @@ interface GalleryProps {
 }
 
 const Gallery: React.FC<GalleryProps> = ({ className }) => {
-  const [ emblaRef, emblaApi ] = useEmblaCarousel(galleryOptions, [ Autoplay({ delay: 5000 }) ])
+  const shouldReduceMotion = useReducedMotion()
+  const emblaPlugins = shouldReduceMotion ? [ Fade() ] : [ Autoplay({ delay: 5000 }) ]
+  const [ emblaRef, emblaApi ] = useEmblaCarousel(galleryOptions, emblaPlugins)
   const { width: screenWidth } = useWindowSize()
   const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
   const [ isPlaying, setIsPlaying ] = useState<boolean>(true)
@@ -89,20 +92,19 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
   const [ galleryControlsMounted, setGalleryControlsMounted ] = useState<boolean>(false)
   const [ galleryControlsOpen, setGalleryControlsOpen ] = useState<boolean>(false)
   const [ selectCategoriesOpen, setSelectCategoriesOpen ] = useState<boolean>(false)
+  const [ selectCategoriesInfoModalOpen, setSelectCategoriesInfoModalOpen ] = useState<boolean>(false)
   const viewProjectDetailsRef = useRef<HTMLButtonElement>(null)
-  const selectCategoriesInputRef = useRef<HTMLInputElement>(null)
   const galleryRef = useRef<HTMLDivElement>(null)
   const galleryDimensions = useResizeObserver<HTMLDivElement>(galleryRef)
   const calculatedHeight = galleryDimensions.width * aspectRatio
   const currentProjectDetails: Project = data.details.find(({ id }: Project) => id === projects[currentSlideIndex].substring(0, 4))!
 
   const handleMouseEnterGallery = () => {
-    if (emblaApi) emblaApi.plugins().autoplay.stop()
+    if (emblaApi && !shouldReduceMotion) emblaApi.plugins().autoplay.stop()
   }
 
   const handleMouseLeaveGallery = () => {
-    if (emblaApi && isPlaying && !infoModalOpen) emblaApi.plugins().autoplay.play()
-    if (selectCategoriesInputRef.current) selectCategoriesInputRef.current.blur()
+    if (emblaApi && isPlaying && !infoModalOpen && !shouldReduceMotion) emblaApi.plugins().autoplay.play()
   }
 
   const handleNavigateNextSlide = () => {
@@ -113,7 +115,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
     if (emblaApi) {
       const nextIndex = projects.findIndex((id, i) => id.substring(0, 4) !== projects[currentSlideIndex].substring(0, 4) && i > projects.indexOf(projects[currentSlideIndex]))
       emblaApi.scrollTo(nextIndex !== -1 ? nextIndex : 0)
-      emblaApi.plugins().autoplay.stop()
+      if (!shouldReduceMotion) emblaApi.plugins().autoplay.stop()
     }
   }
 
@@ -125,7 +127,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
     if (emblaApi) {
       const previousIndex = projects.findIndex(id => id.substring(0, 4) === (projects.findLast((id, i) => id.substring(0, 4) !== projects[currentSlideIndex].substring(0, 4) && i < currentSlideIndex) || projects.at(-1))!.substring(0, 4))
       emblaApi.scrollTo(previousIndex)
-      emblaApi.plugins().autoplay.stop()
+      if (!shouldReduceMotion) emblaApi.plugins().autoplay.stop()
     }
   }
 
@@ -151,7 +153,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
 
   const handleOpenInfoModal = () => {
     setInfoModalOpen(true)
-    if (emblaApi) emblaApi.plugins().autoplay.stop()
+    if (emblaApi && !shouldReduceMotion) emblaApi.plugins().autoplay.stop()
     const body = document.querySelector('body')
     setTimeout(() => { if (body) body.style.pointerEvents = 'unset' }, 10)
   }
@@ -159,7 +161,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
   const handleCloseInfoModal = () => {
     setInfoModalOpen(false)
     viewProjectDetailsRef.current?.blur()
-    if (emblaApi && isPlaying) emblaApi.plugins().autoplay.play()
+    if (emblaApi && isPlaying && !shouldReduceMotion) emblaApi.plugins().autoplay.play()
   }
 
   const switchProject = useCallback((emblaApi: EmblaCarouselType) => {
@@ -196,7 +198,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
         ref={galleryRef}
         id='gallery'
         className={cn('relative max-w-maximum w-full maximum:w-maximum overflow-hidden mx-auto', className)}
-        initial={{ height: 0 }}
+        initial={{ height: shouldReduceMotion ? calculatedHeight : 0 }}
         animate={{ height: calculatedHeight }}
         transition={{
           duration: 0.75,
@@ -244,20 +246,15 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
               }}
             >
               <div className='absolute top-0 left-0 size-full cursor-pointer' onClick={handleOpenInfoModal}></div>
-              <PreviousButton className={cn('button-previous transition-[left] duration-500', galleryControlsOpen ? 'left-0' : 'motion-safe:-left-full')} onClick={handleNavigatePreviousSlide} />
-              <NextButton className={cn('button-next transition-[right] duration-500', galleryControlsOpen ? 'right-0' : 'motion-safe:-right-full')} onClick={handleNavigateNextSlide} />
+              <PreviousButton className={cn('button-previous transition-[left] duration-500 ease-out', galleryControlsOpen ? 'left-0' : 'motion-safe:-left-full')} onClick={handleNavigatePreviousSlide} />
+              <NextButton className={cn('button-next transition-[right] duration-500 ease-out', galleryControlsOpen ? 'right-0' : 'motion-safe:-right-full')} onClick={handleNavigateNextSlide} />
               <div className='gallery-top-right flex justify-end items-center gap-1.5'>
                 <Combobox
-                  ref={selectCategoriesInputRef}
                   value={categories}
                   onValueChange={setCategories}
                   open={selectCategoriesOpen}
                   setOpen={setSelectCategoriesOpen}
-                  options={[
-                    { value: 'web/interactive', label: 'Web/Interactive' },
-                    { value: 'print/illustration', label: 'Print/Illustration' },
-                    { value: '3d/environmental', label: '3D/Environmental' }
-                  ]}
+                  options={data.categories}
                 />
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -266,12 +263,14 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
                   <TooltipContent>View project details</TooltipContent>
                 </Tooltip>
               </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button onClick={handlePlayPauseSlides} className='button-play-pause gallery-bottom-left'>{isPlaying ? <Pause size={24} strokeWidth={2} fill='currentColor' /> : <Play size={24} strokeWidth={2} fill='currentColor' />}</Button>
-                </TooltipTrigger>
-                <TooltipContent>{isPlaying ? 'Pause' : 'Play'}</TooltipContent>
-              </Tooltip>
+              {!shouldReduceMotion && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button onClick={handlePlayPauseSlides} className='button-play-pause gallery-bottom-left'>{isPlaying ? <Pause size={24} strokeWidth={2} fill='currentColor' /> : <Play size={24} strokeWidth={2} fill='currentColor' />}</Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{isPlaying ? 'Pause' : 'Play'}</TooltipContent>
+                </Tooltip>
+              )}
               <div className='gallery-bottom-right flex items-center gap-1.5'>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -355,9 +354,18 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
           )}
           {!isMidSizeScreenOrSmaller && (
             <>
-              <PreviousButton className={cn('button-previous z-[100] transition-transform duration-500', infoModalOpen ? 'translate-x-0' : '-translate-x-full')} onClick={handleNavigatePreviousProject} />
-              <NextButton className={cn('button-next z-[100] transition-transform duration-500', infoModalOpen ? 'translate-x-0' : '-translate-x-full')} onClick={handleNavigateNextProject} />
-              <CloseDialogButton className='absolute top-normal right-normal z-[100]' onClick={handleCloseInfoModal} />
+              <PreviousButton className={cn('button-previous z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigatePreviousProject} />
+              <NextButton className={cn('button-next z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigateNextProject} />
+              <div className='absolute top-normal right-normal z-[100] flex justify-end gap-1.5'>
+                <Combobox
+                  value={categories}
+                  onValueChange={setCategories}
+                  open={selectCategoriesInfoModalOpen}
+                  setOpen={setSelectCategoriesInfoModalOpen}
+                  options={data.categories}
+                />
+                <CloseDialogButton className='shrink-0' onClick={handleCloseInfoModal} />
+              </div>
             </>
           )}
         </DialogPortal>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 
 import ContactDivider from '@/components/ContactDivider'
 import { Email, Link, LinkedIn } from '@/components/Icons'
@@ -44,6 +44,7 @@ const contactInfoItemVariants = {
 }
 
 const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = true, ...props }) => {
+  const shouldReduceMotion = useReducedMotion()
   const { width: screenWidth } = useWindowSize()
   const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
   const [ isMinimumSizeScreenOrSmaller, setIsMinimumSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.minimum))
@@ -52,14 +53,14 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
   const [ solidLogoClipPath, setSolidLogoClipPath ] = useState<string>(`polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)`)
   const [ asciiLogoClipPath, setAsciiLogoClipPath ] = useState<string>(`polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)`)
 
-  const handleMouseMove = ({ clientX, currentTarget }: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleMouseMoveLogo = ({ clientX, currentTarget }: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { width, left } = currentTarget.getBoundingClientRect()
     setClampedValue(Math.min(Math.max(((clientX - left) / width) * 100, -14), 100))
     setSolidLogoClipPath(`polygon(${clampedValue + 14}% 0%, ${clampedValue}% 100%, 0% 100%, 0% 0%)`)
     setAsciiLogoClipPath(`polygon(100% 0%, 100% 100%, ${clampedValue}% 100%, ${clampedValue + 14}% 0%)`)
   }
 
-  const handleMouseLeave = () => {
+  const handleMouseLeaveLogo = () => {
     const duration = 250
     const distance = 100 - clampedValue
     const startTime = performance.now()
@@ -83,11 +84,15 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
   }
 
   useEffect(() => {
-    const introTimer = setTimeout(() => {
+    if (shouldReduceMotion) {
       setIntroComplete(true)
-    }, isMidSizeScreenOrSmaller ? 12500 : 17000)
+    } else {
+      const introTimer = setTimeout(() => {
+        setIntroComplete(true)
+      }, isMidSizeScreenOrSmaller ? 12500 : 17000)
 
-    return () => clearTimeout(introTimer)
+      return () => clearTimeout(introTimer)
+    }
   }, [])
 
   useEffect(() => {
@@ -97,46 +102,48 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
 
   return (
     <section id='info' className={cn('flex mid:block relative w-[calc(100%_-_76px)] maximum:w-full mx-normal maximum:mx-0 transition-[justify-content] gap-normal flex-col-reverse mid:!flex-row mid:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto mid:h-[70px] py-normal maximum:pb-0' : 'py-0', className)} {...props}>
-      <motion.div
-        id='logo-intro'
-        className={cn('relative w-[600px] h-[144px]', showContactInfo ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2', { 'hidden': introComplete })}
-        initial={{ height: 144, width: 600, left: '50%', x: '-50%', scale: isMidSizeScreenOrSmaller ? 1 / 2 : 1 }}
-        animate={{ height: 212, width: isMidSizeScreenOrSmaller ? 600 : 200, left: isMidSizeScreenOrSmaller ? '50%' : -66.66, x: isMidSizeScreenOrSmaller ? '-50%' : 0, scale: 1 / 3 }}
-        transition={{
-          height: {
-            delay: 9.5,
-            duration: 0.5,
-            ease: 'easeInOut'
-          },
-          width: {
-            delay: 12,
-            duration: 0.5,
-            ease: 'easeInOut'
-          },
-          left: {
-            delay: 12,
-            duration: 0.5,
-            ease: 'easeIn'
-          },
-          x: {
-            delay: 12,
-            duration: 0.5,
-            ease: 'easeIn'
-          },
-          scale: {
-            delay: 12,
-            duration: 0.5,
-            ease: 'easeIn'
-          }
-        }}
-      >
-        {!introComplete && <Logo className='absolute left-0 top-0' />}
-        <LogoOutlines className='absolute left-0 top-0' />
-        <LogoAscii className={cn('absolute left-0 top-0', { 'left-1/2 translate-y-1/2 -translate-x-1/2 scale-[2]': isMidSizeScreenOrSmaller })} />
-        <Tagline className={cn('absolute left-0', introComplete ? 'hidden bottom-auto top-0 maximum:top-auto maximum:bottom-full' : 'bottom-0 top-auto')} />
-      </motion.div>
-      {introComplete && (
-        <div id='logo' onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center mid:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}>
+      {!shouldReduceMotion && (
+        <motion.div
+          id='logo-intro'
+          className={cn('relative w-[600px] h-[144px]', showContactInfo ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2', { 'hidden': introComplete })}
+          initial={{ height: 144, width: 600, left: '50%', x: '-50%', scale: isMidSizeScreenOrSmaller ? 1 / 2 : 1 }}
+          animate={{ height: 212, width: isMidSizeScreenOrSmaller ? 600 : 200, left: isMidSizeScreenOrSmaller ? '50%' : -66.66, x: isMidSizeScreenOrSmaller ? '-50%' : 0, scale: 1 / 3 }}
+          transition={{
+            height: {
+              delay: 9.5,
+              duration: 0.5,
+              ease: 'easeInOut'
+            },
+            width: {
+              delay: 12,
+              duration: 0.5,
+              ease: 'easeOut'
+            },
+            left: {
+              delay: 12,
+              duration: 0.5,
+              ease: 'easeOut'
+            },
+            x: {
+              delay: 12,
+              duration: 0.5,
+              ease: 'easeOut'
+            },
+            scale: {
+              delay: 12,
+              duration: 0.5,
+              ease: 'easeOut'
+            }
+          }}
+        >
+          {!introComplete && <Logo className='absolute left-0 top-0' />}
+          <LogoOutlines className='absolute left-0 top-0' />
+          <LogoAscii className={cn('absolute left-0 top-0', { 'left-1/2 translate-y-1/2 -translate-x-1/2 scale-[2]': isMidSizeScreenOrSmaller })} />
+          <Tagline className={cn('absolute left-0', introComplete ? 'hidden bottom-auto top-0 maximum:top-auto maximum:bottom-full' : 'bottom-0 top-auto')} />
+        </motion.div>
+      )}
+      {(shouldReduceMotion || introComplete) && (
+        <div id='logo' onMouseMove={handleMouseMoveLogo} onMouseLeave={handleMouseLeaveLogo} className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center mid:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}>
           <Logo size='small' className='absolute top-0 left-0' style={{ clipPath: solidLogoClipPath }} />
           <LogoAsciiSmall className='absolute top-0 left-0 text-gray-dark' style={{ clipPath: asciiLogoClipPath }} />
           <Tagline size='small' animated={false} className='absolute bottom-0 left-0' />

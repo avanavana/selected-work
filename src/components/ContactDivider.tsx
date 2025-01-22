@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber } from '@/lib/utils'
@@ -10,9 +10,12 @@ interface ContactDividerProps {
   delay?: number
 }
 
-const dividerAnimation = (delay: number) => ({
+const dividerAnimation = (
+  delay: number,
+  shouldReduceMotion: boolean | null
+) => ({
   variants: {
-    start: { pathLength: 0 },
+    start: { pathLength: shouldReduceMotion ? 1 : 0 },
     end: { pathLength: 1 }
   },
   initial: 'start',
@@ -25,6 +28,7 @@ const dividerAnimation = (delay: number) => ({
 })
 
 const ContactDivider: React.FC<ContactDividerProps> = ({ className, delay = 0, ...props }) => {
+  const shouldReduceMotion = useReducedMotion()
   const dimensions = useWindowSize()
   const isMobile = dimensions.width <= extractNumber(screens.minimum)
 
@@ -34,26 +38,14 @@ const ContactDivider: React.FC<ContactDividerProps> = ({ className, delay = 0, .
           <motion.path
             d='M16 0H0'
             stroke={colors['gray-lighter']}
-            strokeWidth={2}            
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{
-              delay,
-              duration: 0.25,
-              ease: 'easeOut'
-            }}
+            strokeWidth={2}
+            {...dividerAnimation(delay, shouldReduceMotion)}
           />
           <motion.path
             d='M16 0H32'
             stroke={colors['gray-lighter']}
-            strokeWidth={2}            
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{
-              delay,
-              duration: 0.25,
-              ease: 'easeOut'
-            }}
+            strokeWidth={2}
+            {...dividerAnimation(delay, shouldReduceMotion)}
           />
         </svg>
       </div>
@@ -64,7 +56,7 @@ const ContactDivider: React.FC<ContactDividerProps> = ({ className, delay = 0, .
             d='M30.5536.6286 1.4464 55.3714'
             stroke={colors['gray-lighter']}
             strokeWidth={2}
-            {...dividerAnimation(delay)}
+            {...dividerAnimation(delay, shouldReduceMotion)}
           />
         </svg>
       </div>
