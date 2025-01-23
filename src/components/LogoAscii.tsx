@@ -7,7 +7,7 @@ import { animate, motion, useMotionValue } from 'framer-motion'
 
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber } from '@/lib/utils'
-import { colors, screens } from '../../tailwind.config'
+import { screens } from '../../tailwind.config'
 
 import type { ShapePath } from 'three'
 
@@ -59,12 +59,12 @@ const logoSizes = {
     scale: [ -1 / 100, -1 / 100, 1 ],
     canvasClassName: '!w-[600px] !h-[144px]'
   },
-  mid: {
+  md: {
     position: [ 1.5, 0.37, -1 ],
     scale: [ -1 / 200, -1 / 200, 1 ],
     canvasClassName: '!w-[300px] !h-[72px]'
   },
-  small: {
+  sm: {
     position: [ 1, 0.25, -1 ],
     scale: [ -1 / 300, -1 / 300, 1 ],
     canvasClassName: '!w-[200px] !h-[48px]'
@@ -80,7 +80,7 @@ const LogoSvg: React.FC<LogoSvgProps> = ({ isMobile = false, size = 'default' })
   const svg = useLoader(SVGLoader, '/src/assets/logo.svg')
 
   return (
-    <group position={isMobile && size !== 'small' ? logoSizes.mid.position : logoSizes[size].position} scale={isMobile && size !== 'small' ? logoSizes.mid.scale : logoSizes[size].scale}>
+    <group position={isMobile && size !== 'sm' ? logoSizes.md.position : logoSizes[size].position} scale={isMobile && size !== 'sm' ? logoSizes.md.scale : logoSizes[size].scale}>
       {svg.paths.map((path: ShapePath, i) => (
         <mesh key={i} position={[0, 0, 0]}>
           <shapeGeometry
@@ -109,25 +109,25 @@ interface LogoAsciiProps {
 
 const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', style, ...props }) => {
   const { width: screenWidth } = useWindowSize()
-  const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
+  const [ isMdScreenOrSmaller, setIsMdScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.md))
 
   useEffect(() => {
-    setIsMidSizeScreenOrSmaller(screenWidth <= extractNumber(screens.mid))
+    setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
   }, [ screenWidth ])
 
   return (
     <motion.div
       className={cn('relative overflow-hidden', className)}
-      {...(size !== 'small' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)', filter: 'blur(32px)' }})}
-      {...(size !== 'small' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)', filter: 'blur(0px)' }})}
-      {...(size !== 'small' && { transition: { clipPath: {delay: 5, duration: 4, ease: 'easeInOut' }, filter: { duration: 2, ease: 'easeOut' }}})}
+      {...(size !== 'sm' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)', filter: 'blur(32px)' }})}
+      {...(size !== 'sm' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)', filter: 'blur(0px)' }})}
+      {...(size !== 'sm' && { transition: { clipPath: {delay: 5, duration: 4, ease: 'easeInOut' }, filter: { duration: 2, ease: 'easeOut' }}})}
       {...(style && { style })}
       {...props}
     >
-      <Canvas className={cn(isMidSizeScreenOrSmaller && size !== 'small' ? logoSizes.mid.canvasClassName : logoSizes[size].canvasClassName)}>
+      <Canvas className={cn(isMdScreenOrSmaller && size !== 'sm' ? logoSizes.md.canvasClassName : logoSizes[size].canvasClassName)}>
         <OrthographicCamera makeDefault position={[0, 0, 1]} zoom={100} />
         <MovingLight />
-        <LogoSvg isMobile={isMidSizeScreenOrSmaller} size={size} />
+        <LogoSvg isMobile={isMdScreenOrSmaller} size={size} />
         <AsciiRenderer
           fgColor='#222225'
           bgColor='transparent'

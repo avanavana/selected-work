@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useLayoutEffect,useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
@@ -38,7 +38,7 @@ const projectCategoriesMap: Record<string, string> = {
   '3d/environmental': '3E'
 } as const
 
-const NextButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, onClick }, ref) => (
+const NextButton = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, onClick }, ref) => (
   <Tooltip>
     <TooltipTrigger asChild>
       <Button ref={ref} variant='galleryNavigation' className={cn('center-right rounded-l-md', className)} onClick={onClick}><ChevronRight size={48} strokeWidth={1} /></Button>
@@ -47,7 +47,7 @@ const NextButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttribute
   </Tooltip>
 ))
 
-const PreviousButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, onClick }, ref) => (
+const PreviousButton = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, onClick }, ref) => (
   <Tooltip>
     <TooltipTrigger asChild>
       <Button ref={ref} variant='galleryNavigation' className={cn('center-left rounded-r-md', className)} onClick={onClick}><ChevronLeft size={48} strokeWidth={1} /></Button>
@@ -56,7 +56,7 @@ const PreviousButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttri
   </Tooltip>
 ))
 
-const CloseDialogButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, onClick }, ref) => (
+const CloseDialogButton = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, onClick }, ref) => (
   <Tooltip>
     <TooltipTrigger asChild>
       <DialogClose asChild><Button ref={ref} className={className} onClick={onClick}><X size={24} strokeWidth={2} /></Button></DialogClose>
@@ -65,7 +65,7 @@ const CloseDialogButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAt
   </Tooltip>
 ))
 
-const aspectRatio = extractNumber(height.maximum) / extractNumber(width.maximum)
+const aspectRatio = extractNumber(height.xl) / extractNumber(width.xl)
 
 const galleryOptions: EmblaOptionsType = {
   duration: 25,
@@ -81,7 +81,8 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
   const emblaPlugins = shouldReduceMotion ? [ Fade() ] : [ Autoplay({ delay: 5000 }) ]
   const [ emblaRef, emblaApi ] = useEmblaCarousel(galleryOptions, emblaPlugins)
   const { width: screenWidth } = useWindowSize()
-  const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
+  const [ isLgScreenOrSmaller, setIsLgScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.lg))
+  const [ isMdScreenOrSmaller, setIsMdScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.md))
   const [ isPlaying, setIsPlaying ] = useState<boolean>(true)
   const [ infoModalOpen, setInfoModalOpen ] = useState<boolean>(false)
   const [ showMobileProjectInfo, setShowMobileProjectInfo ] = useState<boolean>(false)
@@ -89,8 +90,9 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
   const [ categories, setCategories ] = useState<string[]>([ 'web/interactive', 'print/illustration', '3d/environmental' ])
   const [ projects, setProjects ] = useState<string[]>(data.projects)
   const [ showAnnouncement, setShowAnnouncement ] = useState<boolean>(true)
+  const [ gallerySlidesMounted, setGallerySlidesMounted ] = useState<boolean>(false)
   const [ galleryControlsMounted, setGalleryControlsMounted ] = useState<boolean>(false)
-  const [ galleryControlsOpen, setGalleryControlsOpen ] = useState<boolean>(false)
+  const [ galleryControlsVisible, setGalleryControlsVisible ] = useState<boolean>(false)
   const [ selectCategoriesOpen, setSelectCategoriesOpen ] = useState<boolean>(false)
   const [ selectCategoriesInfoModalOpen, setSelectCategoriesInfoModalOpen ] = useState<boolean>(false)
   const viewProjectDetailsRef = useRef<HTMLButtonElement>(null)
@@ -172,8 +174,9 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
     if (emblaApi) emblaApi.on('slidesInView', switchProject)
   }, [ emblaApi ])
 
-  useEffect(() => {
-    setIsMidSizeScreenOrSmaller(screenWidth <= extractNumber(screens.mid))
+  useLayoutEffect(() => {
+    setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
+    setIsLgScreenOrSmaller(screenWidth <= extractNumber(screens.lg))
   }, [ screenWidth ])
 
   useEffect(() => {
@@ -184,12 +187,19 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
   }, [ categories, emblaApi ])
 
   useEffect(() => {
+    const gallerySlidesTimer = setTimeout(() => {
+      setGallerySlidesMounted(true)
+    }, 500)
+
     const announcementExitTimer = setTimeout(() => {
       setShowAnnouncement(false)
       setGalleryControlsMounted(true)
     }, 7500)
 
-    return () => clearTimeout(announcementExitTimer)
+    return () => {
+      clearTimeout(gallerySlidesTimer)
+      clearTimeout(announcementExitTimer)
+    }
   }, [])
 
   return (
@@ -197,15 +207,17 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
       <motion.section
         ref={galleryRef}
         id='gallery'
-        className={cn('relative max-w-maximum w-full maximum:w-maximum overflow-hidden mx-auto', className)}
-        initial={{ height: shouldReduceMotion ? calculatedHeight : 0 }}
+        className={cn('relative max-w-xl w-full xl:w-xl overflow-hidden mx-auto', className)}
+        initial={{ height: shouldReduceMotion || gallerySlidesMounted ? calculatedHeight : 0 }}
         animate={{ height: calculatedHeight }}
-        transition={{
-          duration: 0.75,
-          type: 'spring',
-          stiffness: 500,
-          damping: 20
-        }}
+        transition={
+          gallerySlidesMounted ? {
+            duration: 0
+          } :{
+            duration: 0.5,
+            ease: 'easeOut'
+          }
+        }
         style={{ height: calculatedHeight }}
         onMouseEnter={handleMouseEnterGallery}
         onMouseLeave={handleMouseLeaveGallery}
@@ -219,17 +231,17 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
               <div className='flex-full min-w-0 pl-normal [transform:translate3d(0,0,0)]' key={`image-${i.toString().padStart(2, '0')}-${id.substring(0, 4)}`}>
                 <div className='flex justify-center items-center text-2xl font-bold select-none bg-transparent' style={{ height: calculatedHeight }}>
                   <img
-                    className={cn('w-full', { 'cursor-pointer': isMidSizeScreenOrSmaller })}
+                    className={cn('w-full', { 'cursor-pointer': isMdScreenOrSmaller })}
                     src={`/src/assets/work/image-${projects[i]}.png`}
                     alt={data.details.find((project: Project) => project.id === id.substring(0, 4))!.title}
-                    {...(isMidSizeScreenOrSmaller && { onClick: handleOpenInfoModal })}
+                    {...(isMdScreenOrSmaller && { onClick: handleOpenInfoModal })}
                   />
                 </div>
               </div>
             ))}
           </div>
         </div>
-        {isMidSizeScreenOrSmaller ? (
+        {isMdScreenOrSmaller ? (
           <Button className='button-mobile-menu gallery-top-right z-[60]' onClick={infoModalOpen ? handleCloseInfoModal : handleOpenInfoModal}><Hamburger size={18} toggled={infoModalOpen} /></Button>
         ) : (
           galleryControlsMounted && (
@@ -237,17 +249,17 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
               id='gallery-controls'
               className='absolute top-0 left-0 size-full z-10'
               initial={{ opacity: 0 }}
-              animate={{ opacity: galleryControlsOpen ? 1 : 0 }}
+              animate={{ opacity: galleryControlsVisible ? 1 : 0 }}
               transition={{ duration: 0.5 }}
-              onMouseEnter={() => setGalleryControlsOpen(true)}
+              onMouseEnter={() => setGalleryControlsVisible(true)}
               onMouseLeave={() => {
-                setGalleryControlsOpen(false)
+                setGalleryControlsVisible(false)
                 setSelectCategoriesOpen(false)
               }}
             >
               <div className='absolute top-0 left-0 size-full cursor-pointer' onClick={handleOpenInfoModal}></div>
-              <PreviousButton className={cn('button-previous transition-[left] duration-500 ease-out', galleryControlsOpen ? 'left-0' : 'motion-safe:-left-full')} onClick={handleNavigatePreviousSlide} />
-              <NextButton className={cn('button-next transition-[right] duration-500 ease-out', galleryControlsOpen ? 'right-0' : 'motion-safe:-right-full')} onClick={handleNavigateNextSlide} />
+              <PreviousButton className={cn('button-previous transition-[left] duration-500 ease-out', galleryControlsVisible ? 'left-0' : 'motion-safe:-left-full')} onClick={handleNavigatePreviousSlide} />
+              <NextButton className={cn('button-next transition-[right] duration-500 ease-out', galleryControlsVisible ? 'right-0' : 'motion-safe:-right-full')} onClick={handleNavigateNextSlide} />
               <div className='gallery-top-right flex justify-end items-center gap-1.5'>
                 <Combobox
                   value={categories}
@@ -320,7 +332,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
           </AnimatePresence>
         </motion.section>
         <DialogPortal>
-          {!isMidSizeScreenOrSmaller || showMobileProjectInfo ? (
+          {!isMdScreenOrSmaller || showMobileProjectInfo ? (
             <DialogContent onEscapeKeyDown={handleCloseInfoModal} onPointerDownOutside={(e) => e.preventDefault()} type='projectDetails'>
               <DialogHeader>
                 <DialogTitle
@@ -352,7 +364,7 @@ const Gallery: React.FC<GalleryProps> = ({ className }) => {
               Mobile Menu
             </DialogContent>
           )}
-          {!isMidSizeScreenOrSmaller && (
+          {!isMdScreenOrSmaller && (
             <>
               <PreviousButton className={cn('button-previous z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigatePreviousProject} />
               <NextButton className={cn('button-next z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigateNextProject} />

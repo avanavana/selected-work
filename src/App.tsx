@@ -9,12 +9,13 @@ import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber } from '@/lib/utils'
 import { height, width, screens, spacing } from '../tailwind.config'
 
-const idealAspectRatio = extractNumber(width.maximum) / (extractNumber(height.maximum) + 70 + extractNumber(spacing.double))
+const idealContentHeight = extractNumber(height.xl) + 70 + extractNumber(spacing.double)
+const idealAspectRatio = extractNumber(width.xl) / idealContentHeight
 
 const App: React.FC = () => {
   const shouldReduceMotion = useReducedMotion()
   const { width: screenWidth, height: screenHeight } = useWindowSize()
-  const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
+  const [ isMdScreenOrSmaller, setIsMdScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.md))
   const [ hasFlatAspectRatio, setHasFlatAspectRatio ] = useState<boolean>(screenWidth / screenHeight > idealAspectRatio)
   const [ contactInfoMounted, setContactInfoMounted ] = useState<boolean>(false)
   const [ slidesMounted, setSlidesMounted ] = useState<boolean>(false)
@@ -27,7 +28,7 @@ const App: React.FC = () => {
 
       const slidesTimer = setTimeout(() => {
         setSlidesMounted(true)
-      }, isMidSizeScreenOrSmaller ? 12500 : 17000)
+      }, isMdScreenOrSmaller ? 12500 : 17000)
 
       return () => {
         clearTimeout(contactInfoTimer)
@@ -37,7 +38,7 @@ const App: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    setIsMidSizeScreenOrSmaller(screenWidth <= extractNumber(screens.mid))
+    setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
   }, [ screenWidth ])
 
   useEffect(() => {
@@ -47,10 +48,10 @@ const App: React.FC = () => {
   return (
     <MotionConfig reducedMotion='user'>
       <TooltipProvider>
-        <div className={cn('w-screen h-screen flex justify-center', slidesMounted ? 'items-start minimum:items-center max-height:items-start' : 'items-center')}>
-          <main id='wrapper' className={cn('w-full maximum:w-maximum flex flex-col items-center', shouldReduceMotion || slidesMounted ? 'justify-between' : 'justify-center')}>
+        <div className={cn('w-screen h-screen flex justify-center', slidesMounted ? 'items-start sm:items-center xl-height:items-start' : 'items-center', { 'sm:items-start': hasFlatAspectRatio && screenHeight < idealContentHeight })}>
+          <main id='wrapper' className={cn('w-full xl:w-xl flex flex-col items-center', shouldReduceMotion || slidesMounted ? 'justify-between' : 'justify-center')}>
             {(shouldReduceMotion || slidesMounted) && <Gallery />}
-            <ContactInfo showContactInfo={shouldReduceMotion || contactInfoMounted} />
+            <ContactInfo {...(hasFlatAspectRatio && screenHeight < idealContentHeight && { className: 'xl:pb-normal' })} showContactInfo={shouldReduceMotion || contactInfoMounted} />
           </main>
         </div>
       </TooltipProvider>

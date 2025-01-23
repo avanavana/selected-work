@@ -7,7 +7,10 @@ const logoSizes = {
   default: {
     width: 600
   },
-  small: {
+  lg: {
+    width: 600
+  },
+  sm: {
     width: 200
   }
 } as const
@@ -21,9 +24,9 @@ interface LogoProps {
 const Logo: React.FC<LogoProps> = ({ className, size = 'default', style, ...props }) => (
   <motion.div
     className={className}
-    {...(size !== 'small' && { initial: { clipPath: 'polygon(0% 0%, -14% 100%, 0% 100%, 0% 0%)' }})}
-    {...(size !== 'small' && { animate: { clipPath: 'polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)' }})}
-    {...(size !== 'small' && { transition: { delay: 8, duration: 2 }})}
+    {...(size !== 'sm' && { initial: { clipPath: 'polygon(0% 0%, -14% 100%, 0% 100%, 0% 0%)' }})}
+    {...(size !== 'sm' && { animate: { clipPath: 'polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)' }})}
+    {...(size !== 'sm' && { transition: { delay: 8, duration: 2 }})}
     {...(style && { style })}
     {...props}
   >

@@ -61,16 +61,17 @@ export const colors = {
 } as const
 
 const widths = {
-  maximum: '1500px',
-  mid: '896px',
-  minimum: '640px',
+  xl: '1500px',
+  lg: '1420px',
+  md: '896px',
+  sm: '640px',
   modal: '1024px'
 } as const
 
 export const rawHeightLimits = {
-  'max-height': 1080,
-  'mid-height': 623,
-  'min-height': 445
+  'xl-height': 1080,
+  'md-height': 623,
+  'sm-height': 445
 } as const
 
 export const screens = {
@@ -83,7 +84,7 @@ export const width = {
 } as const
 
 export const height = {
-  maximum: '896px'
+  xl: '896px'
 } as const
 
 export const spacing = {

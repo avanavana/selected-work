@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 
 import { useWindowSize } from '@/hooks/useWindowSize'
@@ -30,7 +30,7 @@ const dividerAnimation = (
 const ContactDivider: React.FC<ContactDividerProps> = ({ className, delay = 0, ...props }) => {
   const shouldReduceMotion = useReducedMotion()
   const dimensions = useWindowSize()
-  const isMobile = dimensions.width <= extractNumber(screens.minimum)
+  const isMobile = dimensions.width <= extractNumber(screens.sm)
 
   return isMobile ? (
       <div className={cn('w-full h-[2px] overflow-hidden', className)} {...props}>
@@ -50,7 +50,7 @@ const ContactDivider: React.FC<ContactDividerProps> = ({ className, delay = 0, .
         </svg>
       </div>
     ) : (
-      <div className={cn('w-auto mid:w-[76px] flex items-center justify-center', className)} {...props}>
+      <div className={cn('w-auto md:w-[76px] flex items-center justify-center', className)} {...props}>
         <svg width='32' height='56' viewBox='0 0 32 56' fill='none' xmlns='http://www.w3.org/2000/svg'>
           <motion.path
             d='M30.5536.6286 1.4464 55.3714'

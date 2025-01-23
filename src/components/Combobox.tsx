@@ -68,7 +68,6 @@ const Combobox = forwardRef((props: ComboboxProps, ref: React.ForwardedRef<HTMLI
     <PopoverContent
       align='center'
       className='p-0 border-0 bg-gray-dark-translucent-85 backdrop-blur-sm shadow-none font-bold'
-      onOpenAutoFocus={(e) => { e.preventDefault() }}
     >
       <Command className='bg-transparent'>
         <CommandInput ref={ref} className='text-white placeholder:font-normal placeholder:text-gray-light' placeholder={props.searchPlaceholder ?? 'Search for an option'} />

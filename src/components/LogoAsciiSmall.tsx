@@ -12,21 +12,24 @@ const charactersToSvg = new Map([
 ])
 
 interface LogoAsciiSmallProps {
+  animated?: boolean
   className?: string
   style?: React.CSSProperties
 }
 
-const LogoAsciiSmall: React.FC<LogoAsciiSmallProps> = ({ className, style }) => {
+const LogoAsciiSmall: React.FC<LogoAsciiSmallProps> = ({ animated = true, className, style }) => {
   const [frames, setFrames] = useState<(string | null)[][]>(logoAnimationData[0])
   const frameRef = useRef(0)
 
   useEffect(() => {
-    const step = setInterval(() => {
-      frameRef.current = (frameRef.current + 1) % logoAnimationData.length
-      setFrames(logoAnimationData[frameRef.current])
-    }, 1000 / 60)
+    if (animated) {
+      const step = setInterval(() => {
+        frameRef.current = (frameRef.current + 1) % logoAnimationData.length
+        setFrames(logoAnimationData[frameRef.current])
+      }, 1000 / 60)
 
-    return () => clearInterval(step)
+      return () => clearInterval(step)
+    }
   }, [])
 
   return (

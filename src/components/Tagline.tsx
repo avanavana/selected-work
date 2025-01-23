@@ -4,8 +4,9 @@ import { cn } from '@/lib/utils'
 import { colors } from '../../tailwind.config'
 
 const taglineSizes = {
-  small: { width: 200, height: 15, widthClass: 'w-[200px]', heightClass: 'h-[15px]', stroke: 1 },
   default: { width: 600, height: 45, widthClass: 'w-[600px]', heightClass: 'h-[45px]', stroke: 3 },
+  lg: { width: 600, height: 45, widthClass: 'w-[600px]', heightClass: 'h-[45px]', stroke: 3 },
+  sm: { width: 200, height: 15, widthClass: 'w-[200px]', heightClass: 'h-[15px]', stroke: 1 },
 } as const
 
 interface TaglineProps {

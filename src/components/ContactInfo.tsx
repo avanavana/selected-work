@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 
 import ContactDivider from '@/components/ContactDivider'
@@ -46,8 +46,8 @@ const contactInfoItemVariants = {
 const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = true, ...props }) => {
   const shouldReduceMotion = useReducedMotion()
   const { width: screenWidth } = useWindowSize()
-  const [ isMidSizeScreenOrSmaller, setIsMidSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.mid))
-  const [ isMinimumSizeScreenOrSmaller, setIsMinimumSizeScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.minimum))
+  const [ isMdScreenOrSmaller, setIsMdScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.md))
+  const [ isSmScreenOrSmaller, setIsSmScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.sm))
   const [ introComplete, setIntroComplete ] = useState<boolean>(false)
   const [ clampedValue, setClampedValue ] = useState<number>(100)
   const [ solidLogoClipPath, setSolidLogoClipPath ] = useState<string>(`polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)`)
@@ -89,25 +89,25 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
     } else {
       const introTimer = setTimeout(() => {
         setIntroComplete(true)
-      }, isMidSizeScreenOrSmaller ? 12500 : 17000)
+      }, isMdScreenOrSmaller ? 12500 : 17000)
 
       return () => clearTimeout(introTimer)
     }
   }, [])
 
-  useEffect(() => {
-    setIsMidSizeScreenOrSmaller(screenWidth <= extractNumber(screens.mid))
-    setIsMinimumSizeScreenOrSmaller(screenWidth <= extractNumber(screens.minimum))
+  useLayoutEffect(() => {
+    setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
+    setIsSmScreenOrSmaller(screenWidth <= extractNumber(screens.sm))
   }, [ screenWidth ])
 
   return (
-    <section id='info' className={cn('flex mid:block relative w-[calc(100%_-_76px)] maximum:w-full mx-normal maximum:mx-0 transition-[justify-content] gap-normal flex-col-reverse mid:!flex-row mid:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto mid:h-[70px] py-normal maximum:pb-0' : 'py-0', className)} {...props}>
+    <section id='info' className={cn('flex md:block relative w-[calc(100%_-_76px)] xl:w-full mx-normal xl:mx-0 transition-[justify-content] gap-normal flex-col-reverse md:!flex-row md:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto md:h-[70px] py-normal xl:pb-0' : 'py-0', className)} {...props}>
       {!shouldReduceMotion && (
         <motion.div
           id='logo-intro'
           className={cn('relative w-[600px] h-[144px]', showContactInfo ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2', { 'hidden': introComplete })}
-          initial={{ height: 144, width: 600, left: '50%', x: '-50%', scale: isMidSizeScreenOrSmaller ? 1 / 2 : 1 }}
-          animate={{ height: 212, width: isMidSizeScreenOrSmaller ? 600 : 200, left: isMidSizeScreenOrSmaller ? '50%' : -66.66, x: isMidSizeScreenOrSmaller ? '-50%' : 0, scale: 1 / 3 }}
+          initial={{ height: 144, width: 600, left: '50%', x: '-50%', scale: isMdScreenOrSmaller ? 1 / 2 : 1 }}
+          animate={{ height: 212, width: isMdScreenOrSmaller ? 600 : 200, left: isMdScreenOrSmaller ? '50%' : -66.66, x: isMdScreenOrSmaller ? '-50%' : 0, scale: 1 / 3 }}
           transition={{
             height: {
               delay: 9.5,
@@ -138,41 +138,70 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
         >
           {!introComplete && <Logo className='absolute left-0 top-0' />}
           <LogoOutlines className='absolute left-0 top-0' />
-          <LogoAscii className={cn('absolute left-0 top-0', { 'left-1/2 translate-y-1/2 -translate-x-1/2 scale-[2]': isMidSizeScreenOrSmaller })} />
-          <Tagline className={cn('absolute left-0', introComplete ? 'hidden bottom-auto top-0 maximum:top-auto maximum:bottom-full' : 'bottom-0 top-auto')} />
+          <LogoAscii className={cn('absolute left-0 top-0', { 'left-1/2 translate-y-1/2 -translate-x-1/2 scale-[2]': isMdScreenOrSmaller })} />
+          <Tagline className={cn('absolute left-0', introComplete ? 'hidden bottom-auto top-0 xl:top-auto xl:bottom-full' : 'bottom-0 top-auto')} />
         </motion.div>
       )}
-      {(shouldReduceMotion || introComplete) && (
-        <div id='logo' onMouseMove={handleMouseMoveLogo} onMouseLeave={handleMouseLeaveLogo} className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center mid:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}>
-          <Logo size='small' className='absolute top-0 left-0' style={{ clipPath: solidLogoClipPath }} />
+      {!shouldReduceMotion ? (introComplete && (
+        <div id='logo' onMouseMove={handleMouseMoveLogo} onMouseLeave={handleMouseLeaveLogo} className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center md:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}>
+          <Logo size='sm' className='absolute top-0 left-0' style={{ clipPath: solidLogoClipPath }} />
           <LogoAsciiSmall className='absolute top-0 left-0 text-gray-dark' style={{ clipPath: asciiLogoClipPath }} />
-          <Tagline size='small' animated={false} className='absolute bottom-0 left-0' />
+          <Tagline size='sm' animated={false} className='absolute bottom-0 left-0' />
         </div>
+      )) : (
+        <motion.div
+          id='logo'
+          className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center md:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}
+          initial='hidden'
+          whileHover='hover'
+        >
+          <motion.div
+            className='absolute top-0 left-0 pointer-events-none'
+            variants={{
+              hidden: { opacity: 1 },
+              hover: { opacity: 0 },
+            }}
+            transition={{ duration: 0.25 }}
+          >
+            <Logo size='sm' />
+          </motion.div>
+          <motion.div
+            className='absolute top-0 left-0 text-gray-dark pointer-events-none'
+            variants={{
+              hidden: { opacity: 0 },
+              hover: { opacity: 1 },
+            }}
+            transition={{ duration: 0.25 }}
+          >
+            <LogoAsciiSmall animated={false} />
+          </motion.div>
+          <Tagline size='sm' animated={false} className='absolute bottom-0 left-0' />
+        </motion.div>
       )}
       {showContactInfo && (
         <motion.div
           id='contact'
-          className={cn('flex flex-col minimum:flex-row justify-between items-center gap-normal minimum:gap-0 h-auto minimum:h-[108px] mid:!h-[70px] text-sm text-gray-medium [&_a]:transition-colors [&_a:hover]:text-gray-dark [&_>_div]:relative [&_>_div]:text-center [&_>_div]:minimum:text-left', introComplete ? 'border-b-2 mid:border-b-0 pb-normal mid:pb-0' : 'mid:absolute mid:top-1/2 mid:-translate-y-1/2 mid:right-0')}
-          initial={isMinimumSizeScreenOrSmaller ? 'hidden' : 'notAnimated'}
-          animate={isMinimumSizeScreenOrSmaller ? 'visible' : 'notAnimated'}
+          className={cn('flex flex-col sm:flex-row justify-between items-center gap-normal sm:gap-0 h-auto sm:h-[108px] md:!h-[70px] text-sm text-gray-medium [&_a]:transition-colors [&_a:hover]:text-gray-dark [&_>_div]:relative [&_>_div]:text-center [&_>_div]:sm:text-left', introComplete ? 'border-b-2 md:border-b-0 pb-normal md:pb-0' : 'md:absolute md:top-1/2 md:-translate-y-1/2 md:right-0')}
+          initial={isSmScreenOrSmaller ? 'hidden' : 'notAnimated'}
+          animate={isSmScreenOrSmaller ? 'visible' : 'notAnimated'}
           variants={contactInfoContainerVariants}
         >
-          <motion.div className='border-b-2 w-full pb-normal minimum:border-0 minimum:w-auto minimum:pb-0' variants={contactInfoItemVariants}>
+          <motion.div className='border-b-2 w-full pb-normal sm:border-0 sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
             <h3 className='text-gray-dark text-[0.98em] font-bold uppercase tracking-[3px]'><TypedText>Avana Vana</TypedText></h3>
             <TypedText as='p' delay={0.25}>Selected Work</TypedText>
             <TypedText as='p' delay={0.5}>{getCurrentQuarter()}</TypedText>
           </motion.div>
-          {!isMinimumSizeScreenOrSmaller && <ContactDivider {...(!introComplete && { delay: 3.5 })} />}
-          <motion.div className='border-b-2 w-full pb-normal minimum:border-0 minimum:w-auto minimum:pb-0' variants={contactInfoItemVariants}>
+          {!isSmScreenOrSmaller && <ContactDivider {...(!introComplete && { delay: 3.5 })} />}
+          <motion.div className='border-b-2 w-full pb-normal sm:border-0 sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
             <TypedText as='p' delay={0.75}>Senior Product Designer</TypedText>
             <TypedText as='p' delay={1}>&amp; Full-stack Developer</TypedText>
             <TypedText as='p' delay={1.25}>New York, NY</TypedText>
           </motion.div>
-          {!isMinimumSizeScreenOrSmaller && <ContactDivider {...(!introComplete && { delay: 4 })} />}
+          {!isSmScreenOrSmaller && <ContactDivider {...(!introComplete && { delay: 4 })} />}
           <motion.div variants={contactInfoItemVariants}>
-            <p className='flex items-center gap-1.5 justify-center minimum:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.5, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Email size={14} color={colors['gray-light']} /></motion.span><a className='cursor-pointer' onClick={handleClickEmailLink} tabIndex={6}><TypedText delay={1.5}>{'\u0061\u0076\u0061\u006e\u0061\u002e\u0076\u0061\u006e\u0061\u0040\u0070\u006d\u002e\u006d\u0065'}</TypedText></a></p>
-            <p className='flex items-center gap-1.5 justify-center minimum:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.75, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Link size={14} color={colors['gray-light']} /></motion.span><a href="https://www.avanavana.com" tabIndex={7}><TypedText delay={1.75}>www.avanavana.com</TypedText></a></p>
-            <p className='flex items-center gap-1.5 justify-center minimum:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 2, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><LinkedIn size={14} color={colors['gray-light']} /></motion.span><a href="https://www.linkedin.com/in/avanavana" tabIndex={8}><TypedText delay={2}>linkedin.com/in/avanavana</TypedText></a></p>
+            <p className='flex items-center gap-1.5 justify-center sm:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.5, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Email size={14} color={colors['gray-light']} /></motion.span><a className='cursor-pointer' onClick={handleClickEmailLink} tabIndex={6}><TypedText delay={1.5}>{'\u0061\u0076\u0061\u006e\u0061\u002e\u0076\u0061\u006e\u0061\u0040\u0070\u006d\u002e\u006d\u0065'}</TypedText></a></p>
+            <p className='flex items-center gap-1.5 justify-center sm:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.75, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Link size={14} color={colors['gray-light']} /></motion.span><a href="https://www.avanavana.com" tabIndex={7}><TypedText delay={1.75}>www.avanavana.com</TypedText></a></p>
+            <p className='flex items-center gap-1.5 justify-center sm:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 2, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><LinkedIn size={14} color={colors['gray-light']} /></motion.span><a href="https://www.linkedin.com/in/avanavana" tabIndex={8}><TypedText delay={2}>linkedin.com/in/avanavana</TypedText></a></p>
           </motion.div>
         </motion.div>
       )}
