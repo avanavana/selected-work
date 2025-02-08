@@ -92,7 +92,7 @@ interface LogoSvgProps {
 
 const LogoSvg: React.FC<LogoSvgProps> = ({ isMobile = false, size = 'default' }) => {
   const { resolvedTheme } = useTheme()
-  const svg = useLoader(SVGLoader, resolvedTheme === 'dark' ? '/src/assets/logo-dark.svg' : '/src/assets/logo.svg')
+  const svg = useLoader(SVGLoader, resolvedTheme === 'dark' ? '/images/logo-dark.svg' : '/images/logo.svg')
 
   return (
     <group position={isMobile && size !== 'sm' ? logoSizes.md.position : logoSizes[size].position} scale={isMobile && size !== 'sm' ? logoSizes.md.scale : logoSizes[size].scale}>
