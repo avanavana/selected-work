@@ -181,7 +181,8 @@ const Gallery: React.FC<GalleryProps> = ({
 
   const [ currentSlideIndex, setCurrentSlideIndex ] = useState<number>(() => {
     const storedIndex = localStorage.getItem('currentSlideIndex')
-    return (storedIndex !== null || storedIndex !== undefined) ? parseInt(storedIndex!, 10) : 0
+    const parsedIndex = storedIndex ? parseInt(storedIndex, 10) : 0
+    return isNaN(parsedIndex) || parsedIndex < 0 ? 0 : parsedIndex
   })
 
   const [ currentProjectDetails, setCurrentProjectDetails ] = useState<Project>(() => {
@@ -522,10 +523,18 @@ const Gallery: React.FC<GalleryProps> = ({
    */
 
   useEffect(() => {
-    const currentProjectId = projects[currentSlideIndex].substring(0, 4)
-    const details = data.details.find(({ id }: Project) => id === currentProjectId)!
-    setCurrentProjectDetails(details)
-  }, [ currentSlideIndex, categories ])
+    if (projects.length === 0) return
+
+    if (!projects[currentSlideIndex]) {
+      setCurrentSlideIndex(0)
+      return
+    }
+
+    const currentProjectId = projects[currentSlideIndex]?.substring(0, 4)
+    const details = data.details.find(({ id }: Project) => id === currentProjectId)
+
+    if (details) setCurrentProjectDetails(details)
+  }, [ categories, currentSlideIndex, projects ])
 
   /**
    *  Note: recaculate the project info modal's content height vs. its container height when the
