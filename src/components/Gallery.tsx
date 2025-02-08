@@ -142,16 +142,11 @@ const Gallery: React.FC<GalleryProps> = ({
   const infoModalWrapperRef = useRef<HTMLDivElement>(null)
   const infoModalHeaderRef = useRef<HTMLDivElement>(null)
   const infoModalBodyRef = useRef<HTMLDivElement>(null)
-  const [ currentSlideIndex, setCurrentSlideIndex ] = useState<number>(0)
-  const [ categories, setCategories ] = useState<string[]>(data.categories.map((category) => category.value))
-  const [ projects, setProjects ] = useState<string[]>(data.projects)
-  const [ filteredImageSources, setFilteredImageSources ] = useState<string[][]>(imageSources)
   const [ gallerySlidesMounted, setGallerySlidesMounted ] = useState<boolean>(false)
   const [ galleryControlsMounted, setGalleryControlsMounted ] = useState<boolean>(false)
   const [ galleryControlsVisible, setGalleryControlsVisible ] = useState<boolean>(false)
   const [ selectCategoriesOpen, setSelectCategoriesOpen ] = useState<boolean>(false)
   const [ selectCategoriesInfoModalOpen, setSelectCategoriesInfoModalOpen ] = useState<boolean>(false)
-  const [ currentProjectDetails, setCurrentProjectDetails ] = useState<Project>(data.details[0])
   const [ infoModalRequiresScroll, setInfoModalRequiresScroll ] = useState<boolean>(false)
   const wasPlayingBeforeResize = useRef<boolean>(true)
   const toasterRef = useRef<ToasterElement>(null)
@@ -163,6 +158,36 @@ const Gallery: React.FC<GalleryProps> = ({
   const calculatedHeight = galleryDimensions.width * aspectRatio
   const nextTheme = themeOptions[(themeOptions.indexOf(theme) + 1) % themeOptions.length]
   const { isFullScreen, toggleFullScreen } = useFullScreen(galleryRef)
+
+  /**
+   *  Note: retrieve user's selected categories, filtered projects, and last viewed project details from
+   *  local storage if they exist, otherwise use the default (all) categories and project details (first project)
+   */
+
+  const [ categories, setCategories ] = useState<string[]>(() => {
+    const storedCategories = localStorage.getItem('selectedCategories')
+    return storedCategories ? JSON.parse(storedCategories) : data.categories.map((category) => category.value)
+  })
+
+  const [ projects, setProjects ] = useState<string[]>(() => {
+    const storedProjects = localStorage.getItem('filteredProjects')
+    return storedProjects ? JSON.parse(storedProjects) : data.projects
+  })
+
+  const [ filteredImageSources, setFilteredImageSources ] = useState<string[][]>(() => {
+    const storedImages = localStorage.getItem('filteredImageSources')
+    return storedImages ? JSON.parse(storedImages) : imageSources
+  })
+
+  const [ currentSlideIndex, setCurrentSlideIndex ] = useState<number>(() => {
+    const storedIndex = localStorage.getItem('currentSlideIndex')
+    return (storedIndex !== null || storedIndex !== undefined) ? parseInt(storedIndex!, 10) : 0
+  })
+
+  const [ currentProjectDetails, setCurrentProjectDetails ] = useState<Project>(() => {
+    const storedProject = localStorage.getItem('currentProjectDetails')
+    return storedProject ? JSON.parse(storedProject) : data.details[0]
+  })
 
   /**
    *  Note: recalculates the height of content in the project info modal relative to the height of its container
@@ -359,7 +384,9 @@ const Gallery: React.FC<GalleryProps> = ({
 
   const switchProject = useCallback((emblaApi: EmblaCarouselType) => {
     if (emblaApi) {
-      setCurrentSlideIndex(emblaApi.slidesInView()[0])
+      const newIndex = emblaApi.slidesInView()[0]
+      setCurrentSlideIndex(newIndex)
+      localStorage.setItem('currentSlideIndex', newIndex.toString())
 
       if ((infoModalOpen && !isSmScreenOrSmaller) || (infoModalOpen && isSmScreenOrSmaller && showMobileProjectInfo)) {
         setTimeout(() => { updateInfoModalDimensions() }, 10)
@@ -370,6 +397,22 @@ const Gallery: React.FC<GalleryProps> = ({
   useEffect(() => {
     if (emblaApi) emblaApi.on('slidesInView', switchProject)
   }, [ emblaApi ])
+
+  /**
+   *  Note: save user's selected categories and last viewed project details to local storage on change
+   */
+
+  useEffect(() => {
+    localStorage.setItem('currentSlideIndex', currentSlideIndex.toString())
+  }, [ currentSlideIndex ])
+
+  useEffect(() => {
+    localStorage.setItem('selectedCategories', JSON.stringify(categories))
+  }, [ categories ])
+
+  useEffect(() => {
+    localStorage.setItem('currentProjectDetails', JSON.stringify(currentProjectDetails))
+  }, [ currentProjectDetails ])
 
   /**
    *  Note: calculate the viewport width and determine which versions of the project info modal should be rendered
@@ -394,8 +437,22 @@ const Gallery: React.FC<GalleryProps> = ({
 
   useEffect(() => {
     if (emblaApi) {
-      setProjects(data.projects.filter((p) => categories.map((c: string) => projectCategoriesMap[c]).includes(p.substring(0, 2))))
-      setFilteredImageSources(imageSources.filter((sources) => categories.map((c: string) => projectCategoriesMap[c]).some((c: string) => sources.some((src) => new RegExp(`image-${c}\\d{2}`).test(src)))))
+      const updatedProjects = data.projects.filter((p) =>
+        categories.map((c: string) => projectCategoriesMap[c]).includes(p.substring(0, 2))
+      )
+
+      const updatedImageSources = imageSources.filter((sources) =>
+        categories
+          .map((c: string) => projectCategoriesMap[c])
+          .some((c: string) => sources.some((src) => new RegExp(`image-${c}\\d{2}`).test(src)))
+      )
+
+      setProjects(updatedProjects)
+      setFilteredImageSources(updatedImageSources)
+
+      localStorage.setItem('filteredProjects', JSON.stringify(updatedProjects))
+      localStorage.setItem('filteredImageSources', JSON.stringify(updatedImageSources))
+
       emblaApi.reInit()
 
       if (infoModalOpen && !shouldReduceMotion) {
