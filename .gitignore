@@ -20,6 +20,8 @@ dist-ssr
 # misc
 .DS_Store
 *.pem
+/.vscode
+/.million
 
 # debug
 npm-debug.log*

@@ -5,7 +5,7 @@ interface WindowDimensions {
   height: number
 }
 
-const useWindowSize = () => {
+const useWindowSize = (onChange?: (width: number, height: number) => void) => {
   const [ dimensions, setDimensions] = useState<WindowDimensions>({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -13,10 +13,13 @@ const useWindowSize = () => {
 
   useLayoutEffect(() => {
     const handleResize = () => {
-      setDimensions({
+      const newDimensions = {
         width: window.innerWidth,
-        height: window.innerHeight,
-      })
+        height: window.innerHeight
+      }
+
+      setDimensions(newDimensions)
+      if (onChange) onChange(newDimensions.width, newDimensions.height)
     }
 
     handleResize()

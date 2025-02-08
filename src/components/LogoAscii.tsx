@@ -1,15 +1,22 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { OrthographicCamera, AsciiRenderer } from '@react-three/drei'
 import { SpotLight } from 'three'
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
 import { animate, motion, useMotionValue } from 'framer-motion'
 
+import { useTheme } from '@/context/ThemeContext'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber } from '@/lib/utils'
 import { screens } from '../../tailwind.config'
 
 import type { ShapePath } from 'three'
+
+/**
+ *  Note: to get a "matrix"-like text effect in the AsciiRenderer, we can take a spotlight, shine it at the logo SVG,
+ *  and then animate the position of the spotlight so that different ASCII characters are rendered as the moving
+ *  spotlight changes the value/brightness of particular regions on the logo SVG with material applied.
+ */
 
 const MovingLight = () => {
   const lightRef = useRef<SpotLight>(null)
@@ -76,22 +83,30 @@ interface LogoSvgProps {
   size?: keyof typeof logoSizes
 }
 
+/**
+ *  Note: We load the logo SVG with Three.js' SVGLoader and R3F's useLoader() hook, convert the SVG
+ *  paths to a shapeGeometry, and then use that geometry to create a mesh with a meshStandardMaterial,
+ *  which has "metalness" and "roughness" properties that make it susceptible to changing lighting,
+ *  and therefore more dramatic when the whole thing is rendered by the AsciiRenderer.
+ */
+
 const LogoSvg: React.FC<LogoSvgProps> = ({ isMobile = false, size = 'default' }) => {
-  const svg = useLoader(SVGLoader, '/src/assets/logo.svg')
+  const { resolvedTheme } = useTheme()
+  const svg = useLoader(SVGLoader, resolvedTheme === 'dark' ? '/src/assets/logo-dark.svg' : '/src/assets/logo.svg')
 
   return (
     <group position={isMobile && size !== 'sm' ? logoSizes.md.position : logoSizes[size].position} scale={isMobile && size !== 'sm' ? logoSizes.md.scale : logoSizes[size].scale}>
       {svg.paths.map((path: ShapePath, i) => (
-        <mesh key={i} position={[0, 0, 0]}>
+        <mesh key={i} position={[ 0, 0, 0 ]}>
           <shapeGeometry
-            args={[path.toShapes(true)[0]]}
+            args={[ path.toShapes(true)[0] ]}
             ref={(geometry) => {
               if (geometry) geometry.computeVertexNormals()
             }}
           />
           <meshStandardMaterial
             attach='material'
-            color='#222225'
+            color={0x222225}
             roughness={0.6}
             metalness={1}
           />
@@ -108,6 +123,7 @@ interface LogoAsciiProps {
 }
 
 const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', style, ...props }) => {
+  const { resolvedTheme } = useTheme()
   const { width: screenWidth } = useWindowSize()
   const [ isMdScreenOrSmaller, setIsMdScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.md))
 
@@ -117,19 +133,19 @@ const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', styl
 
   return (
     <motion.div
-      className={cn('relative overflow-hidden', className)}
+      className={cn('relative', className)}
       {...(size !== 'sm' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)', filter: 'blur(32px)' }})}
       {...(size !== 'sm' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)', filter: 'blur(0px)' }})}
       {...(size !== 'sm' && { transition: { clipPath: {delay: 5, duration: 4, ease: 'easeInOut' }, filter: { duration: 2, ease: 'easeOut' }}})}
       {...(style && { style })}
       {...props}
     >
-      <Canvas className={cn(isMdScreenOrSmaller && size !== 'sm' ? logoSizes.md.canvasClassName : logoSizes[size].canvasClassName)}>
-        <OrthographicCamera makeDefault position={[0, 0, 1]} zoom={100} />
+      <Canvas className={isMdScreenOrSmaller && size !== 'sm' ? logoSizes.md.canvasClassName : logoSizes[size].canvasClassName}>
+        <OrthographicCamera makeDefault position={[ 0, 0, 1 ]} zoom={100} />
         <MovingLight />
         <LogoSvg isMobile={isMdScreenOrSmaller} size={size} />
         <AsciiRenderer
-          fgColor='#222225'
+          fgColor={resolvedTheme === 'dark' ? '#ffffff' : '#222225'}
           bgColor='transparent'
           invert={false}
           characters={` .,;-<+|[}&="@#`}

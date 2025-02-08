@@ -1,6 +1,8 @@
 import { Children, isValidElement } from 'react'
+import { z } from 'zod'
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import parsePhoneNumber from 'libphonenumber-js'
 
 import { rawHeightLimits } from '../../tailwind.config'
 
@@ -66,3 +68,66 @@ export function createFileDownload(filename: string) {
   link.click()
   document.body.removeChild(link)
 }
+
+export function generateImageSources(images: string[]): string[][] {
+  const BASE_URL = import.meta.env.VITE_CDN_URL
+
+  return images.map((id) => [
+    `${BASE_URL}/work/image-${id}.webp`,
+    `${BASE_URL}/work/png/image-${id}.png`,
+    `${BASE_URL}/work/sm/image-${id}.webp`,
+    `${BASE_URL}/work/sm/png/image-${id}.png`,
+    `${BASE_URL}/work/md/image-${id}.webp`,
+    `${BASE_URL}/work/md/png/image-${id}.png`,
+    `${BASE_URL}/work/lg/image-${id}.webp`,
+    `${BASE_URL}/work/lg/png/image-${id}.png`
+  ])
+}
+
+function getOptimalSource(sources: string[], isWebPSupported: boolean): string | null {
+  if (!sources.length) return null
+
+  const format = isWebPSupported ? 'webp' : 'png'
+
+  return (
+    sources.find((src) => src.includes(`lg/${format}`)) ||
+    sources.find((src) => src.includes(`md/${format}`)) ||
+    sources.find((src) => src.includes(`sm/${format}`)) ||
+    sources.find((src) => src.includes(`/work/image-`) && src.endsWith(`.${format}`)) ||
+    sources.find((src) => src.includes(`png`)) ||
+    sources[0]
+  )
+}
+
+export function preloadImage(cache: Map<string, Promise<void>>, sources: string[], isWebPSupported: boolean): Promise<void> {
+  const src = getOptimalSource(sources, isWebPSupported)
+  if (!src) return Promise.resolve()
+  if (cache.has(src)) return cache.get(src)!
+
+  const promise = new Promise<void>((resolve, reject) => {
+    const img = new Image()
+    img.src = src
+    img.onload = () => resolve()
+    img.onerror = reject
+  })
+
+  cache.set(src, promise)
+  return promise
+}
+
+export const zPhoneNumber = z
+  .string()
+  .trim()
+  .transform((value) => (value === '' ? value : value.trim()))
+  .refine((value) => {
+    if (value === '') return true
+    const phoneNumber = parsePhoneNumber(value, { defaultCountry: 'US' })
+    return phoneNumber?.isValid()
+  }, {
+    message: 'Invalid phone number'
+  })
+  .transform((value) => {
+    if (value === '') return value
+    const phoneNumber = parsePhoneNumber(value, { defaultCountry: 'US' })
+    return phoneNumber ? phoneNumber.formatInternational() : value
+  })

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import logoAnimationData from '@/data/logo'
 
@@ -18,7 +18,7 @@ interface LogoAsciiSmallProps {
 }
 
 const LogoAsciiSmall: React.FC<LogoAsciiSmallProps> = ({ animated = true, className, style }) => {
-  const [frames, setFrames] = useState<(string | null)[][]>(logoAnimationData[0])
+  const [ frames, setFrames ] = useState<(string | null)[][]>(logoAnimationData[0])
   const frameRef = useRef(0)
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const LogoAsciiSmall: React.FC<LogoAsciiSmallProps> = ({ animated = true, classN
 
       return () => clearInterval(step)
     }
-  }, [])
+  }, [ animated ])
 
   return (
     <svg

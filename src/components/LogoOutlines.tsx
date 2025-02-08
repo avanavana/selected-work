@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { colors } from '../../tailwind.config'
@@ -15,7 +15,7 @@ const letterSegments = [
   'M111.045 4.38354L191.005 140.067',
   'M191.005 140.067L256.203 29.5568',
   'M256.203 29.5568L263.45 41.1558',
-  'M263.451 41.1558L278.554 15.537', 
+  'M263.451 41.1558L278.554 15.537',
   'M278.554 15.537L271.946 4.38354',
   'M271.946 4.38354H241.292',
   'M241.292 4.38354L191.049 89.6014',
@@ -93,9 +93,10 @@ const crosshairs = [
 
 interface LogoOutlinesProps {
   className?: string
+  isDarkMode?: boolean
 }
 
-const LogoOutlines: React.FC<LogoOutlinesProps> = ({ className, ...props }) => {
+const LogoOutlines: React.FC<LogoOutlinesProps> = ({ className, isDarkMode = false, ...props }) => {
   const [ segmentDurations, setSegmentDurations ] = useState<number[]>([])
   const pathRefs = useRef<(SVGPathElement | null)[]>([])
 
@@ -115,17 +116,17 @@ const LogoOutlines: React.FC<LogoOutlinesProps> = ({ className, ...props }) => {
 
   return (
     <motion.div className={className} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ delay: 10, duration: 2 }} {...props}>
-      <svg width="600" height="144" viewBox="0 0 600 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width='600' height='144' viewBox='0 0 600 144' fill='none' xmlns='http://www.w3.org/2000/svg'>
         {letterSegments.map((path, i) => (
           <motion.path key={`segment-${i}`}
             ref={(ref) => pathRefs.current[i] = ref}
             d={path}
-            stroke={colors['gray-light']}
+            stroke={isDarkMode ? colors['gray-600'] : colors['gray-300']}
             strokeWidth={0.5}
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
             transition={{
-              delay: ((i + 1) * (segmentDurations[i] / 2 || 0.1)) + 5, 
+              delay: ((i + 1) * (segmentDurations[i] / 2 || 0.1)) + 5,
               duration: segmentDurations[i] || 0.2
             }}
           />
@@ -133,7 +134,7 @@ const LogoOutlines: React.FC<LogoOutlinesProps> = ({ className, ...props }) => {
         {crosshairs.map((path, i) => (
           <motion.path key={`crosshair-${i}`}
             d={path}
-            stroke={colors['gray-dark']}
+            stroke={isDarkMode ? colors['white'] : colors['gray-800']}
             strokeWidth={0.5}
             initial={{ scale: 0.01 }}
             animate={{ scale: 1 }}

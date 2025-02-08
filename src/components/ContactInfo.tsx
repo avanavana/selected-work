@@ -1,37 +1,20 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
 import ContactDivider from '@/components/ContactDivider'
 import { Email, Link, LinkedIn } from '@/components/Icons'
+import InteractiveLogo from '@/components/InteractiveLogo'
 import Logo from '@/components/Logo'
 import LogoAscii from '@/components/LogoAscii'
-import LogoAsciiSmall from '@/components/LogoAsciiSmall'
 import LogoOutlines from '@/components/LogoOutlines'
 import Tagline from '@/components/Tagline'
 import TypedText from '@/components/TypedText'
 
+import { useTheme } from '@/context/ThemeContext'
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber,getCurrentQuarter } from '@/lib/utils'
-import { colors, screens } from '../../tailwind.config'
-
-interface ContactInfoProps {
-  className?: string
-  showContactInfo?: boolean
-}
-
-const contactInfoContainerVariants = {
-  hidden: { height: 70 },
-  visible: {
-    height: 376,
-    transition: {
-      duration: 2,
-      staggerChildren: 0.25
-    }
-  },
-  notAnimated: {
-    height: 'auto'
-  }
-}
+import { screens } from '../../tailwind.config'
 
 const contactInfoItemVariants = {
   hidden: { opacity: 0, y: -100 },
@@ -43,45 +26,36 @@ const contactInfoItemVariants = {
   notAnimated: { opacity: 1, y: 0 }
 }
 
-const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = true, ...props }) => {
-  const shouldReduceMotion = useReducedMotion()
+interface ContactInfoItem {
+  heading?: boolean
+  href?: string
+  Icon?: typeof Email | typeof Link | typeof LinkedIn
+  onClick?: () => void
+  text: string
+}
+
+interface ContactInfoProps {
+  className?: string
+  handleOpenContactForm: () => void
+  requiresScroll: boolean
+  shouldAnimate: boolean
+  showContactInfo?: boolean
+}
+
+const ContactInfo: React.FC<ContactInfoProps> = ({
+  className,
+  handleOpenContactForm,
+  requiresScroll,
+  shouldAnimate,
+  showContactInfo = true,
+  ...props
+}) => {
+  const { resolvedTheme } = useTheme()
+  const shouldReduceMotion = usePrefersReducedMotion()
   const { width: screenWidth } = useWindowSize()
   const [ isMdScreenOrSmaller, setIsMdScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.md))
-  const [ isSmScreenOrSmaller, setIsSmScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.sm))
+  const [ isSmScreenOrSmaller, setIsSmScreenOrSmaller ] = useState<boolean>(screenWidth < extractNumber(screens.sm))
   const [ introComplete, setIntroComplete ] = useState<boolean>(false)
-  const [ clampedValue, setClampedValue ] = useState<number>(100)
-  const [ solidLogoClipPath, setSolidLogoClipPath ] = useState<string>(`polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)`)
-  const [ asciiLogoClipPath, setAsciiLogoClipPath ] = useState<string>(`polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)`)
-
-  const handleMouseMoveLogo = ({ clientX, currentTarget }: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const { width, left } = currentTarget.getBoundingClientRect()
-    setClampedValue(Math.min(Math.max(((clientX - left) / width) * 100, -14), 100))
-    setSolidLogoClipPath(`polygon(${clampedValue + 14}% 0%, ${clampedValue}% 100%, 0% 100%, 0% 0%)`)
-    setAsciiLogoClipPath(`polygon(100% 0%, 100% 100%, ${clampedValue}% 100%, ${clampedValue + 14}% 0%)`)
-  }
-
-  const handleMouseLeaveLogo = () => {
-    const duration = 250
-    const distance = 100 - clampedValue
-    const startTime = performance.now()
-
-    const step = (currentTime: number) => {
-      const elapsedTime = currentTime - startTime
-      const progress = Math.min(elapsedTime / (duration * (distance / 100)), 1)
-      const newValue = clampedValue + progress * distance
-      setClampedValue(newValue)
-      setSolidLogoClipPath(`polygon(${newValue + 14}% 0%, ${newValue}% 100%, 0% 100%, 0% 0%)`)
-      setAsciiLogoClipPath(`polygon(100% 0%, 100% 100%, ${newValue}% 100%, ${newValue + 14}% 0%)`)
-      if (progress < 1) requestAnimationFrame(step)
-    }
-
-    requestAnimationFrame(step);
-  }
-
-  const handleClickEmailLink = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    event.preventDefault()
-    window.open('mailto:avana.vana@pm.me', '_blank', 'noopener,noreferrer')
-  }
 
   useEffect(() => {
     if (shouldReduceMotion) {
@@ -97,11 +71,38 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
 
   useLayoutEffect(() => {
     setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
-    setIsSmScreenOrSmaller(screenWidth <= extractNumber(screens.sm))
+    setIsSmScreenOrSmaller(screenWidth < extractNumber(screens.sm))
   }, [ screenWidth ])
 
+  const content: ContactInfoItem[] = [
+    {
+      heading: true,
+      text: 'Avana Vana'
+    },
+    { text: 'Selected Work' },
+    { text: getCurrentQuarter() },
+    { text: 'Senior Product Designer' },
+    { text: '& Full-stack Developer' },
+    { text: 'New York, NY' },
+    {
+      Icon: Email,
+      onClick: () => handleOpenContactForm(),
+      text: 'Get in touch'
+    },
+    {
+      href: 'https://www.avanavana.com',
+      Icon: Link,
+      text: 'www.avanavana.com'
+    },
+    {
+      href: 'https://www.linkedin.com/in/avanavana',
+      Icon: LinkedIn,
+      text: 'linkedin.com/in/avanavana'
+    }
+  ]
+
   return (
-    <section id='info' className={cn('flex md:block relative w-[calc(100%_-_76px)] xl:w-full mx-normal xl:mx-0 transition-[justify-content] gap-normal flex-col-reverse md:!flex-row md:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto md:h-[70px] py-normal xl:pb-0' : 'py-0', className)} {...props}>
+    <section id='info' className={cn('flex md:block relative w-[calc(100%_-_76px)] max:w-full mx-normal max:mx-0 transition-[justify-content] gap-normal flex-col-reverse md:!flex-row md:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto md:h-[70px] py-normal max:pb-0' : 'py-0', { 'pb-0': !requiresScroll }, className)} {...props}>
       {!shouldReduceMotion && (
         <motion.div
           id='logo-intro'
@@ -136,74 +137,108 @@ const ContactInfo: React.FC<ContactInfoProps> = ({ className, showContactInfo = 
             }
           }}
         >
-          {!introComplete && <Logo className='absolute left-0 top-0' />}
-          <LogoOutlines className='absolute left-0 top-0' />
-          <LogoAscii className={cn('absolute left-0 top-0', { 'left-1/2 translate-y-1/2 -translate-x-1/2 scale-[2]': isMdScreenOrSmaller })} />
-          <Tagline className={cn('absolute left-0', introComplete ? 'hidden bottom-auto top-0 xl:top-auto xl:bottom-full' : 'bottom-0 top-auto')} />
+          {!introComplete && <Logo className={cn('logo absolute left-0 top-0', resolvedTheme === 'dark' ? 'text-white' : 'text-gray-800')} />}
+          <LogoOutlines isDarkMode={resolvedTheme === 'dark'} className={cn('logo-outlines absolute left-0', introComplete ? 'top-0' : 'top-0')} />
+          <LogoAscii className={cn('logo-ascii absolute left-0 top-0', { 'left-1/2 translate-y-1/2 -translate-x-1/2 scale-[2]': isMdScreenOrSmaller })} />
+          <Tagline className={cn('tagline absolute left-0', introComplete ? 'hidden bottom-auto top-0 max:top-auto max:bottom-full' : 'bottom-0 top-auto')} />
         </motion.div>
       )}
-      {!shouldReduceMotion ? (introComplete && (
-        <div id='logo' onMouseMove={handleMouseMoveLogo} onMouseLeave={handleMouseLeaveLogo} className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center md:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}>
-          <Logo size='sm' className='absolute top-0 left-0' style={{ clipPath: solidLogoClipPath }} />
-          <LogoAsciiSmall className='absolute top-0 left-0 text-gray-dark' style={{ clipPath: asciiLogoClipPath }} />
-          <Tagline size='sm' animated={false} className='absolute bottom-0 left-0' />
-        </div>
-      )) : (
-        <motion.div
-          id='logo'
-          className={cn('w-[200px] h-[70px] pb-[22px]', introComplete ? 'relative self-center md:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}
-          initial='hidden'
-          whileHover='hover'
-        >
-          <motion.div
-            className='absolute top-0 left-0 pointer-events-none'
-            variants={{
-              hidden: { opacity: 1 },
-              hover: { opacity: 0 },
-            }}
-            transition={{ duration: 0.25 }}
-          >
-            <Logo size='sm' />
-          </motion.div>
-          <motion.div
-            className='absolute top-0 left-0 text-gray-dark pointer-events-none'
-            variants={{
-              hidden: { opacity: 0 },
-              hover: { opacity: 1 },
-            }}
-            transition={{ duration: 0.25 }}
-          >
-            <LogoAsciiSmall animated={false} />
-          </motion.div>
-          <Tagline size='sm' animated={false} className='absolute bottom-0 left-0' />
-        </motion.div>
-      )}
+      <InteractiveLogo
+        isDarkMode={resolvedTheme === 'dark'}
+        className={cn('interactive-logo', introComplete ? 'self-center md:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}
+        shouldReduceMotion={shouldReduceMotion}
+        visible={introComplete}
+      />
       {showContactInfo && (
-        <motion.div
+        <div
           id='contact'
-          className={cn('flex flex-col sm:flex-row justify-between items-center gap-normal sm:gap-0 h-auto sm:h-[108px] md:!h-[70px] text-sm text-gray-medium [&_a]:transition-colors [&_a:hover]:text-gray-dark [&_>_div]:relative [&_>_div]:text-center [&_>_div]:sm:text-left', introComplete ? 'border-b-2 md:border-b-0 pb-normal md:pb-0' : 'md:absolute md:top-1/2 md:-translate-y-1/2 md:right-0')}
-          initial={isSmScreenOrSmaller ? 'hidden' : 'notAnimated'}
-          animate={isSmScreenOrSmaller ? 'visible' : 'notAnimated'}
-          variants={contactInfoContainerVariants}
+          className={cn('relative flex flex-col sm:flex-row justify-between items-center gap-normal sm:gap-0 h-auto sm:h-[108px] md:!h-[70px] !text-mobile-menu leading-mobile-menu sm:!text-sm sm:leading-none [&_a_svg]:size-mobile-menu-icon [&_a_svg]:sm:size-3.5 text-gray-600 dark:text-gray-500 [&_a_svg]:transition-all [&_a_svg]:text-gray-300 dark:[&_a_svg]:text-gray-600 dark:[&_a:hover_svg]:text-white [&_a:hover_svg]:text-gray-800 [&_a]:transition-colors [&_a:hover]:text-gray-800 dark:[&_a:hover]:text-white [&_>_div]:relative [&_>_div]:text-center [&_>_div]:sm:text-left', introComplete ? 'sm:pb-normal sm:after:absolute sm:after:bottom-0 sm:after:content-[""] sm:after:block sm:after:w-0 sm:after:h-[2px] sm:after:bg-border sm:after:animate-center-divider md:after:hidden md:pb-0' : 'md:absolute md:top-1/2 md:-translate-y-1/2 md:right-0')}
         >
-          <motion.div className='border-b-2 w-full pb-normal sm:border-0 sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
-            <h3 className='text-gray-dark text-[0.98em] font-bold uppercase tracking-[3px]'><TypedText>Avana Vana</TypedText></h3>
-            <TypedText as='p' delay={0.25}>Selected Work</TypedText>
-            <TypedText as='p' delay={0.5}>{getCurrentQuarter()}</TypedText>
+          <motion.div className='w-full sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
+            {content.slice(0, 3).map(({ heading, text }, i) => (
+              heading ? (
+                <h3 key={`contact-info-item-col-1-${i}`} className='text-gray-800 dark:text-white text-[0.98em] font-bold uppercase tracking-[3px]'>
+                  {shouldReduceMotion ? <span>{text}</span> : <TypedText delay={i * 0.25}>{text}</TypedText>}
+                </h3>
+              ) : (
+                shouldReduceMotion ? <p key={`contact-info-item-col-1-${i}`}>{text}</p> : <TypedText key={`contact-info-item-col-1-${i}`} as='p' delay={i * 0.25}>{text}</TypedText>
+              )
+            ))}
           </motion.div>
-          {!isSmScreenOrSmaller && <ContactDivider {...(!introComplete && { delay: 3.5 })} />}
-          <motion.div className='border-b-2 w-full pb-normal sm:border-0 sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
-            <TypedText as='p' delay={0.75}>Senior Product Designer</TypedText>
-            <TypedText as='p' delay={1}>&amp; Full-stack Developer</TypedText>
-            <TypedText as='p' delay={1.25}>New York, NY</TypedText>
+          {isSmScreenOrSmaller ? (
+            <motion.div
+              className='h-0.5 bg-border mx-auto'
+              initial={{ width: 0 }}
+              animate={{ width: '100%' }}
+              transition={{
+                delay: 0.75,
+                duration: 0.5,
+                ease: 'easeInOut'
+              }}
+            />
+          ) : (
+            <ContactDivider delay={3.5} shouldAnimate={shouldAnimate} />
+          )}
+          <motion.div className='w-full sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
+            {content.slice(3, 6).map(({ text }, i) => (
+              shouldReduceMotion ? <p key={`contact-info-item-col-2-${i}`}>{text}</p> : <TypedText key={`contact-info-item-col-2-${i}`} as='p' delay={(i + 3) * 0.25}>{text}</TypedText>
+            ))}
           </motion.div>
-          {!isSmScreenOrSmaller && <ContactDivider {...(!introComplete && { delay: 4 })} />}
+          {isSmScreenOrSmaller ? (
+            <motion.div
+              className='h-0.5 bg-border mx-auto'
+              initial={{ width: 0 }}
+              animate={{ width: '100%' }}
+              transition={{
+                delay: 1.25,
+                duration: 0.5,
+                ease: 'easeInOut'
+              }}
+            />
+          ) : (
+            <ContactDivider delay={4} shouldAnimate={shouldAnimate} />
+          )}
           <motion.div variants={contactInfoItemVariants}>
-            <p className='flex items-center gap-1.5 justify-center sm:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.5, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Email size={14} color={colors['gray-light']} /></motion.span><a className='cursor-pointer' onClick={handleClickEmailLink} tabIndex={6}><TypedText delay={1.5}>{'\u0061\u0076\u0061\u006e\u0061\u002e\u0076\u0061\u006e\u0061\u0040\u0070\u006d\u002e\u006d\u0065'}</TypedText></a></p>
-            <p className='flex items-center gap-1.5 justify-center sm:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 1.75, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><Link size={14} color={colors['gray-light']} /></motion.span><a href="https://www.avanavana.com" tabIndex={7}><TypedText delay={1.75}>www.avanavana.com</TypedText></a></p>
-            <p className='flex items-center gap-1.5 justify-center sm:justify-start'><motion.span initial={{ scale: 0.01 }} animate={{ scale: 1 }} transition={{ delay: 2, duration: 0.3, type: 'spring', stiffness: 500, damping: 20 }}><LinkedIn size={14} color={colors['gray-light']} /></motion.span><a href="https://www.linkedin.com/in/avanavana" tabIndex={8}><TypedText delay={2}>linkedin.com/in/avanavana</TypedText></a></p>
+            {content.slice(-3).map(({ href, Icon, onClick, text }, i) => (
+              <a
+                key={`contact-info-item-${i}`}
+                className='flex items-center gap-mobile-menu-gap sm:gap-1.5 justify-center sm:justify-start cursor-pointer group'
+                {...(href && { href, target: '_blank' })}
+                {...(onClick && { onClick })}
+              >
+                {Icon && (
+                  <motion.span
+                    className='contact-info-icon group-hover:motion-safe:animate-contact-item-hover'
+                    initial={{ opacity: 0, scale: 0.01 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      delay: (i + 6) * 0.25,
+                      duration: 0.3,
+                      type: 'spring',
+                      stiffness: 500,
+                      damping: 20
+                    }}
+                  >
+                    <Icon size={14} />
+                  </motion.span>
+                )}
+                {shouldReduceMotion ? <span>{text}</span> : <TypedText delay={(i + 6) * 0.25}>{text}</TypedText>}
+              </a>
+            ))}
           </motion.div>
-        </motion.div>
+          {isSmScreenOrSmaller && (
+            <motion.div
+              className='h-0.5 bg-border mx-auto'
+              initial={{ width: 0 }}
+              animate={{ width: '100%' }}
+              transition={{
+                delay: 2,
+                duration: 0.5,
+                ease: 'easeInOut'
+              }}
+            />
+          )}
+        </div>
       )}
     </section>
   )
