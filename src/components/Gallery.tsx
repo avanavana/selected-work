@@ -725,7 +725,6 @@ const Gallery: React.FC<GalleryProps> = ({
                           className={cn('w-full', { 'cursor-pointer': isSmScreenOrSmaller })}
                           src={fallback}
                           alt={data.details.find((project: Project) => project.id === imageProjectId)!.title}
-                          {...(i > 2 && { loading: 'lazy' })}
                           {...(isSmScreenOrSmaller && { onClick: handleOpenInfoModal })}
                         />
                       </picture>
