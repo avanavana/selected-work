@@ -80,7 +80,7 @@ const App: React.FC = () => {
     setShouldAnimateContactInfo(true)
     const duration = stopTimer()
     // @ts-ignore
-    plausible('intro-skipped', { props: { duration } })
+    plausible('intro-skipped', { props: { 'intro-watch-duration': duration }})
   }
 
   useDeviceOrientation(handlePrematureScreenChange)
@@ -112,6 +112,8 @@ const App: React.FC = () => {
       const slidesTimer = setTimeout(() => {
         setSlidesMounted(true)
         stopTimer()
+        // @ts-ignore
+        plausible('intro-skipped', { props: { 'intro-watch-duration': null }})
       }, isMdScreenOrSmaller ? 12500 : 17000)
 
       const animateContactInfoTimer = setTimeout(() => {
