@@ -346,7 +346,7 @@ const Gallery: React.FC<GalleryProps> = ({
 
     setInfoModalOpen(true)
     // @ts-ignore
-    plausible('info-modal-opened', { props: { source } })
+    plausible('info-modal-opened', { props: { 'info-modal-source': source } })
     window.scrollTo({ top: 0, behavior: 'smooth' })
     const body = document.querySelector('body')
     setTimeout(() => { if (body) body.style.pointerEvents = 'unset' }, 10)
@@ -420,7 +420,7 @@ const Gallery: React.FC<GalleryProps> = ({
   useEffect(() => {
     localStorage.setItem('selectedCategories', JSON.stringify(categories))
     // @ts-ignore
-    plausible('projects-filtered', { props: { 'web': categories.includes('web/interactive'), '3d': categories.includes('3d/environmental'), 'print': categories.includes('print/illustration') }})
+    plausible('project-filters', { props: { filters: categories.map((c) => projectCategoriesMap[c]).join('-') }})
   }, [ categories ])
 
   useEffect(() => {
