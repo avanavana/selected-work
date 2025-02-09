@@ -19,7 +19,7 @@ const useFullScreen = (ref: React.RefObject<HTMLDivElement>) => {
     if (!ref.current) return
 
     // @ts-ignore
-    plausible('fullscreen-requested')
+    plausible('gallery-fullscreen-requested')
 
     if (ref.current.requestFullscreen) {
       ref.current.requestFullscreen()

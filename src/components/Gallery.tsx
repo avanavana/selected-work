@@ -420,7 +420,7 @@ const Gallery: React.FC<GalleryProps> = ({
   useEffect(() => {
     localStorage.setItem('selectedCategories', JSON.stringify(categories))
     // @ts-ignore
-    plausible('project-filters', { props: { filters: categories.map((c) => projectCategoriesMap[c]).join('-') }})
+    plausible('projects-filtered', { props: { filters: categories.map((c) => projectCategoriesMap[c]).join('-') }})
   }, [ categories ])
 
   useEffect(() => {
