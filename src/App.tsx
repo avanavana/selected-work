@@ -14,6 +14,7 @@ import { useDetectWebPSupport } from '@/hooks/useDetectWebPSupport'
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useImagePreloader } from '@/hooks/useImagePreloader'
+import { useTimer } from '@/hooks/useTimer'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber, generateImageSources } from '@/lib/utils'
 import { height, width, screens, spacing } from '../tailwind.config'
@@ -30,6 +31,7 @@ const App: React.FC = () => {
   const shouldReduceMotion = useReducedMotion()
   const { width: screenWidth, height: screenHeight } = useWindowSize()
   const { ref: wrapperRef, dimensions: wrapperDimensions } = useDimensions<HTMLElement>()
+  const { startTimer, stopTimer } = useTimer()
   const [ isMdScreenOrSmaller, setIsMdScreenOrSmaller ] = useState<boolean>(screenWidth <= extractNumber(screens.md))
   const [ hasFlatAspectRatio, setHasFlatAspectRatio ] = useState<boolean>(screenWidth / screenHeight > idealAspectRatio)
   const [ contactInfoMounted, setContactInfoMounted ] = useState<boolean>(false)
@@ -48,6 +50,8 @@ const App: React.FC = () => {
 
   const handleOpenContactForm = () => {
     setContactFormOpen(true)
+    // @ts-ignore
+    plausible('contact-form-opened')
   }
 
   const handleCloseContactForm = () => {
@@ -74,6 +78,9 @@ const App: React.FC = () => {
     setContactInfoMounted(true)
     setSlidesMounted(true)
     setShouldAnimateContactInfo(true)
+    const duration = stopTimer()
+    // @ts-ignore
+    plausible('intro-skipped', { props: { duration } })
   }
 
   useDeviceOrientation(handlePrematureScreenChange)
@@ -82,6 +89,14 @@ const App: React.FC = () => {
   useEffect(() => {
     slidesMountedRef.current = slidesMounted
   }, [ slidesMounted ])
+
+  /**
+   *  Note: start timer when app mounts (used for measuring how long users watch the intro animation)
+   */
+
+  useEffect(() => {
+    startTimer()
+  }, [])
 
   /**
    *  Note: set timers based on key points in the intro animation sequence and use them to
@@ -96,6 +111,7 @@ const App: React.FC = () => {
 
       const slidesTimer = setTimeout(() => {
         setSlidesMounted(true)
+        stopTimer()
       }, isMdScreenOrSmaller ? 12500 : 17000)
 
       const animateContactInfoTimer = setTimeout(() => {

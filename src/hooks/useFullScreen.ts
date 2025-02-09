@@ -18,6 +18,9 @@ const useFullScreen = (ref: React.RefObject<HTMLDivElement>) => {
   const requestFullScreen = useCallback(() => {
     if (!ref.current) return
 
+    // @ts-ignore
+    plausible('fullscreen-requested')
+
     if (ref.current.requestFullscreen) {
       ref.current.requestFullscreen()
     } else if ((ref.current as any).webkitRequestFullscreen) {

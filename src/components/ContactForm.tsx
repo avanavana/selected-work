@@ -225,7 +225,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
                 <DialogDescription className='dark:text-gray-300'>For work opportunities or general inquiries, please contact me using the form below.</DialogDescription>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className='px-normal space-y-6'>
+                <form onSubmit={form.handleSubmit(onSubmit)} className='px-normal space-y-6 plausible-event-name=contact-form-submitted'>
                   {formState === 'success' ? (
                     <SuccessMessage />
                   ) : (

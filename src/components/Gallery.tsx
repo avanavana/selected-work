@@ -284,11 +284,15 @@ const Gallery: React.FC<GalleryProps> = ({
       if (isPlaying) {
         setIsPlaying(false)
         localStorage.setItem('gallery-autoplay', 'false')
+        // @ts-ignore
+        plausible('gallery-paused')
         emblaApi.plugins().autoplay.stop()
         toasterRef.current?.toast({ message: 'Slideshow paused' })
       } else {
         setIsPlaying(true)
         localStorage.setItem('gallery-autoplay', 'true')
+        // @ts-ignore
+        plausible('gallery-resumed')
         emblaApi.plugins().autoplay.play()
         toasterRef.current?.toast({ message: 'Slideshow resumed' })
       }
@@ -297,11 +301,15 @@ const Gallery: React.FC<GalleryProps> = ({
 
   const handleResumeClick = (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
+    // @ts-ignore
+    plausible('resume-downloaded')
     createFileDownload('avana_vana-resume-2025-Q1.pdf')
   }
 
   const handlePortfolioClick = (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
+    // @ts-ignore
+    plausible('portfolio-downloaded')
     createFileDownload('avana_vana-selected_work-2025-Q1.pdf')
   }
 
@@ -326,7 +334,7 @@ const Gallery: React.FC<GalleryProps> = ({
    *  either resume playing or be paused when the user finally closes the dialog.
    */
 
-  const handleOpenInfoModal = () => {
+  const handleOpenInfoModal = (source: 'button' | 'keyCommand' | 'mobileMenu' | 'overlay') => {
     if (emblaApi && !shouldReduceMotion) {
       if (!infoModalOpen) {
         wasPlayingBeforeResize.current = isPlaying
@@ -337,6 +345,8 @@ const Gallery: React.FC<GalleryProps> = ({
     }
 
     setInfoModalOpen(true)
+    // @ts-ignore
+    plausible('info-modal-opened', { props: { source } })
     window.scrollTo({ top: 0, behavior: 'smooth' })
     const body = document.querySelector('body')
     setTimeout(() => { if (body) body.style.pointerEvents = 'unset' }, 10)
@@ -345,7 +355,7 @@ const Gallery: React.FC<GalleryProps> = ({
 
   const handleOpenMobileInfoModal = () => {
     setShowMobileProjectInfo(true)
-    handleOpenInfoModal()
+    handleOpenInfoModal('overlay')
   }
 
   /**
@@ -409,6 +419,8 @@ const Gallery: React.FC<GalleryProps> = ({
 
   useEffect(() => {
     localStorage.setItem('selectedCategories', JSON.stringify(categories))
+    // @ts-ignore
+    plausible('projects-filtered', { props: { 'web': categories.includes('web/interactive'), '3d': categories.includes('3d/environmental'), 'print': categories.includes('print/illustration') }})
   }, [ categories ])
 
   useEffect(() => {
@@ -643,8 +655,8 @@ const Gallery: React.FC<GalleryProps> = ({
   useKeyDown('KeyK', () => setShowMobileProjectFilter(true), { condition: galleryControlsMounted && infoModalOpen && showMobileProjectInfo, modifiers: [ 'Command' ] })
   useKeyDown('KeyK', () => setShowMobileProjectFilter(false), { condition: galleryControlsMounted && infoModalOpen && showMobileProjectFilter, modifiers: [ 'Command' ] })
   useKeyDown('KeyL', handleToggleTheme, { condition: galleryControlsMounted, modifiers: [ 'Command' ] })
-  useKeyDown('Enter', () => { handleOpenInfoModal(); setShowMobileProjectInfo(true) }, { condition: galleryControlsMounted && isSmScreenOrSmaller && !(infoModalOpen || contactFormOpen), modifiers: [ 'Command' ] })
-  useKeyDown('Enter', handleOpenInfoModal, { condition: galleryControlsMounted && !(infoModalOpen || contactFormOpen || selectCategoriesOpen), excludeModifiers: [ 'Alt', 'Command' ] })
+  useKeyDown('Enter', () => { handleOpenInfoModal('keyCommand'); setShowMobileProjectInfo(true) }, { condition: galleryControlsMounted && isSmScreenOrSmaller && !(infoModalOpen || contactFormOpen), modifiers: [ 'Command' ] })
+  useKeyDown('Enter', () => handleOpenInfoModal('keyCommand'), { condition: galleryControlsMounted && !(infoModalOpen || contactFormOpen || selectCategoriesOpen), excludeModifiers: [ 'Alt', 'Command' ] })
   useKeyDown('Space', togglePlayPauseSlides, { condition: galleryControlsMounted && !(infoModalOpen || contactFormOpen) })
   useKeyDown('ArrowLeft', handleNavigatePreviousSlide, { condition: galleryControlsMounted && !(infoModalOpen || contactFormOpen) })
   useKeyDown('ArrowRight', handleNavigateNextSlide, { condition: galleryControlsMounted && !(infoModalOpen || contactFormOpen) })
@@ -674,7 +686,7 @@ const Gallery: React.FC<GalleryProps> = ({
       >
         <Suspense fallback={<Spinner />}>
           <div id='slides' ref={emblaRef} className='overflow-hidden'>
-            <div className='flex touch-pan-y touch-pinch-zoom -ml-normal cursor-pointer' onClick={isSmScreenOrSmaller ? handleOpenMobileInfoModal : handleOpenInfoModal}>
+            <div className='flex touch-pan-y touch-pinch-zoom -ml-normal cursor-pointer' onClick={isSmScreenOrSmaller ? handleOpenMobileInfoModal : () => handleOpenInfoModal('overlay')}>
               {filteredImageSources.map((sources, i) => {
                 /**
                  *  Note: generate source sets for each project's images after preloading them (in App.tsx)
@@ -722,10 +734,9 @@ const Gallery: React.FC<GalleryProps> = ({
                           />
                         )}
                         <img
-                          className={cn('w-full', { 'cursor-pointer': isSmScreenOrSmaller })}
+                          className='w-full'
                           src={fallback}
                           alt={data.details.find((project: Project) => project.id === imageProjectId)!.title}
-                          {...(isSmScreenOrSmaller && { onClick: handleOpenInfoModal })}
                         />
                       </picture>
                     </div>
@@ -776,7 +787,7 @@ const Gallery: React.FC<GalleryProps> = ({
                   aria-label={infoModalOpen ? 'Close menu' : 'Open menu'}
                   aria-live='off'
                   className={cn('button-mobile-menu gallery-top-right z-[60] transition-opacity', showMobileProjectFilter ? 'opacity-0' : 'opacity-100')}
-                  onClick={infoModalOpen ? handleCloseInfoModal : handleOpenInfoModal}
+                  onClick={infoModalOpen ? handleCloseInfoModal : () => handleOpenInfoModal('button')}
                   {...(infoModalOpen && { variant: 'infoModal' })}
                 >
                   <Hamburger size={18} toggled={infoModalOpen} />
@@ -785,7 +796,7 @@ const Gallery: React.FC<GalleryProps> = ({
             )}
             {
               /**
-               *  Note: remove "View proejct info" button from small screen gallery overlay.
+               *  Note: remove "View project info" button from small screen gallery overlay.
                *  This minizes the number of buttons obscuring the gallery images on smaller screens,
                *  since on smaller screens the buttons/overlay does not auto-hide, and because the
                *  functionality for this button is available as the first option in the mobile menu
@@ -858,7 +869,7 @@ const Gallery: React.FC<GalleryProps> = ({
                     forceHideTooltip={!galleryControlsVisible}
                   />
                   <TouchTooltip forceHide={!galleryControlsVisible} content={<>View project details<KeyboardCommand enter /></>}>
-                    <Button aria-label='View project details' className='button-info shrink-0' onClick={handleOpenInfoModal}><Icon iconNode={textSquare} size={24} strokeWidth={2} /></Button>
+                    <Button aria-label='View project details' className='button-info shrink-0' onClick={() => handleOpenInfoModal('button')}><Icon iconNode={textSquare} size={24} strokeWidth={2} /></Button>
                   </TouchTooltip>
                 </div>
               )}
