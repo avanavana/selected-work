@@ -40,6 +40,7 @@ interface ContactInfoProps {
   requiresScroll: boolean
   shouldAnimate: boolean
   showContactInfo?: boolean
+  skipIntro?: boolean
 }
 
 const ContactInfo: React.FC<ContactInfoProps> = ({
@@ -48,6 +49,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
   requiresScroll,
   shouldAnimate,
   showContactInfo = true,
+  skipIntro = false,
   ...props
 }) => {
   const { resolvedTheme } = useTheme()
@@ -58,7 +60,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
   const [ introComplete, setIntroComplete ] = useState<boolean>(false)
 
   useEffect(() => {
-    if (shouldReduceMotion) {
+    if (shouldReduceMotion || skipIntro) {
       setIntroComplete(true)
     } else {
       const introTimer = setTimeout(() => {
@@ -67,7 +69,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
 
       return () => clearTimeout(introTimer)
     }
-  }, [])
+  }, [ skipIntro ])
 
   useLayoutEffect(() => {
     setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
@@ -103,7 +105,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
 
   return (
     <section id='info' className={cn('flex md:block relative w-[calc(100%_-_76px)] max:w-full mx-normal max:mx-0 transition-[justify-content] gap-normal flex-col-reverse md:!flex-row md:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto md:h-[70px] py-normal max:pb-0' : 'py-0', { 'pb-0': !requiresScroll }, className)} {...props}>
-      {!shouldReduceMotion && (
+      {!shouldReduceMotion && !skipIntro && (
         <motion.div
           id='logo-intro'
           className={cn('relative w-[600px] h-[144px]', showContactInfo ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2', { 'hidden': introComplete })}
@@ -177,7 +179,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
               }}
             />
           ) : (
-            <ContactDivider delay={3.5} shouldAnimate={shouldAnimate} />
+            <ContactDivider delay={3.5} {...(!skipIntro && { shouldAnimate })} />
           )}
           <motion.div className='w-full sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
             {content.slice(3, 6).map(({ text }, i) => (
@@ -196,7 +198,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
               }}
             />
           ) : (
-            <ContactDivider delay={4} shouldAnimate={shouldAnimate} />
+            <ContactDivider delay={4} {...(!skipIntro && { shouldAnimate })} />
           )}
           <motion.div variants={contactInfoItemVariants}>
             {content.slice(-3).map(({ href, Icon, onClick, text }, i) => (

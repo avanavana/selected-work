@@ -1,2 +1,2 @@
-# Redirect Hermetica subdomain
-/hermetica https://hermetica.avanavana.com
+# Proxy rewrite for Hermetica website
+/hermetica/*  https://hermetica.avanavana.com/:splat  200

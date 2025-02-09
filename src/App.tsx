@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { MotionConfig, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, MotionConfig, useReducedMotion } from 'framer-motion'
+import { ArrowRight } from 'lucide-react'
 
+import { Button } from '@/components/Button'
 import ContactForm from '@/components/ContactForm'
 import ContactInfo from '@/components/ContactInfo'
 import { Dialog } from '@/components/Dialog'
@@ -33,6 +35,7 @@ const App: React.FC = () => {
   const [ contactInfoMounted, setContactInfoMounted ] = useState<boolean>(false)
   const [ slidesMounted, setSlidesMounted ] = useState<boolean>(false)
   const [ shouldAnimateContactInfo, setShouldAnimateContactInfo ] = useState<boolean>(true)
+  const [ introSkipped, setIntroSkipped ] = useState<boolean>(false)
   const [ contactFormOpen, setContactFormOpen ] = useState<boolean>(false)
   const isInitialRenderRef = useRef<boolean>(true)
   const slidesMountedRef = useRef<boolean>(slidesMounted)
@@ -66,6 +69,13 @@ const App: React.FC = () => {
     if (!slidesMountedRef.current) window.location.reload()
   }
 
+  const handleSkipIntro = () => {
+    setIntroSkipped(true)
+    setContactInfoMounted(true)
+    setSlidesMounted(true)
+    setShouldAnimateContactInfo(true)
+  }
+
   useDeviceOrientation(handlePrematureScreenChange)
   useWindowSize(handlePrematureScreenChange)
 
@@ -79,7 +89,7 @@ const App: React.FC = () => {
    */
 
   useEffect(() => {
-    if (!shouldReduceMotion) {
+    if (!shouldReduceMotion && !introSkipped) {
       const contactInfoTimer = setTimeout(() => {
         setContactInfoMounted(true)
       }, 12500)
@@ -102,7 +112,7 @@ const App: React.FC = () => {
       setSlidesMounted(true)
       setShouldAnimateContactInfo(false)
     }
-  }, [])
+  }, [ introSkipped ])
 
   useEffect(() => {
     setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
@@ -133,10 +143,18 @@ const App: React.FC = () => {
                   showContactInfo={shouldReduceMotion || contactInfoMounted}
                   handleOpenContactForm={handleOpenContactForm}
                   shouldAnimate={shouldAnimateContactInfo}
+                  skipIntro={introSkipped}
                   {...(slidesMounted && hasFlatAspectRatio && screenHeight < idealContentHeight && { className: 'max:pb-normal' })}
                 />
               </main>
             </div>
+            <AnimatePresence>
+              {!introSkipped && !slidesMounted && (
+                <motion.div className='gallery-bottom-right z-10' initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1 }}} exit={{ opacity: 0 }}>
+                  <Button variant='form' className='bg-gray-800/50 hover:bg-gray-800/85  active:bg-gray-800/85' onClick={handleSkipIntro}>Skip animation<ArrowRight size={24} strokeWidth={2} /></Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <ContactForm open={contactFormOpen} onClose={handleCloseContactForm} />
           </Dialog>
         </TouchTooltipProvider>

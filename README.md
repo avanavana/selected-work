@@ -1,7 +1,6 @@
 # Avana Vana – Selected Work
 
-[//]: Release: v1.0.0 (2025-02-08)
-*v1.0.0 (2025-02-08)*
+{{- *v1.1.0 (2025-02-09)* -}}
 
 This repository is my professional portfolio of selected work, hosted at [www.avanavana.com](https://www.avanavana.com).  It's a complete rebuild of a previous version of this site, designed to showcase my technical skills with modern front-end web technologies.  At the moment it is a client-side only single page app hosted on [Netlify](https://www.netlify.com). and pointed to a subdomain on my personal website with URL rewrites.
 

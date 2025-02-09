@@ -13,7 +13,7 @@ const buttonVariants = cva(
         infoModal: 'size-12 rounded-full dark:bg-gray-600/50 dark:hover:bg-gray-600/85 dark:active:bg-gray-600/85 motion-safe:hover:scale-105',
         galleryNavigation: 'p-nav-button-fluid md:p-12 [&_svg]:size-16',
         galleryNavigationInfoModal: 'p-nav-button-fluid md:p-12 [&_svg]:size-16 dark:bg-gray-600/50 dark:hover:bg-gray-600/85',
-        form: 'bg-gray-800 dark:bg-gray-600 hover:bg-gray-800/85 dark:hover:bg-gray-600/85 h-10 px-4 py-2 rounded-md text-white text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+        form: 'flex gap-1 bg-gray-800 dark:bg-gray-600 hover:bg-gray-800/85 dark:hover:bg-gray-600/85 h-10 px-4 py-2 rounded-md text-white text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
       }
     },
