@@ -112,8 +112,6 @@ const App: React.FC = () => {
       const slidesTimer = setTimeout(() => {
         setSlidesMounted(true)
         stopTimer()
-        // @ts-ignore
-        plausible('intro-skipped', { props: { 'intro-skipped-after': null }})
       }, isMdScreenOrSmaller ? 12500 : 17000)
 
       const animateContactInfoTimer = setTimeout(() => {
