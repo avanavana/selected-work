@@ -1,3 +1,3 @@
 # Proxy rewrite for Hermetica website
-# /   hermetica/*  https://hermetica.avanavana.com/:splat  200
-/hermetica https://hermetica.avanavana.com
+/hermetica  https://hermetica.avanavana.com  200
+/hermetica/*  https://hermetica.avanavana.com/:splat  200
