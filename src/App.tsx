@@ -14,12 +14,14 @@ import { useDetectWebPSupport } from '@/hooks/useDetectWebPSupport'
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useImagePreloader } from '@/hooks/useImagePreloader'
+import { useKeyDown } from './hooks/useKeyDown'
 import { useTimer } from '@/hooks/useTimer'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber, generateImageSources } from '@/lib/utils'
 import { height, width, screens, spacing } from '../tailwind.config'
 
 import data from '@/data/projects.json'
+import KeyboardCommand from './components/KeyboardCommand'
 
 const idealContentHeight = extractNumber(height.max) + 70 + extractNumber(spacing.double)
 const idealAspectRatio = extractNumber(width.max) / idealContentHeight
@@ -138,6 +140,8 @@ const App: React.FC = () => {
     setHasFlatAspectRatio(screenWidth / screenHeight > idealAspectRatio)
   }, [ screenWidth, screenHeight ])
 
+  useKeyDown('Enter', handleSkipIntro, { condition: !slidesMounted })
+
   return (
     <ThemeProvider>
       <MotionConfig reducedMotion='user'>
@@ -167,7 +171,7 @@ const App: React.FC = () => {
             <AnimatePresence>
               {!introSkipped && !slidesMounted && (
                 <motion.div className='gallery-bottom-right z-10' initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1 }}} exit={{ opacity: 0 }}>
-                  <Button variant='form' className='bg-gray-800/50 hover:bg-gray-800/85  active:bg-gray-800/85' onClick={handleSkipIntro}>Skip animation<ArrowRight size={24} strokeWidth={2} /></Button>
+                  <Button variant='form' className='bg-gray-800/50 hover:bg-gray-800/85  active:bg-gray-800/85' onClick={handleSkipIntro}>Skip animation<ArrowRight size={24} strokeWidth={2} /><KeyboardCommand enter /></Button>
                 </motion.div>
               )}
             </AnimatePresence>
