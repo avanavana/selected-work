@@ -171,7 +171,7 @@ const App: React.FC = () => {
             <AnimatePresence>
               {!introSkipped && !slidesMounted && (
                 <motion.div className='gallery-bottom-right z-10' initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1 }}} exit={{ opacity: 0 }}>
-                  <Button variant='form' className='bg-gray-800/50 hover:bg-gray-800/85  active:bg-gray-800/85' onClick={handleSkipIntro}>Skip animation<ArrowRight size={24} strokeWidth={2} /><KeyboardCommand enter /></Button>
+                  <Button variant='form' className='bg-gray-800/50 hover:bg-gray-800/85 active:bg-gray-800/85 [&_kbd]:text-gray-300 [&_kbd]:border-gray-300 dark:[&_kbd]:text-gray-500 dark:[&_kbd]:border-gray-500' onClick={handleSkipIntro}>Skip animation<ArrowRight size={24} strokeWidth={2} /><KeyboardCommand enter /></Button>
                 </motion.div>
               )}
             </AnimatePresence>
