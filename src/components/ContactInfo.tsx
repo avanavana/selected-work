@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import ContactDivider from '@/components/ContactDivider'
-import { Email, Link, LinkedIn } from '@/components/Icons'
+import { Email, GitHub, LinkedIn } from '@/components/Icons'
 import InteractiveLogo from '@/components/InteractiveLogo'
 import Logo from '@/components/Logo'
 import LogoAscii from '@/components/LogoAscii'
@@ -29,7 +29,7 @@ const contactInfoItemVariants = {
 interface ContactInfoItem {
   heading?: boolean
   href?: string
-  Icon?: typeof Email | typeof Link | typeof LinkedIn
+  Icon?: typeof Email | typeof GitHub | typeof LinkedIn
   onClick?: () => void
   text: string
 }
@@ -92,9 +92,9 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
       text: 'Get in touch'
     },
     {
-      href: 'https://www.avanavana.com',
-      Icon: Link,
-      text: 'www.avanavana.com'
+      href: 'https://www.github.com/avanavana/selected-work',
+      Icon: GitHub,
+      text: 'github.com/avanavana'
     },
     {
       href: 'https://www.linkedin.com/in/avanavana',
