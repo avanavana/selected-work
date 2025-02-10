@@ -17,7 +17,7 @@ const SelectTrigger = forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-10 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-base md:text-sm transition-colors ring-offset-background dark:ring-offset-gray-800/85 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 dark:placeholder:text-gray-600 dark:focus:ring-white focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:ring-destructive dark:aria-[invalid=true]:border-destructive dark:aria-[invalid=true]:focus-visible:ring-destructive aria-[invalid=true]:focus-visible:border-border [&_svg]:aria-[invalid=true]:stroke-destructive dark:[&_svg]:aria-[invalid=true]:stroke-destructive',
+      'flex h-10 w-full items-center justify-between rounded-md border border-input mix-blend-multiply dark:mix-blend-normal bg-transparent px-3 py-2 text-base md:text-sm transition-colors ring-offset-background dark:ring-offset-gray-800/85 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-800 dark:placeholder:text-gray-600 dark:focus:ring-white focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:ring-destructive dark:aria-[invalid=true]:border-destructive dark:aria-[invalid=true]:focus-visible:ring-destructive aria-[invalid=true]:focus-visible:border-border [&_svg]:aria-[invalid=true]:stroke-destructive dark:[&_svg]:aria-[invalid=true]:stroke-destructive',
       className
     )}
     {...props}

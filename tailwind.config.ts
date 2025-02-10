@@ -50,7 +50,7 @@ export const colors = {
     foreground: 'hsl(var(--success-foreground))'
   },
   border: 'hsl(var(--border))',
-  input: 'hsl(var(--input))',
+  input: 'hsl(var(--input) / 50%)',
   ring: 'hsl(var(--ring))',
   chart: {
     '1': 'hsl(var(--chart-1))',
