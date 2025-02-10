@@ -243,6 +243,12 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
                           <FormControl><Input {...field} /></FormControl>
                         </FormItem>
                       )} />
+                      <FormField control={form.control} name='company' render={({ field }) => (
+                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-200'>
+                          <FormLabel optional>Company</FormLabel>
+                          <FormControl><Input {...field} /></FormControl>
+                        </FormItem>
+                      )} />
                       <FormField control={form.control} name='email' render={({ field }) => (
                         <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-300'>
                           <FormLabel>Email</FormLabel>

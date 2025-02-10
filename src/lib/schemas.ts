@@ -7,6 +7,7 @@ const inquiryTypes = [ 'Job Opportunity', 'Freelance Work Opportunity', 'Other' 
 const contactFormSchema = z.object({
   name: z.string().min(1, { message: 'Name is required' }),
   title: z.string().optional(),
+  company: z.string().optional(),
   email: z.string().min(1, { message: 'Email is required' }).email({ message: 'Invalid email address' }),
   phone: zPhoneNumber.optional(),
   type: z.string().refine(value => inquiryTypes.includes(value), { message: 'Please choose a type from the options above' }),
@@ -19,6 +20,7 @@ type ContactFormValues = z.infer<typeof contactFormSchema>
 const defaultFormValues: ContactFormValues = {
   name: '',
   title: '',
+  company: '',
   email: '',
   phone: '',
   type: '',
