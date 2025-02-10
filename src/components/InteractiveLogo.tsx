@@ -64,7 +64,6 @@ const InteractiveLogo: React.FC<InteractiveLogoProps> = ({ className, isDarkMode
     requestAnimationFrame(step)
     setIsInteracting(false)
 
-
     // @ts-ignore
     plausible('interactive-logo-revealed')
   }
