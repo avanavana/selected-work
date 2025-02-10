@@ -43,8 +43,6 @@ const InteractiveLogo: React.FC<InteractiveLogoProps> = ({ className, isDarkMode
     setSolidLogoClipPath(`polygon(${clampedMousePositionX + 14}% 0%, ${clampedMousePositionX}% 100%, 0% 100%, 0% 0%)`)
     setAsciiLogoClipPath(`polygon(100% 0%, 100% 100%, ${clampedMousePositionX}% 100%, ${clampedMousePositionX + 14}% 0%)`)
     setIsInteracting(true)
-    // @ts-ignore
-    plausible('interactive-logo-revealed')
   }
 
   const handleLeaveLogo = () => {
@@ -65,6 +63,10 @@ const InteractiveLogo: React.FC<InteractiveLogoProps> = ({ className, isDarkMode
 
     requestAnimationFrame(step)
     setIsInteracting(false)
+
+
+    // @ts-ignore
+    plausible('interactive-logo-revealed')
   }
 
   return !shouldReduceMotion ? (
