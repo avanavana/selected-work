@@ -585,8 +585,11 @@ const Gallery: React.FC<GalleryProps> = ({
   useEffect(() => {
     if (!isFullScreen) return
 
-    document.addEventListener('mousemove', handleOverlayIdleBehavior)
-    document.addEventListener('touchstart', handleOverlayIdleBehavior)
+    const controller = new AbortController()
+    const { signal } = controller
+
+    document.addEventListener('mousemove', handleOverlayIdleBehavior, { signal })
+    document.addEventListener('touchstart', handleOverlayIdleBehavior, { signal })
 
     galleryIdleTimerRef.current = setTimeout(() => {
       setGalleryControlsVisible(false)
@@ -594,8 +597,7 @@ const Gallery: React.FC<GalleryProps> = ({
     }, GALLERY_OVERLAY_IDLE_TIMEOUT)
 
     return () => {
-      document.removeEventListener('mousemove', handleOverlayIdleBehavior)
-      document.removeEventListener('touchstart', handleOverlayIdleBehavior)
+      controller.abort()
 
       if (galleryIdleTimerRef.current) {
         clearTimeout(galleryIdleTimerRef.current)

@@ -131,3 +131,12 @@ export const zPhoneNumber = z
     const phoneNumber = parsePhoneNumber(value, { defaultCountry: 'US' })
     return phoneNumber ? phoneNumber.formatInternational() : value
   })
+
+
+  export const setAbortableTimeout = (callback: () => void, timeout: number, signal: AbortSignal) => {
+    const timer = setTimeout(() => {
+      if (!signal.aborted) callback()
+    }, timeout)
+
+    return timer
+  }

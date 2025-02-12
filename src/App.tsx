@@ -17,7 +17,7 @@ import { useImagePreloader } from '@/hooks/useImagePreloader'
 import { useKeyDown } from './hooks/useKeyDown'
 import { useTimer } from '@/hooks/useTimer'
 import { useWindowSize } from '@/hooks/useWindowSize'
-import { cn, extractNumber, generateImageSources } from '@/lib/utils'
+import { cn, extractNumber, generateImageSources, setAbortableTimeout } from '@/lib/utils'
 import { height, width, screens, spacing } from '../tailwind.config'
 
 import data from '@/data/projects.json'
@@ -107,24 +107,23 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (!shouldReduceMotion && !introSkipped) {
-      const contactInfoTimer = setTimeout(() => {
-        setContactInfoMounted(true)
-      }, 12500)
+      const controller = new AbortController()
+      const { signal } = controller
 
-      const slidesTimer = setTimeout(() => {
+      setAbortableTimeout(() => {
+        setContactInfoMounted(true)
+      }, 12500, signal)
+
+      setAbortableTimeout(() => {
         setSlidesMounted(true)
         stopTimer()
-      }, isMdScreenOrSmaller ? 12500 : 17000)
+      }, isMdScreenOrSmaller ? 12500 : 17000, signal)
 
-      const animateContactInfoTimer = setTimeout(() => {
+      setAbortableTimeout(() => {
         setShouldAnimateContactInfo(false)
-      }, isMdScreenOrSmaller ? 17000 : 21500)
+      }, isMdScreenOrSmaller ? 17000 : 21500, signal)
 
-      return () => {
-        clearTimeout(contactInfoTimer)
-        clearTimeout(slidesTimer)
-        clearTimeout(animateContactInfoTimer)
-      }
+      return () => controller.abort()
     } else {
       setContactInfoMounted(true)
       setSlidesMounted(true)
@@ -184,4 +183,3 @@ const App: React.FC = () => {
 }
 
 export default App
-
