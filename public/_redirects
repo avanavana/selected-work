@@ -1,3 +1,8 @@
-# Proxy rewrite for Hermetica website
+# Proxy rewrites for Hermetica website
 /hermetica  https://hermetica.avanavana.com  200
 /hermetica/*  https://hermetica.avanavana.com/:splat  200
+
+# Proxy rewrites for Plausible analytics
+/js/script.js https://plausible.io/js/script.js 200
+/js/script.file-downloads.outbound-links.pageview-props.tagged-events.js https://plausible.io/js/script.file-downloads.outbound-links.pageview-props.tagged-events.js 200
+/api/event https://plausible.io/api/event 200
