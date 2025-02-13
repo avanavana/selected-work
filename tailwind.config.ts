@@ -108,7 +108,7 @@ export const spacing = {
 
 export default {
     darkMode: [ 'class' ],
-    content: [ './index.html', './src/**/*.{mjs,js,ts,jsx,tsx}', './public/**/*.{html}' ],
+    content: [ './index.html', './src/**/*.{mjs,js,ts,jsx,tsx}', './public/**/*.html' ],
   theme: {
   	extend: {
       colors,

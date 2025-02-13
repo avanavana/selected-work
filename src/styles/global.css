@@ -107,8 +107,8 @@
     @font-face {
       font-family: 'PF DIN Mono';
       src: local('PFDINMono-Regular'),
-           url('/fonts/PFDINMono-Regular.woff2') format('woff2'),
-           url('/fonts/PFDINMono-Regular.woff') format('woff');
+           url('@/assets/fonts/PFDINMono-Regular.woff2') format('woff2'),
+           url('@/assets/fonts/PFDINMono-Regular.woff') format('woff');
       font-weight: normal;
       font-style: normal;
       font-display: swap;
@@ -117,8 +117,8 @@
     @font-face {
       font-family: 'PF DIN Mono';
       src: local('PFDINMono-Medium'),
-           url('/fonts/PFDINMono-Medium.woff2') format('woff2'),
-           url('/fonts/PFDINMono-Medium.woff') format('woff');
+           url('@/assets/fonts/PFDINMono-Medium.woff2') format('woff2'),
+           url('@/assets/fonts/PFDINMono-Medium.woff') format('woff');
       font-weight: 500;
       font-style: normal;
       font-display: swap;
