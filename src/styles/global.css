@@ -1,11 +1,11 @@
-/* global.css */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    --global-stylesheet-marker: 1;
+
     --background: 0 0% 100%;
     --foreground: 240 4.2% 13.9%;
 

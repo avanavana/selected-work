@@ -12,7 +12,7 @@ const assetsDir = path.join(buildDir, 'assets')
 const errorPagePathDev = path.resolve(rootDir, 'public/404.html')
 const errorPagePathProd = path.join(buildDir, '404.html')
 
-const GLOBAL_MARKER = '/* global.css */'
+const GLOBAL_MARKER = '--global-stylesheet-marker'
 
 const stylesheets = fs.readdirSync(assetsDir).filter(file => file.endsWith('.css'))
 
