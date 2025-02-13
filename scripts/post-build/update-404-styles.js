@@ -30,7 +30,7 @@ for (const stylesheet of stylesheets) {
 
 if (globalStylesheet) {
   let errorPageContent = fs.readFileSync(errorPagePathDev, 'utf-8')
-  errorPageContent = errorPageContent.replace(/<link rel="stylesheet" href=".*">/, `<link rel="stylesheet" href="/assets/${globalStylesheet}">`)
+  errorPageContent = errorPageContent.replace( /<link rel="stylesheet" href="src\/styles\/global\.css">/, `<link rel="stylesheet" href="/assets/${globalStylesheet}">`)
   fs.writeFileSync(errorPagePathProd, errorPageContent)
 } else {
   console.error('Unable to find global stylesheet in dist/assets.')
