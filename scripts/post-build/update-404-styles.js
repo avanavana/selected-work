@@ -5,9 +5,11 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-const buildDir = path.resolve(__dirname, 'dist')
+const rootDir = path.resolve(__dirname, '../../')
+
+const buildDir = path.resolve(rootDir, 'dist')
 const assetsDir = path.join(buildDir, 'assets')
-const errorPagePathDev = path.resolve(__dirname, 'public/404.html')
+const errorPagePathDev = path.resolve(rootDir, 'public/404.html')
 const errorPagePathProd = path.join(buildDir, '404.html')
 
 const GLOBAL_MARKER = '/* global.css */'
