@@ -47,8 +47,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setTheme = (theme: Theme) => {
     localStorage.setItem('theme', theme)
-    // @ts-ignore
-    plausible('theme-changed', { props: { theme }})
     setThemeState(theme)
   }
 
