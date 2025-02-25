@@ -316,7 +316,7 @@ const Gallery: React.FC<GalleryProps> = ({
   const handleToggleTheme = () => {
     setTheme(nextTheme)
     // @ts-ignore
-    plausible('theme-changed', { props: { theme }})
+    plausible('theme-changed', { props: { theme: nextTheme }})
     toasterRef.current?.toast({ message: `Switched to ${nextTheme} theme` })
   }
 
