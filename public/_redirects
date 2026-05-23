@@ -1,3 +1,7 @@
+# Proxy rewrites for Hermetica Guide
+/hermetica/guide https://hermetica.avanavana.com/guide/ 301
+/hermetica/guide/* https://hermetica.avanavana.com/guide/:splat 301
+
 # Proxy rewrites for Hermetica website
 /hermetica  https://hermetica.avanavana.com  200
 /hermetica/*  https://hermetica.avanavana.com/:splat  200
