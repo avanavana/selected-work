@@ -69,6 +69,63 @@ export function createFileDownload(filename: string) {
   document.body.removeChild(link)
 }
 
+interface PortfolioProject {
+  id: string
+}
+
+interface PortfolioData<TCategory, TProject extends PortfolioProject> {
+  categories: TCategory[]
+  projects: string[]
+  details: TProject[]
+}
+
+const portfolioCategoryOrder = [ 'WI', 'PI', '3E' ] as const
+
+function parsePortfolioIdentifier(identifier: string) {
+  const match = identifier.match(/^((?:WI|PI|3E))(\d{2})(?:-(\d+))?$/)
+
+  if (!match) {
+    return {
+      category: '',
+      categoryIndex: portfolioCategoryOrder.length,
+      projectIndex: -1,
+      imageIndex: Number.POSITIVE_INFINITY
+    }
+  }
+
+  const [ , category, projectIndex, imageIndex ] = match
+
+  return {
+    category,
+    categoryIndex: portfolioCategoryOrder.indexOf(category as typeof portfolioCategoryOrder[number]),
+    projectIndex: parseInt(projectIndex, 10),
+    imageIndex: typeof imageIndex === 'string' ? parseInt(imageIndex, 10) : 0
+  }
+}
+
+function comparePortfolioIdentifiersForDisplay(a: string, b: string) {
+  const left = parsePortfolioIdentifier(a)
+  const right = parsePortfolioIdentifier(b)
+
+  if (left.categoryIndex !== right.categoryIndex) {
+    return left.categoryIndex - right.categoryIndex
+  }
+
+  if (left.projectIndex !== right.projectIndex) {
+    return right.projectIndex - left.projectIndex
+  }
+
+  return left.imageIndex - right.imageIndex
+}
+
+export function orderPortfolioDataForDisplay<TCategory, TProject extends PortfolioProject>(data: PortfolioData<TCategory, TProject>): PortfolioData<TCategory, TProject> {
+  return {
+    ...data,
+    projects: [ ...data.projects ].sort(comparePortfolioIdentifiersForDisplay),
+    details: [ ...data.details ].sort((left, right) => comparePortfolioIdentifiersForDisplay(left.id, right.id))
+  }
+}
+
 export function generateImageSources(images: string[]): string[][] {
   const BASE_URL = import.meta.env.VITE_CDN_URL
 

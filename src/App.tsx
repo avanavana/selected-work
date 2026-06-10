@@ -17,7 +17,7 @@ import { useImagePreloader } from '@/hooks/useImagePreloader'
 import { useKeyDown } from './hooks/useKeyDown'
 import { useTimer } from '@/hooks/useTimer'
 import { useWindowSize } from '@/hooks/useWindowSize'
-import { cn, extractNumber, generateImageSources, setAbortableTimeout } from '@/lib/utils'
+import { cn, extractNumber, generateImageSources, orderPortfolioDataForDisplay, setAbortableTimeout } from '@/lib/utils'
 import { height, width, screens, spacing } from '../tailwind.config'
 
 import data from '@/data/projects.json'
@@ -26,7 +26,8 @@ import KeyboardCommand from './components/KeyboardCommand'
 const idealContentHeight = extractNumber(height.max) + 70 + extractNumber(spacing.double)
 const idealAspectRatio = extractNumber(width.max) / idealContentHeight
 
-const imageSources = generateImageSources(data.projects)
+const orderedData = orderPortfolioDataForDisplay(data)
+const imageSources = generateImageSources(orderedData.projects)
 
 const App: React.FC = () => {
   const isWebPSupported = useDetectWebPSupport()
@@ -151,7 +152,7 @@ const App: React.FC = () => {
                 {(shouldReduceMotion || slidesMounted) && (
                   <Gallery
                     contactFormOpen={contactFormOpen}
-                    data={data}
+                    data={orderedData}
                     handleOpenContactForm={handleOpenContactForm}
                     imageSources={imageSources}
                     isWebPSupported={isWebPSupported}
