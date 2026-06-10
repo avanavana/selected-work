@@ -14,6 +14,8 @@
     }
   ],
   "projects": [
+    "WI18-1",
+    "WI18-2",
     "WI00-1",
     "WI00-2",
     "WI01-1",
@@ -65,6 +67,16 @@
     "3E10-1"
   ],
   "details": [
+    {
+      "id": "WI18",
+      "title": "CO:CREATE Universal App",
+      "type": "Mobile & Web Apps",
+      "date": "Apr 2025 – Apr 2026",
+      "fullTime": true,
+      "client": "CO:CREATE",
+      "skills": "React Native, Expo, EAS, Git, GCP (Firestore, PubSub, Cloud Functions), AWS (S3, Lambda, SES), Elastic Cloud, Google S2, Stream Chat, Admob",
+      "desc": "<p>As co-founder and CTO of a new tech startup, I was solely responsible for the product design and UI/UX design of a pair of bold, proof-of-concept mobile dating apps, which use a shared codebase. I also personally coded over half of both the client—built with Expo and React Native—and the back end—which employs a microservices-style, often serverless architecture using Google Cloud Functions, PubSub, Cloud Firestore, Amazon S3, Amazon SES, Elastic Cloud, and Stream Chat—and later hired and managed a small team of international developers to help get the project across the finish line.</p><p>One of the hardest challenges of this entire project was developing a search algorithm that returns truly relevant matches to users—both in terms of geographical proximity, as well as users' declared preferences for age, interests, etc.  To accomplish the former, I used Google's S2 library to encode users' two-dimensional, coordinate locations as a single dimension, using a novel method that allows them to be efficiently ingested and indexed by Elasticsearch and searched using simple text queries, returning accurate hits quickly.</p><p>The unique emoji style of representing user interests presented another challenge. To index, search, and score this information in Elasticsearch, I abstracted it as a multidimensional vector, wherein each component is a different emoji, represented as either boolean true or false—the whole vector can thus be stored as a string of ones and zeroes,  such that similar sets of emoji effectively become similarly-spelled \"words\" to Elasticsearch—words which can then be fuzzy-searched, scored, and ranked according to similarity.  A few other preferences such as age act as filters in the query.  User matches are pre-generated whenever possible according to the user's last saved preferences, paged, and cached, to improve user experience on the client.</p>"
+    },
     {
       "id": "WI00",
       "title": "The Full Package/Flutterby",
