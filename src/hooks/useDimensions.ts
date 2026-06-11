@@ -1,28 +1,38 @@
-import { useState, useRef, useLayoutEffect } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
-const useDimensions = <T extends HTMLElement>() => {
-  const ref = useRef<T | null>(null)
-  const [ dimensions, setDimensions ] = useState<DOMRect | null>(null)
+function useDimensions<T extends HTMLElement>() {
+  const elementRef = useRef<T | null>(null);
+  const [ node, setNode ] = useState<T | null>(null);
+  const [ dimensions, setDimensions ] = useState<DOMRect | null>(null);
 
-  const updateDimensions = () => {
-    if (ref.current) setDimensions(ref.current.getBoundingClientRect())
-  }
+  const ref = useCallback((element: T | null) => {
+    elementRef.current = element;
+    setNode((currentNode) => (currentNode === element ? currentNode : element));
+  }, []);
 
   useLayoutEffect(() => {
-    updateDimensions()
-
-    const handleResize = () => {
-      updateDimensions()
+    if (!node) {
+      setDimensions(null);
+      return;
     }
 
-    window.addEventListener('resize', handleResize)
+    const observedNode = node;
+
+    function updateDimensions() {
+      setDimensions(observedNode.getBoundingClientRect());
+    }
+
+    updateDimensions();
+
+    const observer = new ResizeObserver(updateDimensions);
+    observer.observe(observedNode);
 
     return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [ ref.current ])
+      observer.disconnect();
+    };
+  }, [ node ]);
 
-  return { ref, dimensions }
+  return { ref, dimensions };
 }
 
-export { useDimensions }
+export { useDimensions };

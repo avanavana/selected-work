@@ -1,27 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react';
 
-const NO_REDUCED_MOTION_PREFERENCE = '(prefers-reduced-motion: no-preference)'
-const initialState = !window.matchMedia(NO_REDUCED_MOTION_PREFERENCE).matches
+const NO_REDUCED_MOTION_PREFERENCE = '(prefers-reduced-motion: no-preference)';
 
-const usePrefersReducedMotion = () => {
-  const [ prefersReducedMotion, setPrefersReducedMotion ] = useState<boolean>(initialState)
-
-  useEffect(() => {
-    const mediaQueryList = window.matchMedia(NO_REDUCED_MOTION_PREFERENCE)
-    setPrefersReducedMotion(!mediaQueryList.matches)
-
-    const matchMotionPreference = (event: MediaQueryListEvent) => {
-      setPrefersReducedMotion(!event.matches);
-    }
-
-    mediaQueryList.addEventListener('change', matchMotionPreference)
-
-    return () => {
-      mediaQueryList.removeEventListener('change', matchMotionPreference)
-    }
-  }, [])
-
-  return prefersReducedMotion
+function canReadMotionPreference() {
+  return (
+    typeof window !== 'undefined' && typeof window.matchMedia === 'function'
+  );
 }
 
-export { usePrefersReducedMotion }
+function subscribe(onStoreChange: () => void) {
+  if (!canReadMotionPreference()) {
+    return () => undefined;
+  }
+
+  const mediaQueryList = window.matchMedia(NO_REDUCED_MOTION_PREFERENCE);
+
+  function handleChange() {
+    onStoreChange();
+  }
+
+  mediaQueryList.addEventListener('change', handleChange);
+
+  return () => {
+    mediaQueryList.removeEventListener('change', handleChange);
+  };
+}
+
+function getSnapshot() {
+  return canReadMotionPreference()
+    ? !window.matchMedia(NO_REDUCED_MOTION_PREFERENCE).matches
+    : false;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
+
+export { usePrefersReducedMotion };
