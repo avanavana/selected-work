@@ -2,6 +2,9 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 export type Theme = 'light' | 'dark' | 'system'
 
+const themeCookieName = 'theme'
+const validThemes: Theme[] = [ 'light', 'dark', 'system' ]
+
 interface ThemeContextType {
   theme: Theme
   resolvedTheme: 'light' | 'dark'
@@ -10,10 +13,42 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+function isTheme(value: string | null): value is Theme {
+  return value !== null && validThemes.includes(value as Theme)
+}
+
+function getThemeCookieDomain() {
+  const hostname = window.location.hostname
+
+  if (hostname === 'avanavana.com' || hostname.endsWith('.avanavana.com')) {
+    return '; domain=.avanavana.com'
+  }
+
+  return ''
+}
+
+function getStoredThemePreference(): Theme {
+  const cookieTheme = document.cookie
+    .split('; ')
+    .find((cookie) => cookie.startsWith(`${themeCookieName}=`))
+    ?.split('=')[1] ?? null
+
+  if (isTheme(cookieTheme)) return cookieTheme
+
+  const localStorageTheme = localStorage.getItem(themeCookieName)
+  if (isTheme(localStorageTheme)) return localStorageTheme
+
+  return 'system'
+}
+
+function persistThemePreference(theme: Theme) {
+  localStorage.setItem(themeCookieName, theme)
+  document.cookie = `${themeCookieName}=${theme}; path=/; max-age=31536000; samesite=lax${getThemeCookieDomain()}`
+}
+
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [ theme, setThemeState ] = useState<Theme>(() => {
-    const storedTheme = localStorage.getItem('theme') as Theme | null
-    return storedTheme || 'system'
+    return getStoredThemePreference()
   })
 
   const [ resolvedTheme, setResolvedTheme ] = useState<'light' | 'dark'>(() => {
@@ -21,6 +56,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   })
 
   useEffect(() => {
+    persistThemePreference(theme)
+
     const root = document.documentElement
 
     const applyTheme = (theme: Theme) => {
@@ -46,7 +83,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [ theme ])
 
   const setTheme = (theme: Theme) => {
-    localStorage.setItem('theme', theme)
     setThemeState(theme)
   }
 
