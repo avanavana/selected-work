@@ -299,13 +299,13 @@ const Gallery: React.FC<GalleryProps> = ({
   const handleResumeClick = (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
     plausible('resume-downloaded')
-    createFileDownload('avana_vana-resume-2025-Q1.pdf')
+    createFileDownload('avana_vana-resume-2026-Q2.pdf')
   }
 
   const handlePortfolioClick = (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
     plausible('portfolio-downloaded')
-    createFileDownload('avana_vana-selected_work-2025-Q1.pdf')
+    createFileDownload('avana_vana-selected_work-2026-Q2.pdf')
   }
 
   const handleToggleTheme = () => {
