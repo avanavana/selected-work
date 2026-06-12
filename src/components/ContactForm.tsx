@@ -1,12 +1,12 @@
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react'
-import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence,motion } from 'framer-motion'
 import { CircleCheck, TriangleAlert, X } from 'lucide-react'
+import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 
 import { Button } from '@/components/Button'
 import { DialogContent, DialogDescription, DialogHeader, DialogPortal, DialogTitle } from '@/components/Dialog'
-import { Form, FormField, FormItem, FormLabel, FormControl } from '@/components/Form'
+import { Form, FormControl,FormField, FormItem, FormLabel } from '@/components/Form'
 import { Input } from '@/components/Input'
 import KeyboardCommand from '@/components/KeyboardCommand'
 import { ScrollArea } from '@/components/ScrollArea'
@@ -15,8 +15,8 @@ import Spinner from '@/components/Spinner'
 import { Textarea } from '@/components/Textarea'
 import { TouchTooltip } from '@/components/TouchTooltip'
 
+import { contactFormSchema, ContactFormValues,defaultFormValues } from '@/lib/schemas'
 import { cn } from '@/lib/utils'
-import { contactFormSchema, defaultFormValues, ContactFormValues } from '@/lib/schemas'
 
 type FormState = 'error' | 'idle' | 'pending' | 'success'
 
@@ -31,7 +31,7 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ name, ...props }) => {
   return (
     <AnimatePresence>
       {errors[name] && (
-        <motion.span className='error-message flex items-center gap-1 text-destructive text-sm' initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} {...props}>
+        <motion.span className="error-message flex items-center gap-1 text-sm text-destructive" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} {...props}>
           <TriangleAlert size={14} strokeWidth={2} />
           {errors[name]?.message as string | undefined}
         </motion.span>
@@ -44,7 +44,7 @@ ErrorMessage.displayName = 'ErrorMessage'
 
 const SuccessMessage: React.FC = (props) => (
   <motion.div
-    className='flex gap-2 bg-green-50/85 dark:bg-success border border-success text-success dark:text-white dark:font-bold dark:border-0 py-3 px-4 rounded-sm motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter'
+    className="flex gap-2 rounded-sm border border-success bg-green-50/85 px-4 py-3 text-success motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 dark:border-0 dark:bg-success dark:font-bold dark:text-white"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     {...props}
@@ -56,8 +56,8 @@ const SuccessMessage: React.FC = (props) => (
 SuccessMessage.displayName = 'SuccessMessage'
 
 const CloseContactFormButton = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(({ className, onClick }, ref) => (
-  <TouchTooltip variant='infoModal' content={<>Close<KeyboardCommand esc /></>}>
-    <Button ref={ref} aria-label='Close' variant='infoModal' className={className} onClick={onClick}><X size={24} strokeWidth={2} /></Button>
+  <TouchTooltip variant="infoModal" content={<>Close<KeyboardCommand esc /></>}>
+    <Button ref={ref} aria-label="Close" variant="infoModal" className={className} onClick={onClick}><X size={24} strokeWidth={2} /></Button>
   </TouchTooltip>
 ))
 
@@ -93,19 +93,19 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
    */
 
   const updateContactModalDimensions = useCallback(() => {
-      setTimeout(() => {
-        if (!dialogRef.current || !contactFormRef.current) return
-        const dialogHeight = dialogRef.current.getBoundingClientRect().height
-        const bodyHeight = contactFormRef.current.getBoundingClientRect().height
-        setContactModalRequiresScroll(dialogHeight - (38 * 2) - 48 - 38 < bodyHeight)
-      }, 10)
-    }, [])
+    setTimeout(() => {
+      if (!dialogRef.current || !contactFormRef.current) return
+      const dialogHeight = dialogRef.current.getBoundingClientRect().height
+      const bodyHeight = contactFormRef.current.getBoundingClientRect().height
+      setContactModalRequiresScroll(dialogHeight - (38 * 2) - 48 - 38 < bodyHeight)
+    }, 10)
+  }, [])
 
-    useEffect(() => {
-      updateContactModalDimensions()
-      window.addEventListener('resize', updateContactModalDimensions)
-      return () => window.removeEventListener('resize', updateContactModalDimensions)
-    }, [ updateContactModalDimensions ])
+  useEffect(() => {
+    updateContactModalDimensions()
+    window.addEventListener('resize', updateContactModalDimensions)
+    return () => window.removeEventListener('resize', updateContactModalDimensions)
+  }, [ updateContactModalDimensions ])
 
   /**
    *  Note: watch the form values for changes, and clear the form server error if a previous one exists
@@ -115,7 +115,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
 
   useEffect(() => {
     if (formError) setFormError(null)
-  }, [ formValues ])
+  }, [ formError, formValues ])
 
   /**
    *  Note: unfortunately, Radix UI's Dialog component has some nasty issues related to
@@ -156,13 +156,13 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
       const response = await fetch(import.meta.env.VITE_CONTACT_WEBHOOK_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data)
       })
 
       if (!response.ok) throw new Error('There was a problem sending your message. Please try again.')
 
       setFormState('success')
-    } catch (error: any) {
+    } catch (error: unknown) {
       setFormState('error')
       setFormError('Could not connect to the server. Please try again.')
       console.error(error)
@@ -195,14 +195,14 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
     }
 
     updateContactModalDimensions()
-  }, [ open ])
+  }, [ open, updateContactModalDimensions ])
 
   return (
     <DialogPortal>
       <DialogContent
         ref={dialogRef}
-        aria-live='off'
-        type='contact'
+        aria-live="off"
+        type="contact"
         className={cn('block px-0 z-[70] pb-normal gap-normal max-w-full', { 'requires-scroll': contactModalRequiresScroll })}
         onEscapeKeyDown={(e) => {
           if (selectOpen) {
@@ -218,57 +218,57 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
         onPointerDownOutside={(e) => e.preventDefault()}
       >
         <FormProvider {...form}>
-          <ScrollArea className='h-full'>
-            <div ref={contactFormRef} className='max-w-sm justify-self-center mx-auto'>
-              <DialogHeader className='flex flex-col px-normal gap-2 md:gap-2 mb-normal motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter'>
+          <ScrollArea className="h-full">
+            <div ref={contactFormRef} className="mx-auto max-w-sm justify-self-center">
+              <DialogHeader className="mb-normal flex flex-col gap-2 px-normal motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 md:gap-2">
                 <DialogTitle>Get in touch</DialogTitle>
-                <DialogDescription className='dark:text-gray-300'>For work opportunities or general inquiries, please contact me using the form below.</DialogDescription>
+                <DialogDescription className="dark:text-gray-300">For work opportunities or general inquiries, please contact me using the form below.</DialogDescription>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className='px-normal space-y-6 plausible-event-name=contact-form-submitted'>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="plausible-event-name=contact-form-submitted space-y-6 px-normal">
                   {formState === 'success' ? (
                     <SuccessMessage />
                   ) : (
                     <>
-                      <FormField control={form.control} name='name' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-100'>
+                      <FormField control={form.control} name="name" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-100">
                           <FormLabel>Name</FormLabel>
-                          <FormControl><Input aria-errormessage='error-name' aria-required {...field} /></FormControl>
-                          <ErrorMessage id='error-name'name='name' />
+                          <FormControl><Input aria-errormessage="error-name" aria-required {...field} /></FormControl>
+                          <ErrorMessage id="error-name"name="name" />
                         </FormItem>
                       )} />
-                      <FormField control={form.control} name='title' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-200'>
+                      <FormField control={form.control} name="title" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-200">
                           <FormLabel optional>Title</FormLabel>
                           <FormControl><Input {...field} /></FormControl>
                         </FormItem>
                       )} />
-                      <FormField control={form.control} name='company' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-200'>
+                      <FormField control={form.control} name="company" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-200">
                           <FormLabel optional>Company</FormLabel>
                           <FormControl><Input {...field} /></FormControl>
                         </FormItem>
                       )} />
-                      <FormField control={form.control} name='email' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-300'>
+                      <FormField control={form.control} name="email" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-300">
                           <FormLabel>Email</FormLabel>
-                          <FormControl><Input aria-errormessage='error-email' aria-required {...field} /></FormControl>
-                          <ErrorMessage id='error-email' name='email' />
+                          <FormControl><Input aria-errormessage="error-email" aria-required {...field} /></FormControl>
+                          <ErrorMessage id="error-email" name="email" />
                         </FormItem>
                       )} />
-                      <FormField control={form.control} name='phone' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-400'>
+                      <FormField control={form.control} name="phone" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-400">
                           <FormLabel optional>Phone</FormLabel>
-                          <FormControl><Input aria-errormessage='error-phone' aria-required {...field} /></FormControl>
-                          <ErrorMessage id='error-phone' name='phone' />
+                          <FormControl><Input aria-errormessage="error-phone" aria-required {...field} /></FormControl>
+                          <ErrorMessage id="error-phone" name="phone" />
                         </FormItem>
                       )} />
-                      <FormField control={form.control} name='type' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-500'>
+                      <FormField control={form.control} name="type" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-500">
                           <FormLabel>Inquiry type</FormLabel>
                           <FormControl>
                             <Select
-                              aria-errormessage='error-type'
+                              aria-errormessage="error-type"
                               aria-required
                               open={selectOpen}
                               onOpenChange={setSelectOpen}
@@ -280,37 +280,37 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
                                 onBlur={() => field.onBlur()}
                                 aria-invalid={!!form.formState.errors.type}
                               >
-                                <SelectValue placeholder='Select an option' />
+                                <SelectValue placeholder="Select an option" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value='Job Opportunity'>Job Opportunity</SelectItem>
-                                <SelectItem value='Freelance Work Opportunity'>Freelance Work</SelectItem>
-                                <SelectItem value='Other'>Other</SelectItem>
+                                <SelectItem value="Job Opportunity">Job Opportunity</SelectItem>
+                                <SelectItem value="Freelance Work Opportunity">Freelance Work</SelectItem>
+                                <SelectItem value="Other">Other</SelectItem>
                               </SelectContent>
                             </Select>
                           </FormControl>
-                          <ErrorMessage id='error-type' name='type' />
+                          <ErrorMessage id="error-type" name="type" />
                         </FormItem>
                       )} />
-                      <FormField control={form.control} name='subject' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-600'>
+                      <FormField control={form.control} name="subject" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-600">
                           <FormLabel>Subject</FormLabel>
-                          <FormControl><Input aria-errormessage='error-subject' aria-required {...field} /></FormControl>
-                          <ErrorMessage id='error-subject' name='subject' />
+                          <FormControl><Input aria-errormessage="error-subject" aria-required {...field} /></FormControl>
+                          <ErrorMessage id="error-subject" name="subject" />
                         </FormItem>
                       )} />
-                      <FormField control={form.control} name='message' render={({ field }) => (
-                        <FormItem className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-700'>
+                      <FormField control={form.control} name="message" render={({ field }) => (
+                        <FormItem className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-700">
                           <FormLabel>Message</FormLabel>
-                          <FormControl><Textarea aria-errormessage='error-message' aria-required className='min-h-40' {...field} /></FormControl>
-                          <ErrorMessage id='error-message' name='message' />
+                          <FormControl><Textarea aria-errormessage="error-message" aria-required className="min-h-40" {...field} /></FormControl>
+                          <ErrorMessage id="error-message" name="message" />
                         </FormItem>
                       )} />
                     </>
                   )}
-                  <div className='motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-800'>
+                  <div className="motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-800">
                     <Button
-                      variant='form'
+                      variant="form"
                       {...(formState === 'pending' && { 'aria-busy': true, 'aria-disabled': true, disabled: true })}
                       {...(formState === 'success' && { onClick: onClose })}
                       {...(formState === 'success' ? { type: 'button' } : { type: 'submit' })}
@@ -321,9 +321,9 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
                   <AnimatePresence>
                     {formError && (
                       <motion.p
-                        aria-role='alert'
-                        aria-live='assertive'
-                        className='text-destructive text-sm mt-2'
+                        aria-role="alert"
+                        aria-live="assertive"
+                        className="mt-2 text-sm text-destructive"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -337,7 +337,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onClose, open }) => {
             </div>
           </ScrollArea>
         </FormProvider>
-        <CloseContactFormButton className='gallery-top-right shrink-0' onClick={onClose} />
+        <CloseContactFormButton className="gallery-top-right shrink-0" onClick={onClose} />
       </DialogContent>
     </DialogPortal>
   )

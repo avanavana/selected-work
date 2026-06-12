@@ -1766,7 +1766,7 @@ const logoAnimationData: (string | null)[][][] = [
     [ null, null, null, '<', '<', null, '<', '<', '<', null, '<', '<', null, '<', '<', '<', null, '<', '<', null, null, '<', '<', null, null, '+', '+', null, '+', '+', null, '+', '+', '+', null, '+', '+', null, null, null ],
     [ null, '<', '<', '<', null, null, null, '<', '<', '<', null, '<', '<', '<', null, null, '<', '<', null, null, null, null, '+', '+', null, null, '+', '+', '+', null, '+', '+', '+', null, null, null, '+', '+', '+', null ],
     [ '<', '<', null, null, null, null, null, null, null, '<', '<', null, null, null, null, '+', '+', null, null, null, null, null, null, '+', '+', null, null, null, null, '+', '+', null, null, null, null, null, null, null, '|', '|' ]
-  ],
+  ]
   // [
   //   [ null, null, null, null, null, '-', null, null, '-', '-', null, null, null, null, null, null, '<', '<', '<', null, null, '<', '<', '<', null, null, null, null, null, null, '<', '+', '+', null, '+', null, null, null, null, null ],
   //   [ null, null, null, null, '<', '<', '<', null, null, '<', '<', null, null, null, '+', '<', '<', null, '<', '<', '<', '<', null, '<', '<', '<', null, null, null, '+', '+', null, null, '+', '+', '+', null, null, null, null ],
@@ -1776,4 +1776,4 @@ const logoAnimationData: (string | null)[][][] = [
   // ]
 ]
 
-export default logoAnimationData;
+export default logoAnimationData

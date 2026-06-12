@@ -44,7 +44,7 @@ const letterSegments = [
   'M566.614 139.636H596.376',
   'M566.614 139.636L516.371 54.4182',
   'M516.371 54.4182L466.129 139.636',
-  'M466.129 139.636H436.366',
+  'M466.129 139.636H436.366'
 ]
 
 const crosshairs = [
@@ -88,7 +88,7 @@ const crosshairs = [
   'M599.361 139.631H596.391M596.391 139.631H593.421M596.391 139.631L597.891 142.186M596.391 139.631L594.876 137.062',
   'M569.599 139.631H566.629M566.629 139.631H563.659M566.629 139.631L568.129 142.186M566.629 139.631L565.114 137.062',
   'M514.871 51.8588L516.371 54.4133M516.371 54.4133L517.886 56.9677M516.371 54.4133L517.886 51.8588M516.371 54.4133L514.871 56.9677',
-  'M463.158 139.631H466.129M466.129 139.631H469.099M466.129 139.631L464.629 142.186M466.129 139.631L467.643 137.062',
+  'M463.158 139.631H466.129M466.129 139.631H469.099M466.129 139.631L464.629 142.186M466.129 139.631L467.643 137.062'
 ]
 
 interface LogoOutlinesProps {
@@ -116,7 +116,7 @@ const LogoOutlines: React.FC<LogoOutlinesProps> = ({ className, isDarkMode = fal
 
   return (
     <motion.div className={className} initial={{ opacity: 1 }} animate={{ opacity: 0 }} transition={{ delay: 10, duration: 2 }} {...props}>
-      <svg width='600' height='144' viewBox='0 0 600 144' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <svg width="600" height="144" viewBox="0 0 600 144" fill="none" xmlns="http://www.w3.org/2000/svg">
         {letterSegments.map((path, i) => (
           <motion.path key={`segment-${i}`}
             ref={(ref) => pathRefs.current[i] = ref}

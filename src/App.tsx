@@ -8,20 +8,19 @@ import ContactInfo from '@/components/ContactInfo'
 import { Dialog } from '@/components/Dialog'
 import Gallery from '@/components/Gallery'
 import { TouchTooltipProvider } from '@/components/TouchTooltip'
+import KeyboardCommand from './components/KeyboardCommand'
 
 import { ThemeProvider } from '@/context/ThemeContext'
+import { useKeyDown } from './hooks/useKeyDown'
 import { useDetectWebPSupport } from '@/hooks/useDetectWebPSupport'
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation'
 import { useDimensions } from '@/hooks/useDimensions'
 import { useImagePreloader } from '@/hooks/useImagePreloader'
-import { useKeyDown } from './hooks/useKeyDown'
 import { useTimer } from '@/hooks/useTimer'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber, generateImageSources, orderPortfolioDataForDisplay, setAbortableTimeout } from '@/lib/utils'
-import { height, width, screens, spacing } from '../tailwind.config'
-
 import data from '@/data/projects.json'
-import KeyboardCommand from './components/KeyboardCommand'
+import { height, screens, spacing, width } from '../tailwind.config'
 
 const idealContentHeight = extractNumber(height.max) + 70 + extractNumber(spacing.double)
 const idealAspectRatio = extractNumber(width.max) / idealContentHeight
@@ -53,7 +52,6 @@ const App: React.FC = () => {
 
   const handleOpenContactForm = () => {
     setContactFormOpen(true)
-    // @ts-ignore
     plausible('contact-form-opened')
   }
 
@@ -82,8 +80,7 @@ const App: React.FC = () => {
     setSlidesMounted(true)
     setShouldAnimateContactInfo(true)
     const duration = stopTimer()
-    // @ts-ignore
-    plausible('intro-skipped', { props: { 'intro-skipped-after': isNaN(duration) ? null : duration / 1000 }})
+    plausible('intro-skipped', { props: { 'intro-skipped-after': isNaN(duration) ? null : duration / 1000 } })
   }
 
   useDeviceOrientation(handlePrematureScreenChange)
@@ -99,7 +96,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     startTimer()
-  }, [])
+  }, [ startTimer ])
 
   /**
    *  Note: set timers based on key points in the intro animation sequence and use them to
@@ -130,7 +127,7 @@ const App: React.FC = () => {
       setSlidesMounted(true)
       setShouldAnimateContactInfo(false)
     }
-  }, [ introSkipped ])
+  }, [ introSkipped, isMdScreenOrSmaller, shouldReduceMotion, stopTimer ])
 
   useEffect(() => {
     setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
@@ -144,11 +141,11 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider>
-      <MotionConfig reducedMotion='user'>
+      <MotionConfig reducedMotion="user">
         <TouchTooltipProvider>
           <Dialog open={contactFormOpen} onOpenChange={setContactFormOpen}>
             <div className={cn('w-screen min-w-80 h-full flex justify-center', slidesMounted ? 'items-start sm:items-center max-height:items-start' : 'items-center overflow-hidden', { 'sm:items-start': hasFlatAspectRatio && screenHeight < idealContentHeight })}>
-              <main ref={wrapperRef} id='wrapper' className={cn('w-full max:w-max flex flex-col items-center', slidesMounted ? 'justify-between min-h-auto' : 'justify-center min-h-full overflow-hidden')}>
+              <main ref={wrapperRef} id="wrapper" className={cn('w-full max:w-max flex flex-col items-center', slidesMounted ? 'justify-between min-h-auto' : 'justify-center min-h-full overflow-hidden')}>
                 {(shouldReduceMotion || slidesMounted) && (
                   <Gallery
                     contactFormOpen={contactFormOpen}
@@ -170,8 +167,8 @@ const App: React.FC = () => {
             </div>
             <AnimatePresence>
               {!introSkipped && !slidesMounted && (
-                <motion.div className='gallery-bottom-right z-10' initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1 }}} exit={{ opacity: 0 }}>
-                  <Button variant='form' className='bg-gray-800/50 hover:bg-gray-800/85 active:bg-gray-800/85 [&_kbd]:text-gray-300 [&_kbd]:!border-gray-300 dark:[&_kbd]:text-gray-500 dark:[&_kbd]:!border-gray-500' onClick={handleSkipIntro}>Skip animation<ArrowRight size={24} strokeWidth={2} /><KeyboardCommand enter /></Button>
+                <motion.div className="gallery-bottom-right z-10" initial={{ opacity: 0 }} animate={{ opacity: 1, transition: { delay: 1 } }} exit={{ opacity: 0 }}>
+                  <Button variant="form" className="bg-gray-800/50 hover:bg-gray-800/85 active:bg-gray-800/85 [&_kbd]:!border-gray-300 [&_kbd]:text-gray-300 dark:[&_kbd]:!border-gray-500 dark:[&_kbd]:text-gray-500" onClick={handleSkipIntro}>Skip animation<ArrowRight size={24} strokeWidth={2} /><KeyboardCommand enter /></Button>
                 </motion.div>
               )}
             </AnimatePresence>

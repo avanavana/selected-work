@@ -1,43 +1,43 @@
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react'
 
-const NO_REDUCED_MOTION_PREFERENCE = '(prefers-reduced-motion: no-preference)';
+const NO_REDUCED_MOTION_PREFERENCE = '(prefers-reduced-motion: no-preference)'
 
 function canReadMotionPreference() {
   return (
     typeof window !== 'undefined' && typeof window.matchMedia === 'function'
-  );
+  )
 }
 
 function subscribe(onStoreChange: () => void) {
   if (!canReadMotionPreference()) {
-    return () => undefined;
+    return () => undefined
   }
 
-  const mediaQueryList = window.matchMedia(NO_REDUCED_MOTION_PREFERENCE);
+  const mediaQueryList = window.matchMedia(NO_REDUCED_MOTION_PREFERENCE)
 
   function handleChange() {
-    onStoreChange();
+    onStoreChange()
   }
 
-  mediaQueryList.addEventListener('change', handleChange);
+  mediaQueryList.addEventListener('change', handleChange)
 
   return () => {
-    mediaQueryList.removeEventListener('change', handleChange);
-  };
+    mediaQueryList.removeEventListener('change', handleChange)
+  }
 }
 
 function getSnapshot() {
   return canReadMotionPreference()
     ? !window.matchMedia(NO_REDUCED_MOTION_PREFERENCE).matches
-    : false;
+    : false
 }
 
 function getServerSnapshot() {
-  return false;
+  return false
 }
 
 function usePrefersReducedMotion() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }
 
-export { usePrefersReducedMotion };
+export { usePrefersReducedMotion }

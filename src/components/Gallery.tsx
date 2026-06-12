@@ -7,13 +7,14 @@
  */
 
 import { forwardRef, MouseEventHandler, Suspense, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
-import useEmblaCarousel from 'embla-carousel-react'
+import { textSquare } from '@lucide/lab'
+import type { EmblaCarouselType,EmblaOptionsType } from 'embla-carousel'
 import Autoplay from 'embla-carousel-autoplay'
 import Fade from 'embla-carousel-fade'
+import useEmblaCarousel from 'embla-carousel-react'
+import { motion } from 'framer-motion'
 import { Squash as Hamburger } from 'hamburger-react'
 import { ChevronLeft, ChevronRight, CircleUserRound, Icon, Mail, Maximize, Minimize, Moon, MousePointerClick, Paperclip, Pause, Play, Sun, SunMoon, X } from 'lucide-react'
-import { textSquare } from '@lucide/lab'
 
 import { Button } from '@/components/Button'
 import { Combobox, ComboboxContent } from '@/components/Combobox'
@@ -26,6 +27,7 @@ import { Toaster, ToasterElement } from '@/components/Toast'
 import { TouchTooltip } from '@/components/TouchTooltip'
 import TypedText from '@/components/TypedText'
 
+import type { Theme } from '@/context/ThemeContext'
 import { useTheme } from '@/context/ThemeContext'
 import { useFullScreen } from '@/hooks/useFullScreen'
 import { useKeyDown } from '@/hooks/useKeyDown'
@@ -34,9 +36,6 @@ import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, createFileDownload, extractNumber } from '@/lib/utils'
 import { height, screens, width } from '../../tailwind.config'
-
-import type { EmblaOptionsType, EmblaCarouselType } from 'embla-carousel'
-import type { Theme } from '@/context/ThemeContext'
 
 interface Category {
   value: string
@@ -91,13 +90,13 @@ const PreviousButton = forwardRef<HTMLButtonElement, NavigationButtonProps>(({ c
 
 const CloseDialogButton = forwardRef<HTMLButtonElement, CloseDialogButtonProps>(({ className, forceHide, onClick, variant }, ref) => (
   <TouchTooltip forceHide={forceHide} content={<>Close project details<KeyboardCommand esc /></>} {...(variant && { variant })}>
-    <DialogClose asChild><Button ref={ref} variant={variant} className={className} aria-label='Close project details' onClick={onClick}><X size={24} strokeWidth={2} /></Button></DialogClose>
+    <DialogClose asChild><Button ref={ref} variant={variant} className={className} aria-label="Close project details" onClick={onClick}><X size={24} strokeWidth={2} /></Button></DialogClose>
   </TouchTooltip>
 ))
 
 const aspectRatio = extractNumber(height.max) / extractNumber(width.max)
 
-const themeOptions: Theme[] = [ 'light', 'dark', 'system']
+const themeOptions: Theme[] = [ 'light', 'dark', 'system' ]
 
 const projectCategoriesMap: Record<string, string> = {
   'web/interactive': 'WI',
@@ -221,7 +220,7 @@ const Gallery: React.FC<GalleryProps> = ({
    *  to resume if the user is idle for a certain amount of time, and fade out when activity resumes
    */
 
-  const handleOverlayIdleBehavior = () => {
+  const handleOverlayIdleBehavior = useCallback(() => {
     setGalleryControlsVisible(true)
     if (emblaApi && !shouldReduceMotion) emblaApi.plugins().autoplay.stop()
 
@@ -235,7 +234,7 @@ const Gallery: React.FC<GalleryProps> = ({
         if (emblaApi && !shouldReduceMotion && isPlaying) emblaApi.plugins().autoplay.play()
       }
     }, GALLERY_OVERLAY_IDLE_TIMEOUT)
-  }
+  }, [ emblaApi, isFullScreen, isPlaying, shouldReduceMotion ])
 
   const handleNavigateNextSlide = () => {
     if (emblaApi) emblaApi.scrollNext()
@@ -284,14 +283,12 @@ const Gallery: React.FC<GalleryProps> = ({
       if (isPlaying) {
         setIsPlaying(false)
         localStorage.setItem('gallery-autoplay', 'false')
-        // @ts-ignore
         plausible('gallery-paused')
         emblaApi.plugins().autoplay.stop()
         toasterRef.current?.toast({ message: 'Slideshow paused' })
       } else {
         setIsPlaying(true)
         localStorage.setItem('gallery-autoplay', 'true')
-        // @ts-ignore
         plausible('gallery-resumed')
         emblaApi.plugins().autoplay.play()
         toasterRef.current?.toast({ message: 'Slideshow resumed' })
@@ -301,22 +298,19 @@ const Gallery: React.FC<GalleryProps> = ({
 
   const handleResumeClick = (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
-    // @ts-ignore
     plausible('resume-downloaded')
     createFileDownload('avana_vana-resume-2025-Q1.pdf')
   }
 
   const handlePortfolioClick = (e: React.MouseEvent<HTMLButtonElement | HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
-    // @ts-ignore
     plausible('portfolio-downloaded')
     createFileDownload('avana_vana-selected_work-2025-Q1.pdf')
   }
 
   const handleToggleTheme = () => {
     setTheme(nextTheme)
-    // @ts-ignore
-    plausible('theme-changed', { props: { theme: nextTheme }})
+    plausible('theme-changed', { props: { theme: nextTheme } })
     toasterRef.current?.toast({ message: `Switched to ${nextTheme} theme` })
   }
 
@@ -347,7 +341,6 @@ const Gallery: React.FC<GalleryProps> = ({
     }
 
     setInfoModalOpen(true)
-    // @ts-ignore
     plausible('info-modal-opened', { props: { 'info-modal-source': source } })
     window.scrollTo({ top: 0, behavior: 'smooth' })
     const body = document.querySelector('body')
@@ -371,7 +364,7 @@ const Gallery: React.FC<GalleryProps> = ({
     setShowMobileProjectFilter(false)
     setSelectCategoriesOpen(false)
     setSelectCategoriesInfoModalOpen(false)
-    isSmScreenOrSmaller && setShowMobileProjectInfo(false)
+    if (isSmScreenOrSmaller) setShowMobileProjectInfo(false)
     viewProjectDetailsRef.current?.blur()
 
     if (emblaApi && wasPlayingBeforeResize.current && !shouldReduceMotion) {
@@ -405,11 +398,11 @@ const Gallery: React.FC<GalleryProps> = ({
         setTimeout(() => { updateInfoModalDimensions() }, 10)
       }
     }
-  }, [ emblaApi, infoModalOpen, isSmScreenOrSmaller, showMobileProjectInfo ])
+  }, [ infoModalOpen, isSmScreenOrSmaller, showMobileProjectInfo, updateInfoModalDimensions ])
 
   useEffect(() => {
     if (emblaApi) emblaApi.on('slidesInView', switchProject)
-  }, [ emblaApi ])
+  }, [ emblaApi, switchProject ])
 
   /**
    *  Note: save user's selected categories and last viewed project details to local storage on change
@@ -421,8 +414,7 @@ const Gallery: React.FC<GalleryProps> = ({
 
   useEffect(() => {
     localStorage.setItem('selectedCategories', JSON.stringify(categories))
-    // @ts-ignore
-    plausible('projects-filtered', { props: { filters: categories.map((c) => projectCategoriesMap[c]).join('-') }})
+    plausible('projects-filtered', { props: { filters: categories.map((c) => projectCategoriesMap[c]).join('-') } })
   }, [ categories ])
 
   useEffect(() => {
@@ -441,7 +433,7 @@ const Gallery: React.FC<GalleryProps> = ({
       setShowMobileProjectInfo(false)
       setInfoModalOpen(false)
     }
-  }, [ screenWidth ])
+  }, [ contactFormOpen, infoModalOpen, screenWidth ])
 
   /**
    *  Note: dynamically filter gallery image sources and project data based on the user's selected categories.
@@ -479,7 +471,7 @@ const Gallery: React.FC<GalleryProps> = ({
         return () => clearTimeout(timer)
       }
     }
-  }, [ categories, emblaApi ])
+  }, [ categories, data.projects, emblaApi, imageSources, infoModalOpen, shouldReduceMotion ])
 
   /**
    *  Note: again, Radix UI's Dialog component sets 'pointer-events: none' on the body, and to avoid
@@ -548,7 +540,7 @@ const Gallery: React.FC<GalleryProps> = ({
     const details = data.details.find(({ id }: Project) => id === currentProjectId)
 
     if (details) setCurrentProjectDetails(details)
-  }, [ categories, currentSlideIndex, projects ])
+  }, [ currentSlideIndex, data.details, projects ])
 
   /**
    *  Note: recaculate the project info modal's content height vs. its container height when the
@@ -605,7 +597,7 @@ const Gallery: React.FC<GalleryProps> = ({
         clearTimeout(galleryIdleTimerRef.current)
       }
     }
-  }, [ isFullScreen, isPlaying, shouldReduceMotion ])
+  }, [ emblaApi, handleOverlayIdleBehavior, isFullScreen, isPlaying, shouldReduceMotion ])
 
   /**
    *  Note dynamically generates mobile menu options
@@ -615,33 +607,33 @@ const Gallery: React.FC<GalleryProps> = ({
     {
       text: 'View project details',
       action: () => setShowMobileProjectInfo(true),
-      icon: <Icon iconNode={textSquare} size={24} strokeWidth={2} className='transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white' stroke='currentColor' />
+      icon: <Icon iconNode={textSquare} size={24} strokeWidth={2} className="transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white" stroke="currentColor" />
     },
     {
       text: 'Download résumé',
       caption: '61 kB PDF',
       action: handleResumeClick,
-      icon: <CircleUserRound size={24} strokeWidth={2} className='transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white' stroke='currentColor' />
+      icon: <CircleUserRound size={24} strokeWidth={2} className="transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white" stroke="currentColor" />
     },
     {
       text: 'Download selected work',
       caption: '16 MB PDF',
       action: handlePortfolioClick,
-      icon: <Paperclip size={24} strokeWidth={2} className='transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white' stroke='currentColor' />
+      icon: <Paperclip size={24} strokeWidth={2} className="transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white" stroke="currentColor" />
     },
     {
       text: `Switch to ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'} mode`,
       action: handleToggleTheme,
       icon: theme === 'light'
-        ? <Moon size={24} strokeWidth={2} className='transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white' stroke='currentColor' />
+        ? <Moon size={24} strokeWidth={2} className="transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white" stroke="currentColor" />
         : theme === 'dark'
-          ? <SunMoon size={24} strokeWidth={2} className='transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white' stroke='currentColor' />
-          : <Sun size={24} strokeWidth={2} className='transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white' stroke='currentColor' />
+          ? <SunMoon size={24} strokeWidth={2} className="transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white" stroke="currentColor" />
+          : <Sun size={24} strokeWidth={2} className="transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white" stroke="currentColor" />
     },
     {
       text: 'Get in touch',
       action: handleOpenContactForm,
-      icon: <Mail size={24} strokeWidth={2} className='transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white' stroke='currentColor' />
+      icon: <Mail size={24} strokeWidth={2} className="transition-all group-hover:stroke-gray-800 dark:group-hover:stroke-white" stroke="currentColor" />
     }
   ]
 
@@ -669,7 +661,7 @@ const Gallery: React.FC<GalleryProps> = ({
     <Dialog open={infoModalOpen} onOpenChange={setInfoModalOpen}>
       <motion.section
         ref={galleryRef}
-        id='gallery'
+        id="gallery"
         className={cn('relative max-w-max min-w-80 w-full max:w-max overflow-hidden mx-auto', { 'flex items-center': isFullScreen }, className)}
         initial={{ height: shouldReduceMotion || gallerySlidesMounted ? calculatedHeight : 0 }}
         animate={{ height: calculatedHeight }}
@@ -689,8 +681,8 @@ const Gallery: React.FC<GalleryProps> = ({
         }}
       >
         <Suspense fallback={<Spinner />}>
-          <div id='slides' ref={emblaRef} className='overflow-hidden'>
-            <div className='flex touch-pan-y touch-pinch-zoom -ml-normal cursor-pointer' onClick={isSmScreenOrSmaller ? handleOpenMobileInfoModal : () => handleOpenInfoModal('overlay')}>
+          <div id="slides" ref={emblaRef} className="overflow-hidden">
+            <div className="-ml-normal flex cursor-pointer touch-pan-y touch-pinch-zoom" onClick={isSmScreenOrSmaller ? handleOpenMobileInfoModal : () => handleOpenInfoModal('overlay')}>
               {filteredImageSources.map((sources, i) => {
                 /**
                  *  Note: generate source sets for each project's images after preloading them (in App.tsx)
@@ -720,25 +712,25 @@ const Gallery: React.FC<GalleryProps> = ({
                 const imageProjectId = webpOriginal?.match(/image-((?:WI|PI|3E)[0-9]{2})/)![1]
 
                 return (
-                  <div className='flex-full min-w-0 pl-normal [transform:translate3d(0,0,0)]' key={`image-${i.toString().padStart(2, '0')}-${imageProjectId}`}>
-                    <div className='flex justify-center items-center text-2xl font-bold select-none bg-transparent' style={{ height: calculatedHeight }}>
+                  <div className="min-w-0 flex-full pl-normal [transform:translate3d(0,0,0)]" key={`image-${i.toString().padStart(2, '0')}-${imageProjectId}`}>
+                    <div className="flex select-none items-center justify-center bg-transparent text-2xl font-bold" style={{ height: calculatedHeight }}>
                       <picture>
                         {isWebPSupported && webpOriginal && webpSmall && webpMedium && webpLarge && (
                           <source
-                            type='image/webp'
+                            type="image/webp"
                             srcSet={`${webpSmall} 640w, ${webpMedium} 896w, ${webpLarge} 1024w, ${webpOriginal} 1280w`}
-                            sizes='(max-width: 640px) 640px, (max-width: 896px) 896px, (max-width: 1024px) 1024px, 1280px'
+                            sizes="(max-width: 640px) 640px, (max-width: 896px) 896px, (max-width: 1024px) 1024px, 1280px"
                           />
                         )}
                         {pngOriginal && pngSmall && pngMedium && pngLarge && (
                           <source
-                            type='image/png'
+                            type="image/png"
                             srcSet={`${pngSmall} 640w, ${pngMedium} 896w, ${pngLarge} 1024w, ${pngOriginal} 1280w`}
-                            sizes='(max-width: 640px) 640px, (max-width: 896px) 896px, (max-width: 1024px) 1024px, 1280px'
+                            sizes="(max-width: 640px) 640px, (max-width: 896px) 896px, (max-width: 1024px) 1024px, 1280px"
                           />
                         )}
                         <img
-                          className='w-full'
+                          className="w-full"
                           src={fallback}
                           alt={data.details.find((project: Project) => project.id === imageProjectId)!.title}
                         />
@@ -760,26 +752,26 @@ const Gallery: React.FC<GalleryProps> = ({
         {isSmScreenOrSmaller ? (
           <>
             {showMobileProjectInfo && (
-              <TouchTooltip forceHide={!galleryControlsVisible} variant='infoModal' content={<>Previous project <KeyboardCommand left /></>}>
+              <TouchTooltip forceHide={!galleryControlsVisible} variant="infoModal" content={<>Previous project <KeyboardCommand left /></>}>
                 <Button
-                  aria-label='Previous project'
-                  aria-live='off'
+                  aria-label="Previous project"
+                  aria-live="off"
                   className={cn('button-mobile-menu gallery-top-left z-[60] rounded-r-none', showMobileProjectFilter ? 'opacity-0' : 'opacity-100')}
                   onClick={handleNavigatePreviousProject}
-                  variant='infoModal'
+                  variant="infoModal"
                 >
                   <ChevronLeft size={24} strokeWidth={2} />
                 </Button>
               </TouchTooltip>
             )}
             {showMobileProjectInfo && (
-              <TouchTooltip forceHide={!galleryControlsVisible} variant='infoModal' content={<>Next project <KeyboardCommand right /></>}>
+              <TouchTooltip forceHide={!galleryControlsVisible} variant="infoModal" content={<>Next project <KeyboardCommand right /></>}>
                 <Button
-                  aria-label='Next project'
-                  aria-live='off'
+                  aria-label="Next project"
+                  aria-live="off"
                   className={cn('button-mobile-menu absolute top-normal left-[86px] z-[60] rounded-l-none before:content-[""] before:block before:w-[1px] before:h-full before:bg-gray-500 dark:before:bg-gray-600 before:absolute before:left-0', showMobileProjectFilter ? 'opacity-0' : 'opacity-100')}
                   onClick={handleNavigateNextProject}
-                  variant='infoModal'
+                  variant="infoModal"
                 >
                   <ChevronRight size={24} strokeWidth={2} />
                 </Button>
@@ -789,7 +781,7 @@ const Gallery: React.FC<GalleryProps> = ({
               <TouchTooltip forceHide={!galleryControlsVisible} content={infoModalOpen ? <>Close menu <KeyboardCommand esc /></> : <>Open menu <KeyboardCommand enter /></>} {...(infoModalOpen && { variant: 'infoModal' })}>
                 <Button
                   aria-label={infoModalOpen ? 'Close menu' : 'Open menu'}
-                  aria-live='off'
+                  aria-live="off"
                   className={cn('button-mobile-menu gallery-top-right z-[60] transition-opacity', showMobileProjectFilter ? 'opacity-0' : 'opacity-100')}
                   onClick={infoModalOpen ? handleCloseInfoModal : () => handleOpenInfoModal('button')}
                   {...(infoModalOpen && { variant: 'infoModal' })}
@@ -821,7 +813,7 @@ const Gallery: React.FC<GalleryProps> = ({
             )} */}
             {!contactFormOpen && (
               <TouchTooltip forceHide={!galleryControlsVisible} content={<>{isFullScreen ? 'Exit full screen' : 'Full screen'}<KeyboardCommand option enter /></>}>
-                <Button aria-label={isFullScreen ? 'Exit full screen' : 'Full screen'} onClick={toggleFullScreen} className={cn('button-fullscreen gallery-bottom-right transition-opacity duration-500 z-40', galleryControlsVisible ? 'opacity-100' : 'opacity-0')}>{isFullScreen ? <Minimize size={24} strokeWidth={2} fill='currentColor' /> : <Maximize size={24} strokeWidth={2} fill='currentColor' />}</Button>
+                <Button aria-label={isFullScreen ? 'Exit full screen' : 'Full screen'} onClick={toggleFullScreen} className={cn('button-fullscreen gallery-bottom-right transition-opacity duration-500 z-40', galleryControlsVisible ? 'opacity-100' : 'opacity-0')}>{isFullScreen ? <Minimize size={24} strokeWidth={2} fill="currentColor" /> : <Maximize size={24} strokeWidth={2} fill="currentColor" />}</Button>
               </TouchTooltip>
             )}
             {
@@ -833,13 +825,13 @@ const Gallery: React.FC<GalleryProps> = ({
                */
             }
             {showMobileProjectInfo && (
-              <TouchTooltip forceHide={!galleryControlsVisible} variant='infoModal' content={<>{showMobileProjectFilter ? 'Close' : 'Filter by category'}<KeyboardCommand command keys={[ 'K' ]} /></>}>
+              <TouchTooltip forceHide={!galleryControlsVisible} variant="infoModal" content={<>{showMobileProjectFilter ? 'Close' : 'Filter by category'}<KeyboardCommand command keys={[ 'K' ]} /></>}>
                 <Button
                   aria-label={showMobileProjectFilter ? 'Close' : 'Filter by category'}
-                  aria-live='off'
+                  aria-live="off"
                   className={cn('info-modal-filter-container absolute top-normal z-[60] transition-[left]', showMobileProjectFilter ? 'left-normal' : 'left-[140px]')}
                   onClick={showMobileProjectFilter ? handleCloseMobileProjectFilter : handleOpenMobileProjectFilter}
-                  variant='infoModal'
+                  variant="infoModal"
                 >
                   <FilterBurger
                     size={20}
@@ -853,7 +845,7 @@ const Gallery: React.FC<GalleryProps> = ({
             )}
           </>
         ) : (
-          /**
+        /**
            *  Note: conditionally render gallery overlay buttons on larger screens, depending on function
            */
 
@@ -873,29 +865,29 @@ const Gallery: React.FC<GalleryProps> = ({
                     forceHideTooltip={!galleryControlsVisible}
                   />
                   <TouchTooltip forceHide={!galleryControlsVisible} content={<>View project details<KeyboardCommand enter /></>}>
-                    <Button aria-label='View project details' className='button-info shrink-0' onClick={() => handleOpenInfoModal('button')}><Icon iconNode={textSquare} size={24} strokeWidth={2} /></Button>
+                    <Button aria-label="View project details" className="button-info shrink-0" onClick={() => handleOpenInfoModal('button')}><Icon iconNode={textSquare} size={24} strokeWidth={2} /></Button>
                   </TouchTooltip>
                 </div>
               )}
-              <div className='gallery-bottom-left flex items-center gap-1.5'>
+              <div className="gallery-bottom-left flex items-center gap-1.5">
                 {/* Note: Autoplay is disabled in reduced motion mode, so we don't need to show a play/pause button */}
                 {!shouldReduceMotion && (
                   <TouchTooltip forceHide={!galleryControlsVisible} content={<>{isPlaying ? 'Pause' : 'Play'}<KeyboardCommand space /></>}>
-                    <Button aria-label={isPlaying ? 'Pause' : 'Play'} onClick={togglePlayPauseSlides} className={cn('button-play-pause transition-opacity duration-500', galleryControlsVisible ? 'opacity-100' : 'opacity-0')}>{isPlaying ? <Pause size={24} strokeWidth={2} fill='currentColor' /> : <Play size={24} strokeWidth={2} fill='currentColor' />}</Button>
+                    <Button aria-label={isPlaying ? 'Pause' : 'Play'} onClick={togglePlayPauseSlides} className={cn('button-play-pause transition-opacity duration-500', galleryControlsVisible ? 'opacity-100' : 'opacity-0')}>{isPlaying ? <Pause size={24} strokeWidth={2} fill="currentColor" /> : <Play size={24} strokeWidth={2} fill="currentColor" />}</Button>
                   </TouchTooltip>
                 )}
                 <TouchTooltip forceHide={!galleryControlsVisible} content={<>{isFullScreen ? 'Exit full screen' : 'Full screen'}<KeyboardCommand option enter /></>}>
-                  <Button aria-label={isFullScreen ? 'Exit full screen' : 'Full screen'} onClick={toggleFullScreen} className={cn('button-fullscreen transition-opacity duration-500', galleryControlsVisible ? 'opacity-100' : 'opacity-0')}>{isFullScreen ? <Minimize size={24} strokeWidth={2} fill='currentColor' /> : <Maximize size={24} strokeWidth={2} fill='currentColor' />}</Button>
+                  <Button aria-label={isFullScreen ? 'Exit full screen' : 'Full screen'} onClick={toggleFullScreen} className={cn('button-fullscreen transition-opacity duration-500', galleryControlsVisible ? 'opacity-100' : 'opacity-0')}>{isFullScreen ? <Minimize size={24} strokeWidth={2} fill="currentColor" /> : <Maximize size={24} strokeWidth={2} fill="currentColor" />}</Button>
                 </TouchTooltip>
               </div>
               {/* Note: No need to show resume/portfolio download buttons in full screen mode */}
               {!isFullScreen && (
                 <div className={cn('gallery-bottom-right flex items-center gap-1.5 transition-opacity duration-500', galleryControlsVisible ? 'opacity-100' : 'opacity-0')}>
-                  <TouchTooltip forceHide={!galleryControlsVisible} content={<>Download résumé <span className='font-normal text-gray-300'>(61 kB PDF)</span></>}>
-                    <Button aria-label='Download résumé' className='button-resume' onClick={handleResumeClick}><CircleUserRound size={24} strokeWidth={2} /></Button>
+                  <TouchTooltip forceHide={!galleryControlsVisible} content={<>Download résumé <span className="font-normal text-gray-300">(61 kB PDF)</span></>}>
+                    <Button aria-label="Download résumé" className="button-resume" onClick={handleResumeClick}><CircleUserRound size={24} strokeWidth={2} /></Button>
                   </TouchTooltip>
-                  <TouchTooltip forceHide={!galleryControlsVisible} content={<>Download selected work <span className='font-normal text-gray-300'>(16 MB PDF)</span></>}>
-                    <Button aria-label='Download selected work' className='button-portfolio' onClick={handlePortfolioClick}><Paperclip size={24} strokeWidth={2} /></Button>
+                  <TouchTooltip forceHide={!galleryControlsVisible} content={<>Download selected work <span className="font-normal text-gray-300">(16 MB PDF)</span></>}>
+                    <Button aria-label="Download selected work" className="button-portfolio" onClick={handlePortfolioClick}><Paperclip size={24} strokeWidth={2} /></Button>
                   </TouchTooltip>
                 </div>
               )}
@@ -919,7 +911,7 @@ const Gallery: React.FC<GalleryProps> = ({
         }
         {(!isSmScreenOrSmaller || showMobileProjectInfo) ? (
           <DialogContent
-            type='projectDetails'
+            type="projectDetails"
             onEscapeKeyDown={(e) => {
               e.preventDefault()
               e.stopPropagation()
@@ -941,9 +933,9 @@ const Gallery: React.FC<GalleryProps> = ({
             }
             {showMobileProjectFilter && isSmScreenOrSmaller ? (
               <div ref={infoModalWrapperRef} className={cn('info-modal-wrapper h-full flex flex-col justify-center gap-normal overflow-y-scroll overflow-x-hidden px-normal sm:px-info-modal-fluid md:px-info-modal-max', { 'pb-double !justify-start requires-scroll': infoModalRequiresScroll })} >
-                <DialogHeader ref={infoModalHeaderRef} className='sr-only'><DialogTitle>Menu</DialogTitle></DialogHeader>
-                <DialogDescription className='sr-only' isDarkMode={resolvedTheme === 'dark'}>Filter selected work by category.</DialogDescription>
-                <div ref={infoModalBodyRef} className='info-modal-body'>
+                <DialogHeader ref={infoModalHeaderRef} className="sr-only"><DialogTitle>Menu</DialogTitle></DialogHeader>
+                <DialogDescription className="sr-only" isDarkMode={resolvedTheme === 'dark'}>Filter selected work by category.</DialogDescription>
+                <div ref={infoModalBodyRef} className="info-modal-body">
                   <ComboboxContent
                     ref={mobileProjectFilterRef}
                     value={categories}
@@ -954,29 +946,29 @@ const Gallery: React.FC<GalleryProps> = ({
                 </div>
               </div>
             ) : (
-              /**
+            /**
                *  Note: render project info dialog content itself
               */
 
               <div ref={infoModalWrapperRef} className={cn('info-modal-wrapper h-full flex flex-col justify-center gap-normal overflow-y-scroll overflow-x-hidden px-normal sm:px-info-modal-fluid md:px-info-modal-max', { 'pb-double !justify-start requires-scroll': infoModalRequiresScroll })} >
-                <DialogHeader ref={infoModalHeaderRef} key={`${currentProjectDetails.id}-header`} className='info-modal-header flex-col md:flex-row motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter'>
+                <DialogHeader ref={infoModalHeaderRef} key={`${currentProjectDetails.id}-header`} className="info-modal-header flex-col motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 md:flex-row">
                   <DialogTitle
-                    className='relative md:after:content-[""] md:after:w-0.5 md:after:h-6 after:block md:after:bg-gray-200 dark:md:after:bg-gray-600 md:after:top-1 md:after:-right-[18px] md:after:absolute md:after:rotate-[28deg]'
+                    className='relative after:block md:after:absolute md:after:-right-[18px] md:after:top-1 md:after:h-6 md:after:w-0.5 md:after:rotate-[28deg] md:after:bg-gray-200 md:after:content-[""] dark:md:after:bg-gray-600'
                   >
                     {currentProjectDetails.title}
                   </DialogTitle>
-                  <span className='info-modal-project-title relative top-[3px] flex flex-col text-xs whitespace-nowrap leading-3'>
-                    <span className='info-modal-project-type uppercase tracking-[2px]'>{currentProjectDetails.type}</span>
-                    <span className='info-modal-project-date'>{currentProjectDetails.date}</span>
+                  <span className="info-modal-project-title relative top-[3px] flex flex-col whitespace-nowrap text-xs leading-3">
+                    <span className="info-modal-project-type uppercase tracking-[2px]">{currentProjectDetails.type}</span>
+                    <span className="info-modal-project-date">{currentProjectDetails.date}</span>
                   </span>
                 </DialogHeader>
-                <div ref={infoModalBodyRef} className='info-modal-body flex flex-col gap-normal'>
-                  <div className='info-modal-metadata flex flex-col md:flex-row gap-normal'>
-                    <div key={`${currentProjectDetails.id}-client`} className='info-modal-project-client w-[240px] motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-100'>
+                <div ref={infoModalBodyRef} className="info-modal-body flex flex-col gap-normal">
+                  <div className="info-modal-metadata flex flex-col gap-normal md:flex-row">
+                    <div key={`${currentProjectDetails.id}-client`} className="info-modal-project-client w-[240px] motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-100">
                       <h3>{currentProjectDetails.fullTime ? 'With' : 'For'}</h3>
                       <DialogDescription isDarkMode={resolvedTheme === 'dark'}>{currentProjectDetails.client}</DialogDescription>
                     </div>
-                    <div key={`${currentProjectDetails.id}-skills`} className='info-modal-project-skills motion-safe:opacity-0 motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:delay-200'>
+                    <div key={`${currentProjectDetails.id}-skills`} className="info-modal-project-skills motion-safe:translate-y-3 motion-safe:animate-slide-enter motion-safe:opacity-0 motion-safe:delay-200">
                       <h3>Skills</h3>
                       <p>{currentProjectDetails.skills}</p>
                     </div>
@@ -997,38 +989,38 @@ const Gallery: React.FC<GalleryProps> = ({
             )}
           </DialogContent>
         ) : (
-          /**
+        /**
            *  Note: render mobile menu on small screen sizes
            */
 
           <DialogContent
-            type='projectDetails'
-            className='px-normal justify-stretch'
+            type="projectDetails"
+            className="justify-stretch px-normal"
             onEscapeKeyDown={handleCloseInfoModal}
             onPointerDownOutside={(e) => e.preventDefault()}
           >
-            <DialogHeader className='sr-only'><DialogTitle>Menu</DialogTitle></DialogHeader>
-            <DialogDescription className='sr-only'>Choose a menu option from the list below.</DialogDescription>
-            <ul className='self-center flex flex-col gap-normal w-full [&_a]:text-mobile-menu [&_a]:transition-colors [&_a:hover]:text-gray-800 dark:[&_a:hover]:text-white'>
+            <DialogHeader className="sr-only"><DialogTitle>Menu</DialogTitle></DialogHeader>
+            <DialogDescription className="sr-only">Choose a menu option from the list below.</DialogDescription>
+            <ul className="flex w-full flex-col gap-normal self-center [&_a:hover]:text-gray-800 dark:[&_a:hover]:text-white [&_a]:text-mobile-menu [&_a]:transition-colors">
               {
                 /**
                  *  Note: dynamically generate mobile menu options with animated icons and typewriter effect for text
                  */
               }
-              {mobileMenuOptions.map(({action, caption, icon, text }, i) => {
+              {mobileMenuOptions.map(({ action, caption, icon, text }, i) => {
                 const mobileMenuItemTextDelay = i * 0.25
                 const mobileMenuItemTextDuration = text.length * 0.075
                 const mobileMenuItemDividerDelay = (i + 1) * 0.25
 
                 return (
-                  <li key={`mobile-menu-option-${i}`} className='relative pb-normal'>
-                    <a href='#' onClick={action} className='block group text-gray-600 dark:text-gray-300 [&_svg]:text-gray-300 dark:[&_svg]:text-gray-600 transition-colors hover:text-gray-800 dark:hover:text-white'>
+                  <li key={`mobile-menu-option-${i}`} className="relative pb-normal">
+                    <a href="#" onClick={action} className="group block text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-300 dark:hover:text-white [&_svg]:text-gray-300 dark:[&_svg]:text-gray-600">
                       {shouldReduceMotion ? (
-                        <span className='flex items-center gap-2'>{icon}{text}{caption && <span className='font-normal whitespace-nowrap text-gray-300 dark:text-gray-600'>({caption})</span>}</span>
+                        <span className="flex items-center gap-2">{icon}{text}{caption && <span className="whitespace-nowrap font-normal text-gray-300 dark:text-gray-600">({caption})</span>}</span>
                       ) : (
-                        <span className='relative flex items-center gap-2'>
+                        <span className="relative flex items-center gap-2">
                           <motion.span
-                            className='motion-safe:group-hover:animate-contact-item-hover stroke-current group-hover:stroke-gray-800 dark:group-hover:stroke-white'
+                            className="stroke-current group-hover:stroke-gray-800 motion-safe:group-hover:animate-contact-item-hover dark:group-hover:stroke-white"
                             initial={{ opacity: 0, scale: 0.01 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{
@@ -1042,13 +1034,13 @@ const Gallery: React.FC<GalleryProps> = ({
                             {icon}
                           </motion.span>
                           <TypedText delay={mobileMenuItemTextDelay}>{text}</TypedText>
-                          {caption && <TypedText delay={mobileMenuItemTextDelay + mobileMenuItemTextDuration} className='font-normal whitespace-nowrap text-gray-300 dark:text-gray-600'>({caption})</TypedText>}
+                          {caption && <TypedText delay={mobileMenuItemTextDelay + mobileMenuItemTextDuration} className="whitespace-nowrap font-normal text-gray-300 dark:text-gray-600">({caption})</TypedText>}
                         </span>
                       )}
                     </a>
                     {i < mobileMenuOptions.length - 1 && (
                       <motion.div
-                        className='absolute left-0 bottom-0 h-0.5 bg-border'
+                        className="absolute bottom-0 left-0 h-0.5 bg-border"
                         initial={{ width: 0 }}
                         animate={{ width: '100%' }}
                         transition={{
@@ -1071,14 +1063,14 @@ const Gallery: React.FC<GalleryProps> = ({
         }
         {!isSmScreenOrSmaller && (
           <>
-            <PreviousButton forceHide={!galleryControlsVisible} variant='galleryNavigationInfoModal' className={cn('button-previous z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigatePreviousProject} />
-            <NextButton forceHide={!galleryControlsVisible} variant='galleryNavigationInfoModal' className={cn('button-next z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigateNextProject} />
+            <PreviousButton forceHide={!galleryControlsVisible} variant="galleryNavigationInfoModal" className={cn('button-previous z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigatePreviousProject} />
+            <NextButton forceHide={!galleryControlsVisible} variant="galleryNavigationInfoModal" className={cn('button-next z-[100] -translate-x-full motion-reduce:translate-x-0 transition-transform duration-500 ease-out', { 'translate-x-0': infoModalOpen })} onClick={handleNavigateNextProject} />
             <div
-              aria-live='off'
-              className='info-modal-filter-container absolute top-normal right-normal z-[100] flex justify-end gap-1.5'
+              aria-live="off"
+              className="info-modal-filter-container absolute right-normal top-normal z-[100] flex justify-end gap-1.5"
             >
               <Combobox
-                variant='infoModal'
+                variant="infoModal"
                 value={categories}
                 onValueChange={setCategories}
                 open={selectCategoriesInfoModalOpen}
@@ -1086,7 +1078,7 @@ const Gallery: React.FC<GalleryProps> = ({
                 options={data.categories}
                 forceHideTooltip={!galleryControlsVisible}
               />
-              <CloseDialogButton forceHide={!galleryControlsVisible} aria-label='Close' variant='infoModal' className='shrink-0' onClick={handleCloseInfoModal} />
+              <CloseDialogButton forceHide={!galleryControlsVisible} aria-label="Close" variant="infoModal" className="shrink-0" onClick={handleCloseInfoModal} />
             </div>
           </>
         )}

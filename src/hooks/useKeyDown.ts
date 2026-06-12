@@ -53,7 +53,7 @@ const useKeyDown = (key: Key, cb: EventCallback, options: EventOptions = {}) => 
     target.addEventListener('keydown', handleKeyDown, { capture })
 
     return () => target.removeEventListener('keydown', handleKeyDown, { capture })
-  }, [ callbackRef, condition, target ])
+  }, [ callbackRef, capture, condition, excludeModifiers, key, modifiers, preventDefault, target ])
 }
 
 export { useKeyDown }

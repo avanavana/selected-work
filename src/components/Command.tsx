@@ -3,8 +3,9 @@ import { type DialogProps } from '@radix-ui/react-dialog'
 import { Command as CommandPrimitive } from 'cmdk'
 import { Search } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
 import { Dialog, DialogContent } from '@/components/Dialog'
+
+import { cn } from '@/lib/utils'
 
 const Command = forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -24,8 +25,8 @@ Command.displayName = CommandPrimitive.displayName
 const CommandDialog = ({ children, ...props }: DialogProps) => {
   return (
     <Dialog {...props}>
-      <DialogContent className='overflow-hidden p-0 shadow-lg'>
-        <Command className='[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5'>
+      <DialogContent className="overflow-hidden p-0 shadow-lg">
+        <Command className="[&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:size-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:size-5">
           {children}
         </Command>
       </DialogContent>
@@ -37,7 +38,7 @@ const CommandInput = forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & { type?: 'popover' | 'inline' }
 >(({ className, type = 'inline', ...props }, ref) => (
-  <div className={cn('flex items-center border-b border-gray-600 px-3', { 'border-b-2 border-border': type === 'inline' })} cmdk-input-wrapper=''>
+  <div className={cn('flex items-center border-b border-gray-600 px-3', { 'border-b-2 border-border': type === 'inline' })} cmdk-input-wrapper="">
     <Search className={cn('mr-2 size-4 shrink-0 opacity-50', { 'opacity-100 text-gray-300 dark:text-gray-500 size-mobile-menu-icon': type === 'inline' })} />
     <CommandPrimitive.Input
       ref={ref}
@@ -71,7 +72,7 @@ const CommandEmpty = forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className='py-6 text-center text-sm'
+    className="py-6 text-center text-sm"
     {...props}
   />
 ))
@@ -147,5 +148,5 @@ export {
   CommandGroup,
   CommandItem,
   CommandShortcut,
-  CommandSeparator,
+  CommandSeparator
 }

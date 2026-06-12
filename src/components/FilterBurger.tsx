@@ -81,15 +81,15 @@ const FilterBurger: React.FC<FilterBurgerProps> = ({
   return (
     <div
       className={cn('filterburger relative', className)}
-      aria-label='Animated open/close filter icon'
+      aria-label="Animated open/close filter icon"
       aria-expanded={isToggled}
       onClick={disabled ? undefined : handler}
       onKeyUp={disabled ? undefined : (e) => e.key === 'Enter' && handler()}
-      role='img'
+      role="img"
       style={iconStyles}
     >
       <div
-        data-testid='bar-wrap-one'
+        data-testid="bar-wrap-one"
         style={{
           transition: `${time / 2}s ${easing} ${
             isToggled ? '0s' : `${time / 2}s`
@@ -100,7 +100,7 @@ const FilterBurger: React.FC<FilterBurgerProps> = ({
         }}
       >
         <div
-          data-testid='bar-one'
+          data-testid="bar-one"
           style={{
             ...barStyles,
             width: `${width}px`,
@@ -108,32 +108,32 @@ const FilterBurger: React.FC<FilterBurgerProps> = ({
             transition: `${time / 2}s ${easing} ${
               isToggled ? `${time / 2}s` : '0s'
             }`,
-            transform: `${isToggled ? `rotate(45deg)` : 'none'}`
+            transform: `${isToggled ? 'rotate(45deg)' : 'none'}`
           }}
         />
       </div>
       <div
-        data-testid='bar-wrap-two'
+        data-testid="bar-wrap-two"
         style={{
           transition: `${time / 2}s ${easing}`,
           opacity: `${isToggled ? '0' : '1'}`
         }}
       >
         <div
-          data-testid='bar-two'
+          data-testid="bar-two"
           style={{
             ...barStyles,
             width: `${width * 0.6}px`,
             top: `${topOffset + barHeight + margin}px`,
-            left: `50%`,
-            transform: `translateX(-50%)`,
+            left: '50%',
+            transform: 'translateX(-50%)',
             transition: `${time / 2}s ${easing}`
           }}
         />
       </div>
 
       <div
-        data-testid='bar-wrap-three'
+        data-testid="bar-wrap-three"
         style={{
           transition: `${time / 2}s ${easing} ${
             isToggled ? '0s' : `${time / 2}s`
@@ -144,22 +144,22 @@ const FilterBurger: React.FC<FilterBurgerProps> = ({
         }}
       >
         <div
-          data-testid='bar-three'
+          data-testid="bar-three"
           style={{
             ...barStyles,
             width: isToggled ? `${width}px` : `${width * 0.3}px`,
             top: `${topOffset + barHeight * 2 + margin * 2}px`,
-            left: `50%`,
+            left: '50%',
             transition: `${time / 2}s ${easing} ${
               isToggled ? `${time / 2}s` : '0s'
             }`,
-            transform: `translateX(-50%) ${isToggled ? `rotate(-45deg)` : ''}`
+            transform: `translateX(-50%) ${isToggled ? 'rotate(-45deg)' : ''}`
           }}
         />
       </div>
       {value.length < options.length && showCount && (
         <motion.div
-          className='absolute -top-2 -right-2 bg-gray-800-translucent-85 text-white rounded-full flex items-center justify-center text-xs size-6'
+          className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-gray-800-translucent-85 text-xs text-white"
           initial={{ scale: 0.01 }}
           animate={{ scale: 1 }}
           transition={{

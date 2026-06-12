@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 
 import Logo from '@/components/Logo'
@@ -10,16 +10,15 @@ import { cn } from '@/lib/utils'
 
 interface InteractiveLogoProps {
   className?: string
-  isDarkMode?: boolean
   shouldReduceMotion?: boolean
   visible?: boolean
 }
 
-const InteractiveLogo: React.FC<InteractiveLogoProps> = ({ className, isDarkMode = false, shouldReduceMotion = false, visible = true, ...props }) => {
+const InteractiveLogo: React.FC<InteractiveLogoProps> = ({ className, shouldReduceMotion = false, visible = true }) => {
   const isTouchscreen = useDetectTouchscreen()
   const [ clampedMousePositionX, setClampedMousePositionX ] = useState<number>(100)
-  const [ solidLogoClipPath, setSolidLogoClipPath ] = useState<string>(`polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)`)
-  const [ asciiLogoClipPath, setAsciiLogoClipPath ] = useState<string>(`polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)`)
+  const [ solidLogoClipPath, setSolidLogoClipPath ] = useState<string>('polygon(114% 0%, 100% 100%, 0% 100%, 0% 0%)')
+  const [ asciiLogoClipPath, setAsciiLogoClipPath ] = useState<string>('polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)')
   const [ isInteracting, setIsInteracting ] = useState(false)
 
   /**
@@ -64,53 +63,52 @@ const InteractiveLogo: React.FC<InteractiveLogoProps> = ({ className, isDarkMode
     requestAnimationFrame(step)
     setIsInteracting(false)
 
-    // @ts-ignore
     plausible('interactive-logo-revealed')
   }
 
   return !shouldReduceMotion ? (
     visible && (
       <div
-        id='logo'
+        id="logo"
         className={cn('relative w-[200px] h-[70px] pb-[22px]', className)}
         onMouseMove={handleMoveLogo}
         onMouseLeave={handleLeaveLogo}
         onTouchMove={handleMoveLogo}
         onTouchEnd={handleLeaveLogo}
       >
-        <Logo size='sm' className='absolute top-0 left-0 text-gray-800 dark:text-white' style={{ clipPath: solidLogoClipPath }} />
-        <LogoAsciiSmall animated={isInteracting} className='absolute top-0 left-0 text-gray-800 dark:text-white' style={{ clipPath: asciiLogoClipPath }} />
-        <Tagline size='sm' animated={false} className='absolute bottom-0 left-0' />
+        <Logo size="sm" className="absolute left-0 top-0 text-gray-800 dark:text-white" style={{ clipPath: solidLogoClipPath }} />
+        <LogoAsciiSmall animated={isInteracting} className="absolute left-0 top-0 text-gray-800 dark:text-white" style={{ clipPath: asciiLogoClipPath }} />
+        <Tagline size="sm" animated={false} className="absolute bottom-0 left-0" />
       </div>
     )
   ) : (
     <motion.div
-      id='logo'
+      id="logo"
       className={cn('relative w-[200px] h-[70px] pb-[22px]', className)}
-      initial='hidden'
-      whileHover='hover'
+      initial="hidden"
+      whileHover="hover"
     >
       <motion.div
-        className='absolute top-0 left-0 pointer-events-none'
+        className="pointer-events-none absolute left-0 top-0"
         variants={{
           hidden: { opacity: 1 },
-          hover: { opacity: 0 },
+          hover: { opacity: 0 }
         }}
         transition={{ duration: 0.25 }}
       >
-        <Logo size='sm' className='text-gray-800 dark:text-white' />
+        <Logo size="sm" className="text-gray-800 dark:text-white" />
       </motion.div>
       <motion.div
-        className='absolute top-0 left-0 text-gray-800 pointer-events-none'
+        className="pointer-events-none absolute left-0 top-0 text-gray-800"
         variants={{
           hidden: { opacity: 0 },
-          hover: { opacity: 1 },
+          hover: { opacity: 1 }
         }}
         transition={{ duration: 0.25 }}
       >
-        <LogoAsciiSmall animated={false} className='text-gray-800 dark:text-white' />
+        <LogoAsciiSmall animated={false} className="text-gray-800 dark:text-white" />
       </motion.div>
-      <Tagline size='sm' animated={false} className='absolute bottom-0 left-0' />
+      <Tagline size="sm" animated={false} className="absolute bottom-0 left-0" />
     </motion.div>
   )
 }

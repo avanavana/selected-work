@@ -37,7 +37,7 @@ const KeyboardCommand: React.FC<KeyboardCommandProps> = ({
   const isTouchscreen = useDetectTouchscreen()
 
   return !isTouchscreen && (
-    <span className='kbd-cmd font-mono relative -top-[0.5px] -mr-[2px] inline-block [&_kbd]:border [&_kbd]:border-gray-500 [&_kbd]:rounded-[3px] [&_kbd]:px-1 [&_kbd]:py-0.5 [&_kbd]:mr-1 [&_kbd:last-child]:mr-0 text-3xs font-bold text-gray-500' {...props}>
+    <span className="kbd-cmd relative -top-[0.5px] -mr-[2px] inline-block font-mono text-3xs font-bold text-gray-500 [&_kbd:last-child]:mr-0 [&_kbd]:mr-1 [&_kbd]:rounded-[3px] [&_kbd]:border [&_kbd]:border-gray-500 [&_kbd]:px-1 [&_kbd]:py-0.5" {...props}>
       {command && <kbd>⌘</kbd>}
       {ctrl && <kbd>⌃</kbd>}
       {alt || option && <kbd>⌥</kbd>}

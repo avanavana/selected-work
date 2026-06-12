@@ -1,15 +1,15 @@
-import { useState, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 const useTimer = () => {
   const [ elapsedTime, setElapsedTime ] = useState<number>(0)
   const startTimeRef = useRef<number | null>(null)
 
-  const startTimer = () => {
+  const startTimer = useCallback(() => {
     startTimeRef.current = Date.now()
     setElapsedTime(0)
-  }
+  }, [])
 
-  const stopTimer = () => {
+  const stopTimer = useCallback(() => {
     if (startTimeRef.current) {
       const duration = Date.now() - startTimeRef.current
       setElapsedTime(duration)
@@ -17,7 +17,7 @@ const useTimer = () => {
     }
 
     return 0
-  }
+  }, [])
 
   return { elapsedTime, startTimer, stopTimer }
 }

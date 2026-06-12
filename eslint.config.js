@@ -1,16 +1,16 @@
-import js from '@eslint/js';
-import { FlatCompat } from '@eslint/eslintrc';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import simpleImportSort from 'eslint-plugin-simple-import-sort';
+import js from '@eslint/js'
+import { FlatCompat } from '@eslint/eslintrc'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import simpleImportSort from 'eslint-plugin-simple-import-sort'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
   recommendedConfig: js.configs.recommended
-});
+})
 
 export default [
   {
@@ -49,6 +49,10 @@ export default [
     rules: {
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      'react/display-name': 'off',
+      'react/no-unknown-property': [ 'error', {
+        ignore: [ 'angle', 'args', 'attach', 'cmdk-input-wrapper', 'intensity', 'metalness', 'position', 'roughness' ]
+      } ],
       'react/prop-types': 'off',
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
@@ -60,9 +64,10 @@ export default [
       'prettier/prettier': 'off',
       'prefer-const': 'error',
       quotes: [ 'error', 'single', { avoidEscape: true } ],
-      semi: [ 'error', 'always' ],
+      semi: [ 'error', 'never' ],
       'tailwindcss/classnames-order': 'warn',
-      'tailwindcss/no-custom-classname': 'warn',
+      'tailwindcss/enforces-negative-arbitrary-values': 'off',
+      'tailwindcss/no-custom-classname': 'off',
       'tailwindcss/no-contradicting-classname': 'error',
       indent: [ 'error', 2 ]
     }
@@ -110,4 +115,4 @@ export default [
       } ]
     }
   }
-];
+]

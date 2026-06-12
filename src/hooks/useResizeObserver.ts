@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react'
 
 const toRect = (rect: DOMRect | undefined) => {
   const width = rect?.width || 0,
-       height = rect?.height || 0,
-            x = rect?.x || 0,
-            y = rect?.y || 0
+    height = rect?.height || 0,
+    x = rect?.x || 0,
+    y = rect?.y || 0
               
   return { width, height, x, y }
 }

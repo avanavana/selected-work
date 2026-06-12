@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
+import { AsciiRenderer,OrthographicCamera } from '@react-three/drei'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
-import { OrthographicCamera, AsciiRenderer } from '@react-three/drei'
+import { animate, motion, useMotionValue } from 'framer-motion'
+import type { ShapePath } from 'three'
 import { SpotLight } from 'three'
 import { SVGLoader } from 'three/addons/loaders/SVGLoader.js'
-import { animate, motion, useMotionValue } from 'framer-motion'
 
 import { useTheme } from '@/context/ThemeContext'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { cn, extractNumber } from '@/lib/utils'
 import { screens } from '../../tailwind.config'
-
-import type { ShapePath } from 'three'
 
 /**
  *  Note: to get a "matrix"-like text effect in the AsciiRenderer, we can take a spotlight, shine it at the logo SVG,
@@ -46,14 +45,14 @@ const MovingLight = () => {
         Math.sin(t) * radius,
         Math.cos(t) * radius,
         4
-      );
+      )
     }
   })
 
   return (
     <spotLight
       ref={lightRef}
-      position={[-2, 2, 2]}
+      position={[ -2, 2, 2 ]}
       angle={Math.PI / 2}
       intensity={3000}
     />
@@ -105,7 +104,7 @@ const LogoSvg: React.FC<LogoSvgProps> = ({ isMobile = false, size = 'default' })
             }}
           />
           <meshStandardMaterial
-            attach='material'
+            attach="material"
             color={0x222225}
             roughness={0.6}
             metalness={1}
@@ -134,9 +133,9 @@ const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', styl
   return (
     <motion.div
       className={cn('relative', className)}
-      {...(size !== 'sm' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)', filter: 'blur(32px)' }})}
-      {...(size !== 'sm' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)', filter: 'blur(0px)' }})}
-      {...(size !== 'sm' && { transition: { clipPath: {delay: 5, duration: 4, ease: 'easeInOut' }, filter: { duration: 2, ease: 'easeOut' }}})}
+      {...(size !== 'sm' && { initial: { clipPath: 'polygon(100% 0%, 100% 100%, -14% 100%, 0% 0%)', filter: 'blur(32px)' } })}
+      {...(size !== 'sm' && { animate: { clipPath: 'polygon(100% 0%, 100% 100%, 100% 100%, 114% 0%)', filter: 'blur(0px)' } })}
+      {...(size !== 'sm' && { transition: { clipPath: { delay: 5, duration: 4, ease: 'easeInOut' }, filter: { duration: 2, ease: 'easeOut' } } })}
       {...(style && { style })}
       {...props}
     >
@@ -146,9 +145,9 @@ const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', styl
         <LogoSvg isMobile={isMdScreenOrSmaller} size={size} />
         <AsciiRenderer
           fgColor={resolvedTheme === 'dark' ? '#ffffff' : '#222225'}
-          bgColor='transparent'
+          bgColor="transparent"
           invert={false}
-          characters={` .,;-<+|[}&="@#`}
+          characters={' .,;-<+|[}&="@#'}
           resolution={0.2}
         />
       </Canvas>
@@ -158,4 +157,4 @@ const LogoAscii: React.FC<LogoAsciiProps> = ({ className, size = 'default', styl
 
 LogoAscii.displayName = 'LogoAscii'
 
-export default LogoAscii;
+export default LogoAscii

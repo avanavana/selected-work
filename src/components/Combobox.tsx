@@ -39,19 +39,19 @@ const ComboboxTrigger = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes
     <PopoverTrigger asChild>
       <Button
         ref={ref}
-        role='combobox'
+        role="combobox"
         aria-controls={id}
-        aria-haspopup='listbox'
+        aria-haspopup="listbox"
         aria-multiselectable
         aria-label={props.open ? 'Close' : 'Filter by category'}
         aria-expanded={props.open}
-        className={cn('w-full h-12 px-3 justify-between gap-2 rounded-full bg-gray-800/50 hover:bg-gray-800/85 data-[state=open]:bg-gray-800/85 active:scale-100 border-0 text-white hover:text-white text-sm font-bold [&_svg]:hover:text-white transition-all duration-500 ease-in-out', { 'dark:bg-gray-600/50 dark:hover:bg-gray-600/85 dark:data-[state=open]:bg-gray-600/85': variant === 'infoModal' }, { 'w-12 justify-center': props.value && props.value.length === props.options.length })}
+        className={cn('w-full h-12 px-3 justify-between gap-2 rounded-full bg-gray-800/50 hover:bg-gray-800/85 data-[state=open]:bg-gray-800/85 active:scale-100 border-0 text-white hover:text-white text-sm font-bold [&_svg]:hover:text-white transition-all duration-500 ease-in-out', { 'dark:bg-gray-600/50 dark:hover:bg-gray-600/85 dark:data-[state=open]:bg-gray-600/85': variant === 'infoModal' }, { 'w-12 justify-center': props.value && props.value.length === props.options.length }, className)}
       >
-        <ListFilter className='size-4 shrink-0 text-gray-200' />
+        <ListFilter className="size-4 shrink-0 text-gray-200" />
         {props.value && props.value.length !== props.options.length && (
-          <span className='line-clamp-1 text-left'>
+          <span className="line-clamp-1 text-left">
             {props.value && (
-              <span className='inline-flex items-center justify-center font-bold bg-gray-600 rounded-full size-6 mr-2'>{props.value.length}</span>
+              <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-gray-600 font-bold">{props.value.length}</span>
             )}
 
             {props.value && props.value.length === 1 && (
@@ -70,15 +70,16 @@ const ComboboxTrigger = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes
     </PopoverTrigger>
   </TouchTooltip>
 ))
+ComboboxTrigger.displayName = 'ComboboxTrigger'
 
 const ComboboxContent = forwardRef(({ id, type = 'inline', variant, ...props }: ComboboxContentProps, ref: React.ForwardedRef<HTMLInputElement>) => (
   <Command id={id} className={cn('bg-transparent', { 'motion-safe:animate-slide-enter': type === 'inline' })}>
-    <CommandInput ref={ref} type={type} className={cn(type === 'inline' ? '!text-mobile-menu placeholder:text-mobile-menu text-gray-800 placeholder:text-gray-300 h-mobile-menu-input' : 'text-white placeholder:font-normal placeholder:text-gray-300', { 'dark:placeholder:text-gray-500': type === 'inline'})} placeholder={props.searchPlaceholder ?? 'Search for an option'} />
+    <CommandInput ref={ref} type={type} className={cn(type === 'inline' ? '!text-mobile-menu placeholder:text-mobile-menu text-gray-800 placeholder:text-gray-300 h-mobile-menu-input' : 'text-white placeholder:font-normal placeholder:text-gray-300', { 'dark:placeholder:text-gray-500': type === 'inline' })} placeholder={props.searchPlaceholder ?? 'Search for an option'} />
     <CommandList>
       <CommandEmpty>{props.emptyText ?? 'No results found'}</CommandEmpty>
       <CommandGroup className={cn({ 'px-0': type === 'inline' })}>
         <ScrollArea>
-          <div className='max-h-60'>
+          <div className="max-h-60">
             {props.options.map((option) => (
               <CommandItem
                 className={cn(
@@ -100,7 +101,7 @@ const ComboboxContent = forwardRef(({ id, type = 'inline', variant, ...props }: 
                     if (!props.clearable && props.value.length === 1) return false
                     props.onValueChange?.(props.value.filter((value) => value !== option.value))
                   } else {
-                    props.onValueChange?.([...(props.value ?? []), option.value])
+                    props.onValueChange?.([ ...(props.value ?? []), option.value ])
                   }
                 }}
               >
@@ -114,6 +115,7 @@ const ComboboxContent = forwardRef(({ id, type = 'inline', variant, ...props }: 
     </CommandList>
   </Command>
 ))
+ComboboxContent.displayName = 'ComboboxContent'
 
 const Combobox = forwardRef(({ variant, ...props }: ComboboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
   const id = useId()
@@ -122,11 +124,11 @@ const Combobox = forwardRef(({ variant, ...props }: ComboboxProps, ref: React.Fo
     <Popover open={props.open} onOpenChange={props.setOpen}>
       <ComboboxTrigger id={id} {...(variant && { variant })} {...props} />
       <PopoverContent
-        align='center'
+        align="center"
         id={id}
         className={cn('p-0 border-0 bg-gray-800/85 backdrop-blur-sm shadow-none font-bold', { 'dark:bg-gray-600/85': variant === 'infoModal' })}
       >
-        <ComboboxContent ref={ref} type='popover' {...(variant && { variant })} {...props} />
+        <ComboboxContent ref={ref} type="popover" {...(variant && { variant })} {...props} />
       </PopoverContent>
     </Popover>
   )}

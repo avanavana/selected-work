@@ -40,10 +40,10 @@ export function getChildrenAsText(children: ReactNode | ReactNode[]): string {
 }
 
 export function getCurrentQuarter(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const quarter = Math.ceil((now.getMonth() + 1) / 3);
-  return `Q${quarter} ${year}`;
+  const now = new Date()
+  const year = now.getFullYear()
+  const quarter = Math.ceil((now.getMonth() + 1) / 3)
+  return `Q${quarter} ${year}`
 }
 
 export function extractNumber(value: string): number {
@@ -55,9 +55,9 @@ type HeightLimits = Record<keyof typeof rawHeightLimits, { raw: string }>
 
 export function rawHeightLimitsToHeightLimits(rawHeightLimits: RawHeightLimits): HeightLimits {
   return Object.entries(rawHeightLimits as RawHeightLimits).reduce((a, [ k, v ]) => {
-      a[k as keyof typeof rawHeightLimits] = { raw: `(max-height:${v}px)` }
-      return a
-    }, {} as HeightLimits)
+    a[k as keyof typeof rawHeightLimits] = { raw: `(max-height:${v}px)` }
+    return a
+  }, {} as HeightLimits)
 }
 
 export function createFileDownload(filename: string) {
@@ -150,8 +150,8 @@ function getOptimalSource(sources: string[], isWebPSupported: boolean): string |
     sources.find((src) => src.includes(`lg/${format}`)) ||
     sources.find((src) => src.includes(`md/${format}`)) ||
     sources.find((src) => src.includes(`sm/${format}`)) ||
-    sources.find((src) => src.includes(`/work/image-`) && src.endsWith(`.${format}`)) ||
-    sources.find((src) => src.includes(`png`)) ||
+    sources.find((src) => src.includes('/work/image-') && src.endsWith(`.${format}`)) ||
+    sources.find((src) => src.includes('png')) ||
     sources[0]
   )
 }
@@ -190,10 +190,10 @@ export const zPhoneNumber = z
   })
 
 
-  export const setAbortableTimeout = (callback: () => void, timeout: number, signal: AbortSignal) => {
-    const timer = setTimeout(() => {
-      if (!signal.aborted) callback()
-    }, timeout)
+export const setAbortableTimeout = (callback: () => void, timeout: number, signal: AbortSignal) => {
+  const timer = setTimeout(() => {
+    if (!signal.aborted) callback()
+  }, timeout)
 
-    return timer
-  }
+  return timer
+}

@@ -1,14 +1,17 @@
 import { useLayoutEffect, useState } from 'react'
 
+import { useCallbackRef } from '@/hooks/useCallbackRef'
+
 interface WindowDimensions {
   width: number
   height: number
 }
 
 const useWindowSize = (onChange?: (width: number, height: number) => void) => {
-  const [ dimensions, setDimensions] = useState<WindowDimensions>({
+  const onChangeRef = useCallbackRef(onChange)
+  const [ dimensions, setDimensions ] = useState<WindowDimensions>({
     width: window.innerWidth,
-    height: window.innerHeight,
+    height: window.innerHeight
   })
 
   useLayoutEffect(() => {
@@ -19,13 +22,13 @@ const useWindowSize = (onChange?: (width: number, height: number) => void) => {
       }
 
       setDimensions(newDimensions)
-      if (onChange) onChange(newDimensions.width, newDimensions.height)
+      onChangeRef?.(newDimensions.width, newDimensions.height)
     }
 
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [ onChangeRef ])
 
   return dimensions
 }

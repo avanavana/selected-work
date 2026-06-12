@@ -13,7 +13,7 @@ import TypedText from '@/components/TypedText'
 import { useTheme } from '@/context/ThemeContext'
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion'
 import { useWindowSize } from '@/hooks/useWindowSize'
-import { cn, extractNumber,getCurrentQuarter } from '@/lib/utils'
+import { cn, extractNumber, getCurrentQuarter } from '@/lib/utils'
 import { screens } from '../../tailwind.config'
 
 const contactInfoItemVariants = {
@@ -69,7 +69,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
 
       return () => clearTimeout(introTimer)
     }
-  }, [ skipIntro ])
+  }, [ isMdScreenOrSmaller, shouldReduceMotion, skipIntro ])
 
   useLayoutEffect(() => {
     setIsMdScreenOrSmaller(screenWidth <= extractNumber(screens.md))
@@ -104,10 +104,10 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
   ]
 
   return (
-    <section id='info' className={cn('flex md:block relative w-[calc(100%_-_76px)] max:w-full mx-normal max:mx-0 transition-[justify-content] gap-normal flex-col-reverse md:!flex-row md:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto md:h-[70px] py-normal max:pb-0' : 'py-0', { 'pb-0': !requiresScroll }, className)} {...props}>
+    <section id="info" className={cn('flex md:block relative w-[calc(100%_-_76px)] max:w-full mx-normal max:mx-0 transition-[justify-content] gap-normal flex-col-reverse md:!flex-row md:gap-0', showContactInfo ? 'box-content justify-between' : 'justify-between', introComplete ? '!flex h-auto md:h-[70px] py-normal max:pb-0' : 'py-0', { 'pb-0': !requiresScroll }, className)} {...props}>
       {!shouldReduceMotion && !skipIntro && (
         <motion.div
-          id='logo-intro'
+          id="logo-intro"
           className={cn('relative w-[600px] h-[144px]', showContactInfo ? 'top-0 translate-y-0' : 'top-1/2 -translate-y-1/2', { 'hidden': introComplete })}
           initial={{ height: 144, width: 600, left: '50%', x: '-50%', scale: isMdScreenOrSmaller ? 1 / 2 : 1 }}
           animate={{ height: 212, width: isMdScreenOrSmaller ? 600 : 200, left: isMdScreenOrSmaller ? '50%' : -66.66, x: isMdScreenOrSmaller ? '-50%' : 0, scale: 1 / 3 }}
@@ -146,30 +146,29 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
         </motion.div>
       )}
       <InteractiveLogo
-        isDarkMode={resolvedTheme === 'dark'}
         className={cn('interactive-logo', introComplete ? 'self-center md:self-start' : 'absolute top-[calc(50%_+_19px)] left-0 -translate-y-1/2')}
         shouldReduceMotion={shouldReduceMotion}
         visible={introComplete}
       />
       {showContactInfo && (
         <div
-          id='contact'
+          id="contact"
           className={cn('relative flex flex-col sm:flex-row justify-between items-center gap-normal sm:gap-0 h-auto sm:h-[108px] md:!h-[70px] !text-mobile-menu leading-mobile-menu sm:!text-sm sm:leading-none [&_a_svg]:size-mobile-menu-icon [&_a_svg]:sm:size-3.5 text-gray-600 dark:text-gray-500 [&_a_svg]:transition-all [&_a_svg]:text-gray-300 dark:[&_a_svg]:text-gray-600 dark:[&_a:hover_svg]:text-white [&_a:hover_svg]:text-gray-800 [&_a]:transition-colors [&_a:hover]:text-gray-800 dark:[&_a:hover]:text-white [&_>_div]:relative [&_>_div]:text-center [&_>_div]:sm:text-left', introComplete ? 'sm:pb-normal sm:after:absolute sm:after:bottom-0 sm:after:content-[""] sm:after:block sm:after:w-0 sm:after:h-[2px] sm:after:bg-border sm:after:animate-center-divider md:after:hidden md:pb-0' : 'md:absolute md:top-1/2 md:-translate-y-1/2 md:right-0')}
         >
-          <motion.div className='w-full sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
+          <motion.div className="w-full sm:w-auto sm:pb-0" variants={contactInfoItemVariants}>
             {content.slice(0, 3).map(({ heading, text }, i) => (
               heading ? (
-                <h3 key={`contact-info-item-col-1-${i}`} className='text-gray-800 dark:text-white text-[0.98em] font-bold uppercase tracking-[3px]'>
+                <h3 key={`contact-info-item-col-1-${i}`} className="text-[0.98em] font-bold uppercase tracking-[3px] text-gray-800 dark:text-white">
                   {shouldReduceMotion ? <span>{text}</span> : <TypedText delay={i * 0.25}>{text}</TypedText>}
                 </h3>
               ) : (
-                shouldReduceMotion ? <p key={`contact-info-item-col-1-${i}`}>{text}</p> : <TypedText key={`contact-info-item-col-1-${i}`} as='p' delay={i * 0.25}>{text}</TypedText>
+                shouldReduceMotion ? <p key={`contact-info-item-col-1-${i}`}>{text}</p> : <TypedText key={`contact-info-item-col-1-${i}`} as="p" delay={i * 0.25}>{text}</TypedText>
               )
             ))}
           </motion.div>
           {isSmScreenOrSmaller ? (
             <motion.div
-              className='h-0.5 bg-border mx-auto'
+              className="mx-auto h-0.5 bg-border"
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
               transition={{
@@ -181,14 +180,14 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
           ) : (
             <ContactDivider delay={3.5} {...(!skipIntro && { shouldAnimate })} />
           )}
-          <motion.div className='w-full sm:w-auto sm:pb-0' variants={contactInfoItemVariants}>
+          <motion.div className="w-full sm:w-auto sm:pb-0" variants={contactInfoItemVariants}>
             {content.slice(3, 6).map(({ text }, i) => (
-              shouldReduceMotion ? <p key={`contact-info-item-col-2-${i}`}>{text}</p> : <TypedText key={`contact-info-item-col-2-${i}`} as='p' delay={(i + 3) * 0.25}>{text}</TypedText>
+              shouldReduceMotion ? <p key={`contact-info-item-col-2-${i}`}>{text}</p> : <TypedText key={`contact-info-item-col-2-${i}`} as="p" delay={(i + 3) * 0.25}>{text}</TypedText>
             ))}
           </motion.div>
           {isSmScreenOrSmaller ? (
             <motion.div
-              className='h-0.5 bg-border mx-auto'
+              className="mx-auto h-0.5 bg-border"
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
               transition={{
@@ -204,13 +203,13 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
             {content.slice(-3).map(({ href, Icon, onClick, text }, i) => (
               <a
                 key={`contact-info-item-${i}`}
-                className='flex items-center gap-mobile-menu-gap sm:gap-1.5 justify-center sm:justify-start cursor-pointer group'
+                className="group flex cursor-pointer items-center justify-center gap-mobile-menu-gap sm:justify-start sm:gap-1.5"
                 {...(href && { href, target: '_blank' })}
                 {...(onClick && { onClick })}
               >
                 {Icon && (
                   <motion.span
-                    className='contact-info-icon group-hover:motion-safe:animate-contact-item-hover'
+                    className="contact-info-icon group-hover:motion-safe:animate-contact-item-hover"
                     initial={{ opacity: 0, scale: 0.01 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{
@@ -230,7 +229,7 @@ const ContactInfo: React.FC<ContactInfoProps> = ({
           </motion.div>
           {isSmScreenOrSmaller && (
             <motion.div
-              className='h-0.5 bg-border mx-auto'
+              className="mx-auto h-0.5 bg-border"
               initial={{ width: 0 }}
               animate={{ width: '100%' }}
               transition={{

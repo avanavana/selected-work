@@ -5,10 +5,9 @@ import { Button } from '@/components/Button'
 import KeyboardCommand from '@/components/KeyboardCommand'
 import { TouchTooltip } from '@/components/TouchTooltip'
 
+import type { Theme } from '@/context/ThemeContext'
 import { useTheme } from '@/context/ThemeContext'
 import { cn } from '@/lib/utils'
-
-import type { Theme } from '@/context/ThemeContext'
 
 const themeOptions: Theme[] = [ 'light', 'dark', 'system' ]
 

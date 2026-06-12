@@ -2,47 +2,64 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { useKeyDown } from '@/hooks/useKeyDown'
 
+interface FullScreenDocument extends Document {
+  mozCancelFullScreen?: () => Promise<void> | void
+  mozFullScreenElement?: Element | null
+  msExitFullscreen?: () => Promise<void> | void
+  msFullscreenElement?: Element | null
+  webkitExitFullscreen?: () => Promise<void> | void
+  webkitFullscreenElement?: Element | null
+}
+
+interface FullScreenElement extends HTMLDivElement {
+  mozRequestFullScreen?: () => Promise<void> | void
+  msRequestFullscreen?: () => Promise<void> | void
+  webkitRequestFullscreen?: () => Promise<void> | void
+}
+
 const useFullScreen = (ref: React.RefObject<HTMLDivElement>) => {
   const [ isFullScreen, setIsFullScreen ] = useState(false)
+  const fullScreenDocument = document as FullScreenDocument
 
-  const getFullScreenElement = (): Element | null => {
+  const getFullScreenElement = useCallback((): Element | null => {
     return (
-      document.fullscreenElement ||
-      (document as any).webkitFullscreenElement ||
-      (document as any).mozFullScreenElement ||
-      (document as any).msFullscreenElement ||
+      fullScreenDocument.fullscreenElement ||
+      fullScreenDocument.webkitFullscreenElement ||
+      fullScreenDocument.mozFullScreenElement ||
+      fullScreenDocument.msFullscreenElement ||
       null
     )
-  }
+  }, [ fullScreenDocument ])
 
   const requestFullScreen = useCallback(() => {
     if (!ref.current) return
 
-    // @ts-ignore
     plausible('gallery-fullscreen-requested')
 
-    if (ref.current.requestFullscreen) {
-      ref.current.requestFullscreen()
-    } else if ((ref.current as any).webkitRequestFullscreen) {
-      (ref.current as any).webkitRequestFullscreen()
-    } else if ((ref.current as any).mozRequestFullScreen) {
-      (ref.current as any).mozRequestFullScreen()
-    } else if ((ref.current as any).msRequestFullscreen) {
-      (ref.current as any).msRequestFullscreen()
+    const fullScreenElement = ref.current as FullScreenElement
+
+    if (fullScreenElement.requestFullscreen) {
+      fullScreenElement.requestFullscreen()
+    } else if (fullScreenElement.webkitRequestFullscreen) {
+      fullScreenElement.webkitRequestFullscreen()
+    } else if (fullScreenElement.mozRequestFullScreen) {
+      fullScreenElement.mozRequestFullScreen()
+    } else if (fullScreenElement.msRequestFullscreen) {
+      fullScreenElement.msRequestFullscreen()
     }
-  }, [])
+  }, [ ref ])
 
   const exitFullScreen = useCallback(() => {
-    if (document.exitFullscreen) {
-      document.exitFullscreen()
-    } else if ((document as any).webkitExitFullscreen) {
-      (document as any).webkitExitFullscreen()
-    } else if ((document as any).mozCancelFullScreen) {
-      (document as any).mozCancelFullScreen()
-    } else if ((document as any).msExitFullscreen) {
-      (document as any).msExitFullscreen()
+    if (fullScreenDocument.exitFullscreen) {
+      fullScreenDocument.exitFullscreen()
+    } else if (fullScreenDocument.webkitExitFullscreen) {
+      fullScreenDocument.webkitExitFullscreen()
+    } else if (fullScreenDocument.mozCancelFullScreen) {
+      fullScreenDocument.mozCancelFullScreen()
+    } else if (fullScreenDocument.msExitFullscreen) {
+      fullScreenDocument.msExitFullscreen()
     }
-  }, [])
+  }, [ fullScreenDocument ])
 
   const toggleFullScreen = useCallback(() => {
     if (getFullScreenElement()) {
@@ -50,7 +67,7 @@ const useFullScreen = (ref: React.RefObject<HTMLDivElement>) => {
     } else {
       requestFullScreen()
     }
-  }, [ exitFullScreen, requestFullScreen ])
+  }, [ exitFullScreen, getFullScreenElement, requestFullScreen ])
 
   useEffect(() => {
     const handleFullScreenChange = () => {
@@ -68,7 +85,7 @@ const useFullScreen = (ref: React.RefObject<HTMLDivElement>) => {
       document.removeEventListener('mozfullscreenchange', handleFullScreenChange)
       document.removeEventListener('MSFullscreenChange', handleFullScreenChange)
     }
-  }, [])
+  }, [ getFullScreenElement ])
 
   useKeyDown('Enter', requestFullScreen, { condition: !!ref.current && !isFullScreen, modifiers: [ 'Alt' ] })
   useKeyDown('Escape', exitFullScreen, { condition: !!ref.current && isFullScreen })
